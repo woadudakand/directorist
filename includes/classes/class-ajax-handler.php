@@ -687,8 +687,6 @@ if (!class_exists('ATBDP_Ajax_Handler')):
             $headers .= "Reply-To: {$email}\r\n";
 
             return ATBDP()->email->send_mail($to, $subject, $message, $headers) ? true : false;
-
-
         }
 
         /**

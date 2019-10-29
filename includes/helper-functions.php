@@ -316,9 +316,8 @@ if (!function_exists('get_directorist_option')) {
         }
         // get the option from the database and return it if it is not a null value. Otherwise, return the default value
         $options = (array)get_option('atbdp_option');
-        $v = (array_key_exists($name, $options))
-            ? $v = $options[sanitize_key($name)]
-            : null;
+        $option_name = sanitize_key($name);
+        $v = (array_key_exists($name, $options)) ? $options[$option_name] : null;
         // use default only when the value of the $v is NULL
         if (is_null($v)) {
             return $default;

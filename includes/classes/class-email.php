@@ -364,7 +364,7 @@ This email is sent automatically for information purpose only. Please do not res
             add_filter('wp_mail_content_type', array($this, 'html_content_type')); // set content type to html
             $sent = wp_mail($to, html_entity_decode($subject), $message, $headers);
             /*@todo; check if we really need to remove the filter, as the above filter change the content type only when we call this function.*/
-            remove_filter('wp_mail_content_type', array($this, 'html_content_type')); // remove content type from html
+            // remove_filter('wp_mail_content_type', array($this, 'html_content_type')); // remove content type from html
             return $sent;
         }
 

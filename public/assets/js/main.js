@@ -634,11 +634,10 @@ jQuery(function ($) {
 
             // Validate report abuse form
             var atbdp_report_abuse_submitted = false;
-
+            
             $('#atbdp-report-abuse-form').validator({
                 disable: false
             }).on('submit', function (e) {
-
                 if (atbdp_report_abuse_submitted) return false;
                 atbdp_report_abuse_submitted = true;
                 // Check for errors
@@ -651,12 +650,12 @@ jQuery(function ($) {
                         'post_id': $('#atbdp-post-id').val(),
                         'message': $('#atbdp-report-abuse-message').val()
                     };
-
+                    $('#atbdp-report-abuse-message').val('Sending...');
                     $.post(atbdp_public_data.ajaxurl, data, function (response) {
                         if (1 == response.error) {
                             $('#atbdp-report-abuse-message-display').addClass('text-danger').html(response.message);
                         } else {
-                            $('#atbdp-report-abuse-message').val('');
+                            // $('#atbdp-report-abuse-message').val('');
                             $('#atbdp-report-abuse-message-display').addClass('text-success').html(response.message);
                         }
                         ;
@@ -674,17 +673,13 @@ jQuery(function ($) {
             $('#atbdp-contact-form,#atbdp-contact-form-widget').validator({
                 disable: false
             }).on('submit', function (e) {
-
                 if (atbdp_contact_submitted) return false;
 
                 // Check for errors
                 if (!e.isDefaultPrevented()) {
-
                     e.preventDefault();
 
                     atbdp_contact_submitted = true;
-
-
                     $('#atbdp-contact-message-display').append('<div class="atbdp-spinner"></div>');
 
                     // Post via AJAX
@@ -704,7 +699,6 @@ jQuery(function ($) {
                             $('#atbdp-contact-message').val('');
                             $('#atbdp-contact-message-display').addClass('text-success').html(response.message);
                         }
-                        ;
 
                     }, 'json');
 
