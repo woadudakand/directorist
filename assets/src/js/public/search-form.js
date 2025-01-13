@@ -5,6 +5,7 @@ import initSearchCategoryCustomFields from './components/category-custom-fields'
 import './components/colorPicker';
 import './components/directoristDropdown';
 import './components/directoristSelect';
+import './range-slider';
 
 (function ($) {
     window.addEventListener('load', () => {
@@ -991,8 +992,8 @@ import './components/directoristSelect';
                 if (!slider || slider.directoristCustomRangeSlider) return;
                 
                 let sliderStep = parseInt(slider.getAttribute('step')) || 1;
-                let sliderDefaultValue = parseInt(slider.getAttribute('value'));
-                let sliderMaxValue = parseInt(slider.getAttribute('max-value'));
+                let sliderDefaultValue = parseInt(slider.getAttribute('value') || 0);
+                let sliderMaxValue = parseInt(slider.getAttribute('max-value') || 100);
                 let minInput = sliderItem.querySelector('.directorist-custom-range-slider__value__min');
                 let maxInput = sliderItem.querySelector('.directorist-custom-range-slider__value__max');
                 let sliderRange = sliderItem.querySelector('.directorist-custom-range-slider__range');
