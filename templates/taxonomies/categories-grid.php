@@ -50,7 +50,7 @@ $taxonomy->atts['type'] = 'category';
 						
 						$listing_count_text = sprintf( '%s <span class="directorist-category-term">%s</span>', $category['grid_count_html'], $listing_count_text );
 						?>
-						<div class="<?php Helper::directorist_column( $columns ); ?> taxonomy-category-items">
+						<div class="<?php Helper::directorist_column( $columns ); ?>">
 							<div class="directorist-categories__single<?php echo esc_attr( $cat_class ); ?> directorist-categories__single--style-one" style="background-image: url('<?php echo $category['img'] ? esc_attr($img_src) : 'none'; ?>')"
 >
 								<div class="directorist-categories__single__content">
