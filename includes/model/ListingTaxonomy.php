@@ -92,8 +92,8 @@ class Directorist_Listing_Taxonomy {
 
 	}
 
-	public function set_terms() {
-		$current_page = max( 1, get_query_var( 'paged' ) );
+	public function set_terms( ?int $current_page = null ) {
+		$current_page = is_int($current_page) ? $current_page : max( 1, get_query_var( 'paged' ) );
     	$offset 	  = ( $current_page - 1 ) * $this->per_page;
 
 		$args = array(
@@ -342,9 +342,7 @@ class Directorist_Listing_Taxonomy {
     			'list_col_class' => 'col-md-' . floor(12 / $column ),
     		);
     		$template_file = 'taxonomies/categories-'. $this->view;
-    	}
-
-    	else {
+    	} else {
     		$args = array(
     			'taxonomy'   => $this,
     			'locations' => $this->tax_data(),

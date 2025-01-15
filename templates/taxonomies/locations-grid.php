@@ -12,10 +12,12 @@ $columns = floor( 12 / $taxonomy->columns );
 if ( '5' == $taxonomy->columns ) {
 	$columns = $columns . '-5';
 }
+
+$taxonomy->atts['type'] = 'location';
 ?>
 <div id="directorist" class="atbd_wrapper directorist-w-100">
 	<div class="<?php Helper::directorist_container_fluid(); ?>">
-		<div class="directorist-location directorist-location--grid directorist-location--grid-one">
+		<div class="directorist-location directorist-location--grid directorist-location--grid-one" data-attrs="<?php echo esc_attr(wp_json_encode( $taxonomy->atts )); ?>">
 			<div class="<?php Helper::directorist_row(); ?>">
 				<div class="directorist-col-12">
 					<?php

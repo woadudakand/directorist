@@ -11,10 +11,12 @@ $columns = floor( 12 / $taxonomy->columns );
 if ( '5' == $taxonomy->columns ) {
 	$columns = $columns . '-5';
 }
+
+$taxonomy->atts['type'] = 'category';
 ?>
 <div id="directorist" class="atbd_wrapper directorist-w-100">
 	<div class="<?php Helper::directorist_container_fluid(); ?>">
-		<div class="directorist-categories">
+		<div class="directorist-categories" data-attrs="<?php echo esc_attr(wp_json_encode( $taxonomy->atts )); ?>">
 			<div class="<?php Helper::directorist_row(); ?>">
 				<div class="directorist-col-12">
 					<?php
@@ -48,7 +50,7 @@ if ( '5' == $taxonomy->columns ) {
 						
 						$listing_count_text = sprintf( '%s <span class="directorist-category-term">%s</span>', $category['grid_count_html'], $listing_count_text );
 						?>
-						<div class="<?php Helper::directorist_column( $columns ); ?>">
+						<div class="<?php Helper::directorist_column( $columns ); ?> taxonomy-category-items">
 							<div class="directorist-categories__single<?php echo esc_attr( $cat_class ); ?> directorist-categories__single--style-one" style="background-image: url('<?php echo $category['img'] ? esc_attr($img_src) : 'none'; ?>')"
 >
 								<div class="directorist-categories__single__content">
