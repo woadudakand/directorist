@@ -54,12 +54,14 @@ $taxonomy->atts['directory_type'] = isset( $_GET['directory_type'] ) && ! empty(
 							</div>
 							<?php
 						}?>
-					<div>
+
+						<?php $taxonomy->pagination(); ?>
+						
+					</div>
 				<?php else : ?>
 					<p><?php esc_html_e( 'No Results found!', 'directorist' ); ?></p>
 				<?php endif; ?>
 
-				<?php $taxonomy->pagination(); ?>
 			</div>
 		</div>
 	</div>
