@@ -140,18 +140,19 @@ window.addEventListener('load', function () {
     var page = current.html();
     var attrs = $(current.closest(selector)).data('attrs');
     $.ajax({
-      url: taxonomyPaginationAjax.ajax_url,
+      url: directorist.ajax_url,
       type: 'POST',
       dataType: 'json',
       data: {
         action: 'directorist_taxonomy_pagination',
-        nonce: taxonomyPaginationAjax.nonce,
+        nonce: directorist.directorist_nonce,
         page: parseInt(page),
         attrs: attrs
       },
       beforeSend: function beforeSend() {
         $(selector).addClass('atbdp-form-fade'); // Optional loader
       },
+
       success: function success(response) {
         if (response.success) {
           var content = response.data.content;
@@ -174,7 +175,7 @@ window.addEventListener('load', function () {
         }
       },
       complete: function complete() {
-        $(selector).removeClass('loading');
+        $(selector).removeClass('atbdp-form-fade');
       }
     });
   }

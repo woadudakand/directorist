@@ -13,11 +13,6 @@ class Localized_Data {
 		// Load in frontend and backend
 		wp_localize_script( 'jquery', 'directorist', self::public_data() );
 
-		wp_localize_script('directorist-all-location-category', 'taxonomyPaginationAjax', array(
-			'ajax_url' => admin_url('admin-ajax.php'),
-			'nonce'    => wp_create_nonce('directorist_ajax_nonce'),
-		));
-
 		// Load in backend only
 		if ( is_admin() ) {
 			wp_localize_script( 'jquery', 'directorist_admin', self::admin_data() );

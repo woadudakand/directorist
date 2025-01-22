@@ -49,12 +49,12 @@ window.addEventListener('load', () => {
         const attrs = $(current.closest(selector)).data('attrs');
 
         $.ajax({
-            url: taxonomyPaginationAjax.ajax_url,
+            url: directorist.ajax_url,
             type: 'POST',
             dataType: 'json',
             data: {
                 action: 'directorist_taxonomy_pagination',
-                nonce: taxonomyPaginationAjax.nonce,
+                nonce: directorist.directorist_nonce,
                 page:parseInt( page ),
                 attrs
             },
@@ -86,7 +86,7 @@ window.addEventListener('load', () => {
                 }
             },
             complete: function () {
-                $(selector).removeClass('loading');
+                $(selector).removeClass('atbdp-form-fade');
             }
         });
     }

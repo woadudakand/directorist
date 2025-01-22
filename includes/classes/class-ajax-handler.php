@@ -133,7 +133,13 @@ if ( ! class_exists( 'ATBDP_Ajax_Handler' ) ) :
 
 		public function directorist_taxonomy_pagination() {
 			// Verify nonce for security
-			check_ajax_referer('directorist_ajax_nonce', 'nonce');
+			if ( ! directorist_verify_nonce( 'nonce' ) ) {
+				wp_send_json(
+					array(
+						'search_form' => __( 'Something went wrong, please try again.', 'directorist' ),
+					)
+				);
+			}
 
 			$page = isset($_REQUEST['page']) ? absint($_REQUEST['page']) : '';
 			$atts = !empty( $_REQUEST['attrs'] ) && is_array($_REQUEST['attrs']) ? $_REQUEST['attrs'] : [];
