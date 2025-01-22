@@ -722,6 +722,7 @@ window.addEventListener('load', function () {
       beforeSend: function beforeSend() {
         $(containerSelector).addClass('atbdp-form-fade');
       },
+
       success: function success(response) {
         var _tempContainer$queryS, _tempContainer$queryS2;
         if (!(response !== null && response !== void 0 && response.success)) {
@@ -2490,6 +2491,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     if ($(e.target).closest('.directorist-custom-range-slider__value').length > 0) {
       return; // Skip calling `filterListing` for this element
     }
+
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
     filterListing(searchElm);

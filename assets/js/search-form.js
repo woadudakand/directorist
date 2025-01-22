@@ -2143,6 +2143,7 @@ __webpack_require__.r(__webpack_exports__);
       }
       return []; // pips.mode = never
     }
+
     function mapToRange(values, stepped) {
       return values.map(function (value) {
         return scope_Spectrum.fromStepping(stepped ? scope_Spectrum.getStep(value) : value);
@@ -3219,6 +3220,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       pips: pips // Issue #594
     };
+
     return scope_Self;
   }
   // Run the standard initializer
