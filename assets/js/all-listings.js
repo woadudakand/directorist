@@ -704,10 +704,11 @@ window.addEventListener('load', function () {
   $(document).on('click', '.directorist-location .directorist-pagination a', function (e) {
     taxonomyPagination(e, $(this), '.directorist-location');
   });
-  function taxonomyPagination(e, current, selector) {
-    e.preventDefault();
-    var page = current.html();
-    var attrs = $(current.closest(selector)).data('attrs');
+  function taxonomyPagination(event, clickedElement, containerSelector) {
+    event.preventDefault();
+    var pageNumber = (clickedElement === null || clickedElement === void 0 ? void 0 : clickedElement.attr('data-page')) || 1;
+    var container = clickedElement.closest(containerSelector);
+    var containerAttributes = container ? $(container).data('attrs') : {};
     $.ajax({
       url: directorist.ajax_url,
       type: 'POST',
@@ -715,36 +716,38 @@ window.addEventListener('load', function () {
       data: {
         action: 'directorist_taxonomy_pagination',
         nonce: directorist.directorist_nonce,
-        page: parseInt(page),
-        attrs: attrs
+        page: parseInt(pageNumber),
+        attrs: containerAttributes
       },
       beforeSend: function beforeSend() {
-        $(selector).addClass('atbdp-form-fade'); // Optional loader
+        $(containerSelector).addClass('atbdp-form-fade');
       },
-
       success: function success(response) {
-        if (response.success) {
-          var content = response.data.content;
-
-          // Cache the #directorist container
-          var $directorist = $(current).closest('#directorist');
-
-          // Cache the navigation area
-          var $navAreaContent = $directorist.find('.directorist-col-12:has(.directorist-type-nav)').html();
-
-          // Extract and update the .directorist-categories element from the `content` data
-          var $newCategories = $(content).find(selector);
-          $newCategories.find('.directorist-type-nav').html($navAreaContent);
-          $(selector).removeClass('atbdp-form-fade'); // Optional loader
-
-          // Replace the .directorist-categories content in the original container
-          $directorist.find(selector).html($newCategories.html());
-        } else {
-          console.error('Error loading categories');
+        var _tempContainer$queryS, _tempContainer$queryS2;
+        if (!(response !== null && response !== void 0 && response.success)) {
+          console.error('Failed to load taxonomy content');
+          return;
+        }
+        var tempContainer = document.createElement('div');
+        tempContainer.innerHTML = response.data.content;
+        // Handle both category and location wrappers
+        var taxonomyWrapper = document.querySelector('.taxonomy-category-wrapper');
+        var locationWrapper = document.querySelector('.taxonomy-location-wrapper');
+        var updatedCategoryContent = (_tempContainer$queryS = tempContainer.querySelector('.taxonomy-category-wrapper')) === null || _tempContainer$queryS === void 0 ? void 0 : _tempContainer$queryS.innerHTML;
+        var updatedLocationContent = (_tempContainer$queryS2 = tempContainer.querySelector('.taxonomy-location-wrapper')) === null || _tempContainer$queryS2 === void 0 ? void 0 : _tempContainer$queryS2.innerHTML;
+        if (taxonomyWrapper && updatedCategoryContent) {
+          taxonomyWrapper.innerHTML = updatedCategoryContent;
+        }
+        if (locationWrapper && updatedLocationContent) {
+          locationWrapper.innerHTML = updatedLocationContent;
+        }
+        if (!taxonomyWrapper && !locationWrapper) {
+          console.error('Required elements not found in response');
+          return;
         }
       },
       complete: function complete() {
-        $(selector).removeClass('atbdp-form-fade');
+        $(containerSelector).removeClass('atbdp-form-fade');
       }
     });
   }
