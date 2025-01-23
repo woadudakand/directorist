@@ -14572,6 +14572,9 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
     width: 100%;
   }
 }
+.directorist-categories .directorist-type-nav {
+  margin-bottom: 15px;
+}
 
 /* Taxonomy List Style One */
 .directorist-taxonomy-list-one .directorist-taxonomy-list {
@@ -15075,6 +15078,9 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
   .directorist-location .directorist-col-4 {
     width: 100%;
   }
+}
+.directorist-location .directorist-type-nav {
+  margin-bottom: 15px;
 }
 
 /* Modal Core Styles */
