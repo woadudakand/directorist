@@ -147,13 +147,12 @@ window.addEventListener('load', function () {
       data: {
         action: 'directorist_taxonomy_pagination',
         nonce: directorist.directorist_nonce,
-        page: parseInt(page),
-        attrs: attrs
+        page: parseInt(pageNumber),
+        attrs: containerAttributes
       },
       beforeSend: function beforeSend() {
         $(containerSelector).addClass('atbdp-form-fade');
       },
-
       success: function success(response) {
         var _tempContainer$queryS, _tempContainer$queryS2;
         if (!(response !== null && response !== void 0 && response.success)) {
@@ -179,7 +178,7 @@ window.addEventListener('load', function () {
         }
       },
       complete: function complete() {
-        $(selector).removeClass('atbdp-form-fade');
+        $(containerSelector).removeClass('atbdp-form-fade');
       }
     });
   }
