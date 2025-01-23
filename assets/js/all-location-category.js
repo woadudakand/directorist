@@ -153,10 +153,6 @@ window.addEventListener('load', function () {
       beforeSend: function beforeSend() {
         $(containerSelector).addClass('atbdp-form-fade');
       },
-<<<<<<< HEAD
-=======
-
->>>>>>> ce7b527b02965221257c6a913eb7f1a35e6e80a4
       success: function success(response) {
         var _tempContainer$queryS, _tempContainer$queryS2;
         if (!(response !== null && response !== void 0 && response.success)) {
