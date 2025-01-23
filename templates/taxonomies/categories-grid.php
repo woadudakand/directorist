@@ -84,6 +84,7 @@ $taxonomy->atts['directory_type'] = isset( $_GET['directory_type'] ) && ! empty(
 				<?php else : ?>
 					<p><?php esc_html_e( 'No Results found!', 'directorist' ); ?></p>
 				<?php endif; ?>
+			</div>
 		</div>
 	</div>
 
