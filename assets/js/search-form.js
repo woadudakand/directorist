@@ -1859,13 +1859,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         // Parse the URL parameters
         var milesParams = new URLSearchParams(window.location.search).has('miles');
         (_directoristCustomRan = directoristCustomRangeSlider) === null || _directoristCustomRan === void 0 || _directoristCustomRan.create(slider, {
-          start: [minInput.value, sliderDefaultValue && !milesParams ? sliderDefaultValue : maxInput.value],
+          start: [0, sliderDefaultValue ? sliderDefaultValue : 100],
           connect: true,
           direction: isRTL ? 'rtl' : 'ltr',
           step: sliderStep ? sliderStep : 1,
           range: {
-            'min': Number(0),
-            'max': Number(sliderMaxValue)
+            'min': Number(minInput.value ? minInput.value : 0),
+            'max': Number(maxInput.value ? maxInput.value : 100)
           }
         });
         (_slider$directoristCu = slider.directoristCustomRangeSlider) === null || _slider$directoristCu === void 0 || _slider$directoristCu.on('update', function (values, handle) {
