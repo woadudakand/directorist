@@ -188,7 +188,7 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 
 			$directories = wp_parse_id_list( $directories );
 
-			if ( empty( $directories ) ) {
+			if ( ! directorist_is_multi_directory_enabled() || empty( $directories ) ) {
 				$directories = array( $this->default_listing_type() );
 			}
 
@@ -361,7 +361,7 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			$image       = ! empty( $_POST['image'] ) ? absint( wp_unslash( $_POST['image'] ) ) : 0;
 			$directories = wp_parse_id_list( $directories );
 
-			if ( empty( $directories ) ) {
+			if ( ! directorist_is_multi_directory_enabled() || empty( $directories ) ) {
 				$directories = array( $this->default_listing_type() );
 			}
 
