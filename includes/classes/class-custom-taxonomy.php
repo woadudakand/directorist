@@ -27,6 +27,14 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			add_action( 'edited_' . ATBDP_LOCATION, array( $this, 'save_edit_location_form_fields' ) );
 			add_filter( ATBDP_LOCATION . '_row_actions', array( $this, 'edit_taxonomy_view_link' ), 10, 2 );
 
+			// Bulk actions
+			add_filter( 'bulk_actions-edit-' . ATBDP_CATEGORY, array( $this, 'register_bulk_actions' ) );
+			add_filter( 'handle_bulk_actions-edit-' . ATBDP_CATEGORY, array( $this, 'handle_bulk_actions' ), 10, 3 );
+			add_filter( 'bulk_actions-edit-' . ATBDP_LOCATION, array( $this, 'register_bulk_actions' ) );
+			add_filter( 'handle_bulk_actions-edit-' . ATBDP_LOCATION, array( $this, 'handle_bulk_actions' ), 10, 3 );
+
+			// Other actions.
+			add_filter( 'term_updated_messages', array( $this, 'add_term_updated_messages' ) );
 
 			add_filter( 'term_link', array( $this, 'taxonomy_redirect_page' ), 10, 3 );
 			add_action( 'template_redirect', array( $this, 'atbdp_template_redirect' ) );
@@ -486,7 +494,7 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 				'edit_item'         => __( 'Edit Location', 'directorist' ),
 				'update_item'       => __( 'Update Location', 'directorist' ),
 				'add_new_item'      => __( 'Add New Location', 'directorist' ),
-				'new_item_name'     => __( 'New Location Name', 'directorist' ),
+				'new_item_name'     => __( 'New location name', 'directorist' ),
 				'menu_name'         => __( 'Locations', 'directorist' ),
 			);
 
@@ -524,8 +532,8 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 				'parent_item_colon' => __( 'Parent category:', 'directorist' ),
 				'edit_item'         => __( 'Edit category', 'directorist' ),
 				'update_item'       => __( 'Update category', 'directorist' ),
-				'add_new_item'      => __( 'Add New category', 'directorist' ),
-				'new_item_name'     => __( 'New category Name', 'directorist' ),
+				'add_new_item'      => __( 'Add New Category', 'directorist' ),
+				'new_item_name'     => __( 'New category name', 'directorist' ),
 				'menu_name'         => __( 'Categories', 'directorist' ),
 			);
 
@@ -562,8 +570,8 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 				'parent_item_colon' => __( 'Parent tag:', 'directorist' ),
 				'edit_item'         => __( 'Edit tag', 'directorist' ),
 				'update_item'       => __( 'Update tag', 'directorist' ),
-				'add_new_item'      => __( 'Add New tag', 'directorist' ),
-				'new_item_name'     => __( 'New tag Name', 'directorist' ),
+				'add_new_item'      => __( 'Add New Tag', 'directorist' ),
+				'new_item_name'     => __( 'New tag name', 'directorist' ),
 				'menu_name'         => __( 'Tags', 'directorist' ),
 			);
 
@@ -790,6 +798,92 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			if ( ! directorist_is_multi_directory_enabled() || ( 1 == count( $this->get_listing_types() ) ) ) {
 				return $this->get_current_listing_type();
 			}
+		}
+
+		public function register_bulk_actions( $actions ) {
+			$taxonomy = substr( current_filter(), 18 ); // Extract taxonomy name from current filter name.
+
+			if ( directorist_is_multi_directory_enabled() && current_user_can( get_taxonomy( $taxonomy )->cap->edit_terms ) ) {
+				$actions[ __( 'Directory', 'directorist') ] = array(
+					'directory_reset_to_empty'   => __( 'Reset To Empty', 'directorist' ),
+					'directory_reset_to_default' => __( 'Reset To Default', 'directorist' ),
+					'directory_assign_all'     => __( 'Assign All Directories', 'directorist' ),
+				);
+			}
+
+			return $actions;
+		}
+
+		public function handle_bulk_actions( $redirect_location, $action, $terms ) {
+			$taxonomy = substr( current_filter(), 25 ); // Extract taxonomy name from current filter name.
+
+			if ( ! directorist_is_multi_directory_enabled() || ! current_user_can( get_taxonomy( $taxonomy )->cap->edit_terms ) ) {
+				return $redirect_location;
+			}
+
+			if ( $action === 'directory_reset_to_empty' ) {
+				foreach ( $terms as $term ) {
+					directorist_delete_term_directory( $term );
+				}
+
+				return add_query_arg( 'message', 7, $redirect_location );
+			}
+
+			if ( $action === 'directory_reset_to_default' ) {
+				foreach ( $terms as $term ) {
+					directorist_update_term_directory( $term, array( directorist_get_default_directory() ) );
+				}
+
+				return add_query_arg( 'message', 7, $redirect_location );
+			}
+
+			if ( $action === 'directory_assign_all' ) {
+				$directory_ids = directorist_get_directories( array( 'fields' => 'ids' ) );
+
+				foreach ( $terms as $term ) {
+					directorist_update_term_directory( $term, $directory_ids );
+				}
+
+				return add_query_arg( 'message', 7, $redirect_location );
+			}
+
+			return $redirect_location;
+		}
+
+		public function add_term_updated_messages( $messages ) {
+			$messages[ ATBDP_LOCATION ] = array(
+				0 => '',
+				1 => __( 'Location added.', 'directorist' ),
+				2 => __( 'Location deleted.', 'directorist' ),
+				3 => __( 'Location updated.', 'directorist' ),
+				4 => __( 'Location not added.', 'directorist' ),
+				5 => __( 'Location not updated.', 'directorist' ),
+				6 => __( 'Locations deleted.', 'directorist' ),
+				7 => __( 'Locations directory updated.', 'directorist' ),
+			);
+
+			$messages[ ATBDP_CATEGORY ] = array(
+				0 => '',
+				1 => __( 'Category added.', 'directorist' ),
+				2 => __( 'Category deleted.', 'directorist' ),
+				3 => __( 'Category updated.', 'directorist' ),
+				4 => __( 'Category not added.', 'directorist' ),
+				5 => __( 'Category not updated.', 'directorist' ),
+				6 => __( 'Categories deleted.', 'directorist' ),
+				7 => __( 'Categories directory updated.', 'directorist' ),
+			);
+
+			$messages[ ATBDP_TAGS ] = array(
+				0 => '',
+				1 => __( 'Tag added.', 'directorist' ),
+				2 => __( 'Tag deleted.', 'directorist' ),
+				3 => __( 'Tag updated.', 'directorist' ),
+				4 => __( 'Tag not added.', 'directorist' ),
+				5 => __( 'Tag not updated.', 'directorist' ),
+				6 => __( 'Tags deleted.', 'directorist' ),
+			);
+
+			return $messages;
 		}
 	}
 endif;
