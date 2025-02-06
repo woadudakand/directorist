@@ -40,6 +40,10 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			add_action( 'template_redirect', array( $this, 'atbdp_template_redirect' ) );
 
 			add_action( 'wp_loaded', array( $this, 'directorist_bulk_term_update' ) );
+
+			// Filter.
+			// add_filter( 'views_edit-' . ATBDP_CATEGORY, array( $this, 'add_directory_filter' ) );
+			// add_filter( 'views_edit-' . ATBDP_LOCATION, array( $this, 'add_directory_filter' ) );
 		}
 
 		public function directorist_bulk_term_update() {
@@ -884,6 +888,44 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			);
 
 			return $messages;
+		}
+
+		public function add_directory_filter( $filters ) {
+			if ( ! directorist_is_multi_directory_enabled() ) {
+				return $filters;
+			}
+
+			$directories = directorist_get_directories( array(
+				'fields'  => 'id=>name',
+				'order'   => 'asc',
+				'orderby' => 'id'
+			) );
+
+			if ( is_wp_error( $directories ) ) {
+				return $filters;
+			}
+
+			$current_directory = (int) ( $_GET['directory'] ?? 0 );
+
+			$filters = array(
+				'directory-filter-all' => sprintf(
+					'<a href="%1$s" class="%2$s">%3$s</a>',
+					esc_url( add_query_arg( 'directory', -1 ) ),
+					$current_directory === -1 ? 'current' : '',
+					esc_html__( 'All', 'directorist' )
+				)
+			);
+
+			foreach ( $directories as $directory_id => $directory_name ) {
+				$filters[ 'directory-filter-'. $directory_id ] = sprintf(
+					'<a href="%1$s" class="%2$s">%3$s</a>',
+					esc_url( add_query_arg( 'directory', $directory_id ) ),
+					$current_directory === $directory_id ? 'current' : '',
+					esc_html( $directory_name )
+				);
+			}
+
+			return $filters;
 		}
 	}
 endif;
