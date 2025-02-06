@@ -35,7 +35,7 @@ function directorist_get_listing_form_fields( $directory_id ) {
 	if( isset( $fields['view_count'] ) ) {
 		unset( $fields['view_count'] );
 	}
-	
+
 	return $fields;
 }
 
@@ -201,6 +201,10 @@ function directorist_update_location_directory( $location_id, array $directory_i
 
 function directorist_update_category_directory( $location_id, array $directory_ids = array(), $append = false) {
 	directorist_update_term_directory( $location_id, $directory_ids, $append );
+}
+
+function directorist_delete_term_directory( $term_id ) {
+	delete_term_meta( $term_id, '_directory_type' );
 }
 
 function directorist_get_term_directory( $term_id ) {
