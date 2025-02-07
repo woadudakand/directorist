@@ -44,6 +44,8 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			// Filter.
 			// add_filter( 'views_edit-' . ATBDP_CATEGORY, array( $this, 'add_directory_filter' ) );
 			// add_filter( 'views_edit-' . ATBDP_LOCATION, array( $this, 'add_directory_filter' ) );
+
+			add_action( 'delete_' . ATBDP_DIRECTORY_TYPE, array( $this, 'delete_directory_to_category_location_relation' ) );
 		}
 
 		public function directorist_bulk_term_update() {
@@ -926,6 +928,10 @@ if ( ! class_exists( 'ATBDP_Custom_Taxonomy' ) ) :
 			}
 
 			return $filters;
+		}
+
+		public function delete_directory_to_category_location_relation( $directory_id ) {
+			delete_metadata( 'term', null, '_directory_type_' . $directory_id, '', true );
 		}
 	}
 endif;
