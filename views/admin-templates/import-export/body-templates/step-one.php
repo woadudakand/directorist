@@ -65,7 +65,7 @@ $upload_dir = wp_upload_dir();
 				</section>
 			</div>
 			<div class="atbdp-actions">
-				<button type="submit" class="button" value="<?php esc_attr_e( 'Upload', 'directorist' ); ?>" name="atbdp_save_csv_step"><?php esc_html_e( 'Upload', 'directorist' ); ?></button>
+				<button type="submit" class="button" value="<?php esc_attr_e( 'Upload CSV', 'directorist' ); ?>" name="atbdp_save_csv_step"><?php esc_html_e( 'Upload CSV', 'directorist' ); ?></button>
 			</div>
 		</form>
 	</div>
