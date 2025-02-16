@@ -194,7 +194,7 @@
                             $multiple = $terms > 0;
 
                             foreach ( $terms as $term ) {
-								$term_id = $this->get_or_create_term_id( $term, $taxonomy );
+								$term_id = $this->maybe_create_term( $term, $taxonomy );
 
 								if ( empty( $term_id ) ) {
 									continue;
@@ -277,11 +277,13 @@
         }
 
 		/**
+		 * Get term id if exists otherwise create and return term id.
+		 *
 		 * @param string $term
 		 * @param string $taxonomy
 		 * @return int|null Term ID
 		 */
-		public function get_or_create_term_id( $term, $taxonomy ) {
+		public function maybe_create_term( $term, $taxonomy ) {
 			$term_data = term_exists( $term, $taxonomy );
 
 			if ( is_array( $term_data ) ) {
@@ -548,31 +550,28 @@
          * Importer Header Template
          *
          * @param bool $return
-         * @return string $template
+         * @return void
          */
-        public function importer_header_template( $return = false ) {
-            $template_data = [];
-
-            $template_data['controller']    = $this;
-            $template_data['download_link'] = esc_url( ATBDP_URL .'views/admin-templates/import-export/data/dummy.csv' );
-            $template_data['nav_menu']      = $this->get_header_nav_menu();
-
-            $template_path = 'admin-templates/import-export/header-templates/header';
-            ATBDP()->load_template( $template_path, $template_data );
-
+        public function importer_header_template() {
+            ATBDP()->load_template(
+				'admin-templates/import-export/header-templates/header',
+				[
+					'controller'    => $this,
+					'download_link' => esc_url( ATBDP_URL .'views/admin-templates/import-export/data/dummy.csv' ),
+					'nav_menu'      => $this->get_header_nav_menu()
+				]
+			);
         }
 
         /**
          * Importer header nav menu item template
          *
          * @param bool $return
-         * @return string $template
+         * @return void
          */
-        public function importer_header_nav_menu_item_template( $template_data = [], $return = false ) {
-
+        public function importer_header_nav_menu_item_template( $template_data = [] ) {
             $template_data['controller'] = $this;
             ATBDP()->load_template( 'admin-templates/import-export/header-templates/nav-item', $template_data );
-
         }
 
 		/**
