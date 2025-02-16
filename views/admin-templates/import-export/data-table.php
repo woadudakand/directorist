@@ -33,10 +33,11 @@ $fields  = $args['fields'];
                         <input type="hidden" name="map_from[<?php echo esc_attr($index); ?>]" value="<?php echo esc_attr($name); ?>" />
                         <select class="atbdp_map_to" name="<?php echo esc_attr($index); ?>">
                             <option value=""><?php esc_html_e( 'Do not import', 'directorist' ); ?></option>
-                            <option value="">&mdash; Select a field &mdash;</option>
+							<optgroup label="<?php esc_attr_e( 'Listing Fields', 'directorist' ); ?>">
                             <?php foreach ( $fields as $key => $value ) : ?>
                                 <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $field_key ); ?>><?php echo esc_html( $value ); ?></option>
                             <?php endforeach ?>
+							</optgroup>
                         </select>
                     </td>
                 </tr>
