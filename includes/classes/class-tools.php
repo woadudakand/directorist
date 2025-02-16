@@ -379,7 +379,7 @@
             }
 
             wp_update_attachment_metadata( $id, wp_generate_attachment_metadata($id, $upload['file']) );
-            
+
             return $id;
         }
 
@@ -575,73 +575,89 @@
 
         }
 
-        /**
-         * Get Header Nav Menu
-         *
-         * @return array
-         */
-        public function get_header_nav_menu() {
-            $step = isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : '';
-            $nav_menu = [];
+		/**
+		 * Get the navigation menu items for the importer header
+		 *
+		 * @since 7.0.0
+		 * @return array Navigation menu items
+		 */
+		public function get_header_nav_menu() {
+			$step = isset( $_GET['step'] ) ? absint( $_GET['step'] ) : 1;
 
-            // Item - 1
-            $nav_item                   = [];
-            $nav_item['nav_item_class'] = ! $step ? esc_attr('active') : ( $step > 1 ? esc_attr('done') : '');
-            $nav_item['label']          = esc_html__('Upload CSV File', 'directorist');
-            $nav_menu[]                 = $nav_item;
+			$nav_menu = array(
+				// Upload step
+				array(
+					'label'          => __( 'Upload CSV File', 'directorist' ),
+					'nav_item_class' => $this->get_nav_item_class( $step, 1 ),
+				),
 
-            // Item - 2
-            $nav_item                   = [];
-            $class                      = ( '2' == $step ) ? esc_attr('active') : ( $step > 2 ? esc_attr('done') : '' );
-            $class                      = 'atbdp-mapping-step ' . $class;
-            $nav_item['nav_item_class'] = trim( $class );
-            $nav_item['label']          = esc_html__('Column Mapping', 'directorist');
-            $nav_menu[]                 = $nav_item;
+				// Mapping step
+				array(
+					'label'          => __( 'Column Mapping', 'directorist' ),
+					'nav_item_class' => trim( 'atbdp-mapping-step ' . $this->get_nav_item_class( $step, 2 ) ),
+				),
 
-            // Item - 3
-            $nav_item                   = [];
-            $class                      = ( $step == 3 ) ? esc_attr('done') : '';
-            $class                      = 'atbdp-progress-step ' . $class;
-            $nav_item['nav_item_class'] = trim( $class );
-            $nav_item['label']          = esc_html__('Import', 'directorist');
-            $nav_menu[]                 = $nav_item;
+				// Import step
+				array(
+					'label'          => esc_html__( 'Import', 'directorist' ),
+					'nav_item_class' => trim( 'atbdp-progress-step ' . ( 3 === $step ? 'done' : '' ) ),
+				),
 
-            // Item - 4
-            $nav_item                   = [];
-            $nav_item['nav_item_class'] = ( '3' == $step ) ? esc_attr('active done') : '';
-            $nav_item['label']          = esc_html__('Done', 'directorist');
-            $nav_menu[]                 = $nav_item;
+				// Done step
+				array(
+					'label'          => esc_html__( 'Done', 'directorist' ),
+					'nav_item_class' => 3 === $step ? 'active done' : '',
+				),
+			);
 
-            $nav_menu = apply_filters( 'directorist_listings_importer_header_nav_menu', $nav_menu, $step );
+			/**
+			 * Filter the importer header navigation menu items
+			 *
+			 * @since 7.0.0
+			 * @param array $nav_menu Navigation menu items
+			 * @param int $step Current step number
+			 */
+			return apply_filters( 'directorist_listings_importer_header_nav_menu', $nav_menu, $step );
+		}
 
-            return $nav_menu;
-        }
+		/**
+		 * Get the CSS class for a navigation item based on the current step
+		 *
+		 * @since 7.0.0
+		 * @param int $current_step Current step number
+		 * @param int $item_step Step number for this item
+		 * @return string CSS class
+		 */
+		private function get_nav_item_class( $current_step, $item_step ) {
+			if ( $current_step === $item_step ) {
+				return 'active';
+			}
+
+			return $current_step > $item_step ? 'done' : '';
+		}
 
         /**
          * Importer Body Template
          *
          * @param bool $return
-         * @return string $template
+         * @return void
          */
         public function importer_body_template( $return = false ) {
-            $step = ( isset( $_REQUEST['step'] ) ) ? directorist_clean( wp_unslash( $_REQUEST['step'] ) ) : 1;
-            $step = ( ! empty( $step ) && is_numeric( $step ) ) ? ( int ) $step : 1;
-            $template_base_path = 'admin-templates/import-export/body-templates';
-            $template_paths = [
-                1 => "{$template_base_path}/step-one",
-                2 => "{$template_base_path}/step-two",
-                3 => "{$template_base_path}/step-done",
+            $step         = isset( $_REQUEST['step'] ) ? absint( $_REQUEST['step'] ) : 1;
+            $base_path    = 'admin-templates/import-export/body-templates/';
+            $template_map = [
+                1 => 'step-one',
+                2 => 'step-two',
+                3 => 'step-done',
             ];
 
-            $template_path = ( isset( $template_paths[ $step ] ) ) ? $template_paths[ $step ] : $template_paths[ 1 ];
+            $template_name = $template_map[ $step ] ?? $template_map[1];
+			$template_name = $base_path . $template_name;
 
-            $template_data = [
+            ATBDP()->load_template( $template_name, [
                 'controller' => $this,
                 'step'       => $step,
-            ];
-
-            ATBDP()->load_template( $template_path, $template_data );
-
+            ] );
         }
 
 		public function get_importable_fields() {
