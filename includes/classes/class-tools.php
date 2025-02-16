@@ -20,7 +20,7 @@
 
             add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
             add_action( 'admin_init', array( $this, 'handle_csv_upload' ) );
-            add_action( 'wp_ajax_handle_import_listings', array( $this, 'handle_import_listings' ) );
+            add_action( 'wp_ajax_atbdp_import_listing', array( $this, 'handle_import_listings' ) );
             add_action( 'wp_ajax_directorist_listing_type_form_fields', array( $this, 'directorist_listing_type_form_fields' ) );
         }
 
@@ -530,14 +530,15 @@
                 $this->importable_fields[ $field_key ] = $label;
             }
         }
-        public function get_data_table( $file_path, $delimiter = ',' ){
+        public function render_field_map_table( $file_path, $delimiter = ',' ){
+			// TODO: Process and render CSV column here.
             $csv_data = csv_get_data( $file_path, false, $delimiter );
 
 			$this->importable_fields = [];
             $this->setup_importable_fields();
 
             $data = [
-                'data'     => $csv_data,
+                'columns'  => $csv_data,
                 'csv_file' => $file_path,
                 'fields'   => $this->get_importable_fields(),
             ];
