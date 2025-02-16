@@ -25,13 +25,94 @@
 				return;
 			}
 
-            add_action('admin_menu', array($this, 'add_tools_submenu'), 10);
-            add_action('admin_init', array($this, 'atbdp_csv_import_controller'));
-            add_action( 'init', [$this, 'prepare_data'] );
+            add_action('admin_menu', array($this, 'add_admin_menu' ) );
+            add_action('admin_init', array($this, 'handle_csv_upload' ) );
+            // add_action( 'init', [$this, 'prepare_data'] );
             add_action('wp_ajax_atbdp_import_listing', array($this, 'atbdp_import_listing'));
             add_action('wp_ajax_directorist_listing_type_form_fields', array($this, 'directorist_listing_type_form_fields'));
         }
 
+		/**
+         * It adds a submenu for showing all the Tools and details support
+         */
+        public function add_admin_menu() {
+			add_submenu_page(
+				'edit.php?post_type=at_biz_dir',
+				__( 'Tools', 'directorist' ),
+				__( 'Tools', 'directorist' ),
+				'manage_options',
+				'tools',
+				array( $this, 'render_page' )
+			);
+
+			// Remove to remove the menu item.
+			remove_submenu_page( 'edit.php?post_type=at_biz_dir', 'tools' );
+        }
+
+		public function render_page() {
+            ATBDP()->load_template(
+				'admin-templates/import-export/import-export',
+				[ 'controller' => $this ]
+			);
+        }
+
+		/**
+		 * Check csv mime type. Only allow csv and text files.
+		 *
+		 * @param mixed $file
+		 */
+		public static function on_wp_handle_upload_prefilter( $file ) {
+			$allowed_mimes = array(
+				'csv' => 'text/csv',
+				'txt' => 'text/plain',
+			);
+
+			if ( empty( $file['size'] ) || empty( $file['type'] ) ) {
+				$file['error'] = __( 'Please select a valid CSV or TXT file.', 'directorist' );
+			} else if ( ! in_array( $file['type'], $allowed_mimes, true ) ) {
+				$file['error'] = __( 'Sorry, only CSV and TXT files are allowed.', 'directorist' );
+			}
+
+			return $file;
+		}
+
+        /**
+		 * Upload CSV file and redirect to step two.
+		 *
+		 * @return false|void
+		 */
+		public function handle_csv_upload() {
+            if ( ! isset( $_POST['directorist_upload_csv'] ) ) {
+                return false;
+            }
+
+			check_admin_referer( 'directorist_importer_upload_csv' );
+
+			add_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'on_wp_handle_upload_prefilter' ) );
+
+            $file = wp_import_handle_upload();
+
+			remove_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'on_wp_handle_upload_prefilter' ) );
+
+			if ( isset( $file['error'] ) ) {
+				wp_die(
+					wp_kses_post( $file['error'] ),
+					'Directorist CSV Import Error!',
+					array(
+						'back_link' => true,
+					) );
+			}
+
+            $args = [
+                'post_type' => ATBDP_POST_TYPE,
+                'page'      => 'tools',
+                'file_id'   => $file['id'],
+                'delimiter' => isset( $_REQUEST['delimiter'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['delimiter'] ) ) : ',',
+                'step'      => 2,
+            ];
+
+            wp_safe_redirect( add_query_arg( $args, admin_url( 'edit.php' ) ) );
+        }
 
         public function directorist_listing_type_form_fields() {
 
@@ -44,7 +125,7 @@
             $term_id = ! empty( $_POST['directory_type'] ) ? sanitize_text_field( wp_unslash( $_POST['directory_type'] ) ) : '';
             $file    = ! empty( $_POST['file_id'] ) ? get_attached_file( directorist_clean( wp_unslash( $_POST['file_id'] ) ) ) : '';
 
-            if( ! $file ) {
+            if ( ! $file ) {
                 wp_send_json( array(
 					'error' => esc_html__( 'Invalid file!', 'directorist' ),
 				) );
@@ -56,7 +137,14 @@
 
             ob_start();
 
-            ATBDP()->load_template( 'admin-templates/import-export/data-table', array( 'data' => csv_get_data( $file, false, $delimiter ), 'fields' => $this->get_importable_fields(), 'csv_file' => $file ) );
+            ATBDP()->load_template(
+				'admin-templates/import-export/data-table',
+				array(
+					'data'     => csv_get_data( $file, false, $delimiter ),
+					'fields'   => $this->get_importable_fields(),
+					'csv_file' => $file
+					)
+				);
 
             $response = ob_get_clean();
 
@@ -415,61 +503,6 @@
             return self::atbdp_legacy_insert_attachment_from_url( $image_url, $post_id );
         }
 
-		public static function on_wp_handle_upload_prefilter( $file ) {
-			$allowed_mimes = array(
-				'csv' => 'text/csv',
-				'txt' => 'text/plain',
-			);
-
-			if ( empty( $file['size'] ) || empty( $file['type'] ) ) {
-				$file['error'] = __( 'Please select a valid CSV or TXT file.', 'directorist' );
-			} else if ( ! in_array( $file['type'], $allowed_mimes, true ) ) {
-				$file['error'] = __( 'Sorry, only CSV and TXT files are allowed.', 'directorist' );
-			}
-
-			return $file;
-		}
-
-        public function atbdp_csv_import_controller() {
-            if ( ! isset( $_POST[ 'atbdp_save_csv_step' ] ) ) {
-                return;
-            }
-
-            check_admin_referer( 'directorist-csv-importer' );
-
-			add_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'on_wp_handle_upload_prefilter' ) );
-
-            $file = wp_import_handle_upload();
-
-			remove_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'on_wp_handle_upload_prefilter' ) );
-
-			if ( isset( $file['error'] ) ) {
-				wp_die(
-					wp_kses_post( $file['error'] ),
-					'Directorist CSV Import Error!',
-					array(
-						'back_link' => true,
-					) );
-			}
-
-            $base_url = admin_url( 'edit.php' );
-            $params   = apply_filters( 'directorist_listings_import_form_submit_redirect_params', [
-                'post_type'       => ATBDP_POST_TYPE,
-                'page'            => 'tools',
-                'file_id'          => $file['id'],
-                'delimiter'       => isset( $_REQUEST['delimiter'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['delimiter'] ) ) : ',',
-                'update_existing' => isset( $_REQUEST['update_existing'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['update_existing'] ) ) : false,
-                'step'            => 2,
-            ] );
-
-            $url = add_query_arg( $params, $base_url );
-            $url = apply_filters( 'directorist_listings_import_form_submit_redirect_url', $url, $base_url, $params );
-
-            // redirect to step two || data mapping
-            wp_safe_redirect( $url );
-        }
-
-
         public function prepare_data(){
             $this->default_directory = default_directory_type();
             $this->setup_fields();
@@ -477,7 +510,7 @@
 
 
         public function setup_fields( $directory = '' ) {
-            $directory = $directory ? $directory : $this->default_directory;
+            $directory = $directory ? $directory : default_directory_type();
             $fields    = directorist_get_form_fields_by_directory_type( 'id', $directory );
 
             $this->importable_fields[ 'publish_date' ]   = esc_html__( 'Publish Date', 'directorist' );
@@ -512,23 +545,6 @@
             }
         }
 
-        /**
-         * It adds a submenu for showing all the Tools and details support
-         */
-        public function add_tools_submenu() {
-			add_submenu_page(
-				'edit.php?post_type=at_biz_dir',
-				__( 'Tools', 'directorist' ),
-				__( 'Tools', 'directorist' ),
-				'manage_options',
-				'tools',
-				array( $this, 'render_tools_submenu_page' )
-			);
-
-			// Remove to remove the menu item.
-			remove_submenu_page( 'edit.php?post_type=at_biz_dir', 'tools' );
-        }
-
         public function get_data_table( $file_path, $delimiter = ',' ){
             $csv_data = csv_get_data( $file_path, false, $delimiter );
             $data = [
@@ -540,11 +556,7 @@
             ATBDP()->load_template('admin-templates/import-export/data-table', $data );
         }
 
-        public function render_tools_submenu_page() {
 
-            ATBDP()->load_template( 'admin-templates/import-export/import-export', [ 'controller' => $this ] );
-
-        }
 
         /**
          * Importer Header Template
