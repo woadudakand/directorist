@@ -13,7 +13,6 @@ $upload_dir = wp_upload_dir();
 <div class="csv-wrapper">
 	<div class="csv-center">
 		<form class="atbdp-progress-form-content directorist-importer" id="atbdp_csv_step_one" enctype="multipart/form-data" method="post">
-			<?php wp_nonce_field( 'directorist-csv-importer' ); ?>
 			<header>
 				<h2><?php esc_html_e( 'Upload CSV File', 'directorist' ); ?></h2>
 				<p><?php
@@ -65,7 +64,8 @@ $upload_dir = wp_upload_dir();
 				</section>
 			</div>
 			<div class="atbdp-actions">
-				<button type="submit" class="button" value="<?php esc_attr_e( 'Upload CSV', 'directorist' ); ?>" name="atbdp_save_csv_step"><?php esc_html_e( 'Upload CSV', 'directorist' ); ?></button>
+				<button type="submit" class="button" value="<?php esc_attr_e( 'Upload CSV', 'directorist' ); ?>" name="directorist_upload_csv"><?php esc_html_e( 'Upload CSV', 'directorist' ); ?></button>
+				<?php wp_nonce_field( 'directorist_importer_upload_csv' ); ?>
 			</div>
 		</form>
 	</div>
