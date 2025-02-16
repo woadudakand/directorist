@@ -7,29 +7,21 @@
  */
 
  if ( ! class_exists( 'ATBDP_Tools' ) ) :
-    class ATBDP_Tools
-    {
-        /**
-         * The current delimiter for the file being read.
-         *
-         * @var string
-         */
+    class ATBDP_Tools {
         protected $postilion = 0;
         public $importable_fields = [];
         private $default_directory;
 
-        public function __construct()
-        {
+        public function __construct() {
 			// Prevent frontend executions.
 			if ( ! is_admin() ) {
 				return;
 			}
 
-            add_action('admin_menu', array($this, 'add_admin_menu' ) );
-            add_action('admin_init', array($this, 'handle_csv_upload' ) );
-            // add_action( 'init', [$this, 'prepare_data'] );
-            add_action('wp_ajax_atbdp_import_listing', array($this, 'atbdp_import_listing'));
-            add_action('wp_ajax_directorist_listing_type_form_fields', array($this, 'directorist_listing_type_form_fields'));
+            add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+            add_action( 'admin_init', array( $this, 'handle_csv_upload' ) );
+            add_action( 'wp_ajax_handle_import_listings', array( $this, 'handle_import_listings' ) );
+            add_action( 'wp_ajax_directorist_listing_type_form_fields', array( $this, 'directorist_listing_type_form_fields' ) );
         }
 
 		/**
@@ -107,7 +99,7 @@
                 'post_type' => ATBDP_POST_TYPE,
                 'page'      => 'tools',
                 'file_id'   => $file['id'],
-                'delimiter' => isset( $_REQUEST['delimiter'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['delimiter'] ) ) : ',',
+                'delimiter' => isset( $_POST['delimiter'] ) ? sanitize_text_field( wp_unslash( $_POST['delimiter'] ) ) : ',',
                 'step'      => 2,
             ];
 
@@ -122,8 +114,8 @@
 				) );
             }
 
-            $term_id = ! empty( $_POST['directory_type'] ) ? sanitize_text_field( wp_unslash( $_POST['directory_type'] ) ) : '';
-            $file    = ! empty( $_POST['file_id'] ) ? get_attached_file( directorist_clean( wp_unslash( $_POST['file_id'] ) ) ) : '';
+            $directory_id = ! empty( $_POST['directory_type'] ) ? absint( wp_unslash( $_POST['directory_type'] ) ) : directorist_get_default_directory();
+            $file         = ! empty( $_POST['file_id'] ) ? get_attached_file( directorist_clean( wp_unslash( $_POST['file_id'] ) ) ) : '';
 
             if ( ! $file ) {
                 wp_send_json( array(
@@ -133,7 +125,7 @@
 
             $delimiter = ! empty( $_POST['delimiter'] ) ? directorist_clean( wp_unslash( $_POST['delimiter'] ) ) : '';
             $this->importable_fields = [];
-            $this->setup_fields( $term_id );
+            $this->setup_importable_fields( $directory_id );
 
             ob_start();
 
@@ -151,7 +143,7 @@
             wp_send_json( $response );
         }
 
-        public function atbdp_import_listing() {
+        public function handle_import_listings() {
 
 			if ( ! current_user_can( 'import' ) ) {
                 wp_send_json( array(
@@ -503,22 +495,16 @@
             return self::atbdp_legacy_insert_attachment_from_url( $image_url, $post_id );
         }
 
-        public function prepare_data(){
-            $this->default_directory = default_directory_type();
-            $this->setup_fields();
-        }
+        public function setup_importable_fields( $directory_id = 0 ) {
+            $directory_id = $directory_id ? $directory_id : default_directory_type();
+            $fields       = directorist_get_form_fields_by_directory_type( 'id', $directory_id );
 
-
-        public function setup_fields( $directory = '' ) {
-            $directory = $directory ? $directory : default_directory_type();
-            $fields    = directorist_get_form_fields_by_directory_type( 'id', $directory );
+			if ( empty( $fields ) || ! is_array( $fields ) ) {
+                return;
+            }
 
             $this->importable_fields[ 'publish_date' ]   = esc_html__( 'Publish Date', 'directorist' );
             $this->importable_fields[ 'listing_status' ] = esc_html__( 'Listing Status', 'directorist' );
-
-            if ( empty( $fields ) || ! is_array( $fields ) ) {
-                return;
-            }
 
             foreach( $fields as $field ) {
                 $field_key  = !empty( $field['field_key'] ) ? $field['field_key'] : '';
@@ -547,6 +533,10 @@
 
         public function get_data_table( $file_path, $delimiter = ',' ){
             $csv_data = csv_get_data( $file_path, false, $delimiter );
+
+			$this->importable_fields = [];
+            $this->setup_importable_fields();
+
             $data = [
                 'data'     => $csv_data,
                 'csv_file' => $file_path,
@@ -555,8 +545,6 @@
 
             ATBDP()->load_template('admin-templates/import-export/data-table', $data );
         }
-
-
 
         /**
          * Importer Header Template
