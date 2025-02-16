@@ -38,7 +38,7 @@ $total     = count( $posts );
 							</select>
 						<?php endif; ?>
 
-						<?php $this->tools->get_data_table( $file, $delimiter ); ?>
+						<?php $args['controller']->render_field_map_table( $file, $delimiter ); ?>
 					</div>
 				</section>
 			</div>
@@ -47,7 +47,7 @@ $total     = count( $posts );
 				<button type="submit" class="button btn-run-importer" value="<?php esc_attr_e('Import Listings', 'directorist'); ?>" name="save_step_two"><?php esc_html_e('Import Listings', 'directorist'); ?></button>
 				<input type="hidden" class="directorist-listings-importer-config-field" name="csv_file" value="<?php echo esc_attr( $file_id ); ?>">
 				<input type="hidden" class="directorist-listings-importer-config-field" name="delimiter" value="<?php echo esc_attr( $delimiter ); ?>" />
-				<?php wp_nonce_field('directorist-csv-importer'); ?>
+				<?php wp_nonce_field('directorist-csv-importer' ); ?>
 			</div>
 		</form>
 		<div id="directorist-type-preloader">
