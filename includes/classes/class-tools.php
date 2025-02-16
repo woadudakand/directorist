@@ -530,7 +530,6 @@
                 $this->importable_fields[ $field_key ] = $label;
             }
         }
-
         public function get_data_table( $file_path, $delimiter = ',' ){
             $csv_data = csv_get_data( $file_path, false, $delimiter );
 
