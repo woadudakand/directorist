@@ -6360,7 +6360,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   color: var(--directorist-color-dark);
 }
 
-button[type=submit] {
+button[type=submit].directorist-btn {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
