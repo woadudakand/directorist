@@ -1022,13 +1022,13 @@ import './components/directoristSelect';
                 const milesParams = new URLSearchParams(window.location.search).has('miles');
 
                 directoristCustomRangeSlider?.create(slider, {
-                    start: [0, sliderDefaultValue ? sliderDefaultValue : 100],
+                    start: [milesParams ? minInput.value : 0,  milesParams ? maxInput.value : sliderDefaultValue],
                     connect: true,
                     direction: isRTL ? 'rtl' : 'ltr',
                     step: sliderStep ? sliderStep : 1,
                     range: {
-                        'min': Number(minInput.value ? minInput.value : 0),
-                        'max': Number(maxInput.value ? maxInput.value : 100)
+                        'min': Number(0),
+                        'max': Number(sliderMaxValue || 100)
                     }
                 });
 
