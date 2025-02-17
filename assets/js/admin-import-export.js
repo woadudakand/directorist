@@ -142,15 +142,7 @@ jQuery(document).ready(function ($) {
       }
     });
   }
-  $('#atbdp_ie_download_sample').on('click', function (e) {
-    var ie_file = $(this).attr('data-sample-csv');
-    if (ie_file) {
-      window.location.href = ie_file;
-      return false;
-    }
-  });
-  var stepTwo = $('#atbdp_csv_step_two');
-  $(stepTwo).on('submit', function (e) {
+  $('#atbdp_csv_step_two').on('submit', function (e) {
     e.preventDefault();
     $('.atbdp-importer-mapping-table-wrapper').fadeOut(300);
     $('.directorist-importer__importing').fadeIn(300);
@@ -162,11 +154,11 @@ jQuery(document).ready(function ($) {
     var imported = 0;
     var configFields = $('.directorist-listings-importer-config-field');
     var counter = 0;
-    var _run_import = function run_import() {
+    var run_import = function run_import() {
       var form_data = new FormData();
 
       // ajax action
-      form_data.append('action', 'atbdp_import_listing');
+      form_data.append('action', 'directorist_import_listings');
       form_data.append('position', position);
       form_data.append('directorist_nonce', directorist_admin.directorist_nonce);
 
@@ -228,7 +220,7 @@ jQuery(document).ready(function ($) {
           $('.directorist-importer-progress').val(response.percentage);
           if (response.percentage != '100') {
             position = response.next_position;
-            _run_import();
+            run_import();
             counter++;
           } else {
             window.location = "".concat(response.url, "&listing-imported=").concat(imported, "&listing-failed=").concat(failed);
@@ -240,8 +232,9 @@ jQuery(document).ready(function ($) {
         }
       });
     };
-    _run_import();
+    run_import();
   });
+
   /* csv upload */
   $('#upload').change(function (e) {
     var filename = e.target.files[0].name;
@@ -259,13 +252,19 @@ jQuery(document).ready(function ($) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var toPropertyKey = __webpack_require__(/*! ./toPropertyKey.js */ "./node_modules/@babel/runtime/helpers/toPropertyKey.js");
-function _defineProperty(e, r, t) {
-  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
-    value: t,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
-  }) : e[r] = t, e;
+function _defineProperty(obj, key, value) {
+  key = toPropertyKey(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
 }
 module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
@@ -279,17 +278,17 @@ module.exports = _defineProperty, module.exports.__esModule = true, module.expor
 /***/ (function(module, exports, __webpack_require__) {
 
 var _typeof = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js")["default"];
-function toPrimitive(t, r) {
-  if ("object" != _typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != _typeof(i)) return i;
+function _toPrimitive(input, hint) {
+  if (_typeof(input) !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (_typeof(res) !== "object") return res;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return ("string" === r ? String : Number)(t);
+  return (hint === "string" ? String : Number)(input);
 }
-module.exports = toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -302,11 +301,11 @@ module.exports = toPrimitive, module.exports.__esModule = true, module.exports["
 
 var _typeof = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js")["default"];
 var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ "./node_modules/@babel/runtime/helpers/toPrimitive.js");
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : i + "";
+function _toPropertyKey(arg) {
+  var key = toPrimitive(arg, "string");
+  return _typeof(key) === "symbol" ? key : String(key);
 }
-module.exports = toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -320,11 +319,11 @@ module.exports = toPropertyKey, module.exports.__esModule = true, module.exports
 function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
     return typeof o;
   } : function (o) {
     return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports, _typeof(o);
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
 }
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 

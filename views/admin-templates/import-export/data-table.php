@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $columns = $args['columns'];
 $fields  = $args['fields'];
 ?>
-<input type="hidden" name="csv_file" value="<?php echo esc_attr( $args['csv_file'] ) ?>">
 <table class="widefat atbdp-importer-mapping-table">
     <thead>
         <tr>

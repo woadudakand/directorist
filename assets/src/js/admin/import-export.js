@@ -47,19 +47,7 @@ jQuery(document).ready(function ($) {
         });
     }
 
-
-
-    $('#atbdp_ie_download_sample').on('click', function (e) {
-        const ie_file = $(this).attr('data-sample-csv');
-        if (ie_file) {
-            window.location.href = ie_file;
-            return false;
-        }
-    });
-
-    const stepTwo = $('#atbdp_csv_step_two');
-
-    $( stepTwo ).on('submit', function (e) {
+    $('#atbdp_csv_step_two').on('submit', function (e) {
         e.preventDefault();
 
         $('.atbdp-importer-mapping-table-wrapper').fadeOut(300);
@@ -83,7 +71,7 @@ jQuery(document).ready(function ($) {
             const form_data = new FormData();
 
             // ajax action
-            form_data.append( 'action', 'atbdp_import_listing' );
+            form_data.append( 'action', 'directorist_import_listings' );
             form_data.append( 'position', position );
 
             form_data.append('directorist_nonce', directorist_admin.directorist_nonce);
@@ -112,7 +100,7 @@ jQuery(document).ready(function ($) {
             if( directory_type ) {
                 form_data.append( 'directory_type', directory_type );
             }
-            
+
             if ( map_elm ) {
                 var log = [];
                 map_elm.each( function () {
@@ -190,6 +178,7 @@ jQuery(document).ready(function ($) {
 
         run_import();
     });
+
     /* csv upload */
     $('#upload').change(function (e) {
         const filename = e.target.files[0].name;
