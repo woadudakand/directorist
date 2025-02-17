@@ -25,7 +25,7 @@ use Directorist\Listings_Importer as Importer;
             add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
             add_action( 'admin_init', array( $this, 'handle_csv_upload' ) );
             add_action( 'wp_ajax_directorist_import_listings', array( $this, 'handle_import_listings' ) );
-            add_action( 'wp_ajax_directorist_listing_type_form_fields', array( $this, 'directorist_listing_type_form_fields' ) );
+            add_action( 'wp_ajax_directorist_update_csv_columns_to_listing_fields_table', array( $this, 'update_csv_columns_to_listing_fields_table' ) );
 
 			include_once( __DIR__ . '/class-listings-importer.php' );
         }
@@ -112,15 +112,22 @@ use Directorist\Listings_Importer as Importer;
             wp_safe_redirect( add_query_arg( $args, admin_url( 'edit.php' ) ) );
         }
 
-        public function directorist_listing_type_form_fields() {
+        public function update_csv_columns_to_listing_fields_table() {
             if ( ! directorist_verify_nonce() ) {
                 wp_send_json( array(
 					'error' => esc_html__( 'Invalid request.', 'directorist' ),
 				) );
             }
 
-            $directory_id = ! empty( $_POST['directory_type'] ) ? absint( wp_unslash( $_POST['directory_type'] ) ) : directorist_get_default_directory();
-            $file_id      = isset( $_POST['file_id'] ) ? absint( $_POST['file_id'] ) : 0;
+			$directory_id = isset( $_POST['directory_type'] ) ? absint( $_POST['directory_type'] ) : 0;
+			$file_id      = isset( $_POST['file_id'] ) ? absint( $_POST['file_id'] ) : 0;
+			$delimiter    = ! empty( $_POST['delimiter'] ) ? directorist_clean( wp_unslash( $_POST['delimiter'] ) ) : ',';
+
+			if ( ! directorist_is_directory( $directory_id ) ) {
+				wp_send_json( array(
+					'error' => esc_html__( 'Invalid request.', 'directorist' ),
+				) );
+			}
 
             if ( ! $file_id ) {
                 wp_send_json( array(
@@ -136,7 +143,6 @@ use Directorist\Listings_Importer as Importer;
 				) );
 			}
 
-            $delimiter = ! empty( $_POST['delimiter'] ) ? directorist_clean( wp_unslash( $_POST['delimiter'] ) ) : '';
             $this->importable_fields = [];
             $this->setup_importable_fields( $directory_id );
 
@@ -145,8 +151,8 @@ use Directorist\Listings_Importer as Importer;
             ATBDP()->load_template(
 				'admin-templates/import-export/data-table',
 				array(
-					'columns'     => $importer->get_header(),
-					'fields'   => $this->get_importable_fields(),
+					'columns' => $importer->get_header(),
+					'fields'  => $this->get_importable_fields(),
 					)
 				);
 

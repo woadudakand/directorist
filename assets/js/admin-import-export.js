@@ -118,7 +118,7 @@ jQuery(document).ready(function ($) {
       type: 'post',
       url: directorist_admin.ajaxurl,
       data: {
-        action: 'directorist_listing_type_form_fields',
+        action: 'directorist_update_csv_columns_to_listing_fields_table',
         directory_type: directory_type,
         delimiter: delimiter,
         directorist_nonce: directorist_admin.directorist_nonce,
