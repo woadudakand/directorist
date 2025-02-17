@@ -8,11 +8,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$file_id   = isset( $_GET['file_id'] ) ? absint( wp_unslash( $_GET['file_id'] ) ) : '';
+$file_id   = isset( $_GET['file_id'] ) ? absint( $_GET['file_id'] ) : 0;
 $delimiter = isset( $_GET['delimiter'] ) ? sanitize_text_field( wp_unslash( $_GET['delimiter'] ) ) : ',';
-$file      = ( ! empty( $file_id ) ) ? get_attached_file( $file_id ) : '';
-$posts     = csv_get_data( $file, true, $delimiter );
-$total     = count( $posts );
+$total     = $args['controller']->get_importer( $file_id )->get_total_items();
 ?>
 <div class="csv-wrapper">
 	<div class="csv-center csv-fields">
@@ -38,7 +36,7 @@ $total     = count( $posts );
 							</select>
 						<?php endif; ?>
 
-						<?php $args['controller']->render_field_map_table( $file, $delimiter ); ?>
+						<?php $args['controller']->render_field_map_table( $file_id, $delimiter ); ?>
 					</div>
 				</section>
 			</div>
