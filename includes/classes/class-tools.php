@@ -218,11 +218,11 @@ use Directorist\Listings_Importer as Importer;
 				$position += 1;
 			}
 
-			$counter      = 1;
-			$batch_size   = 50;
-			$failed_items = [];
-			$imported_items   = [];
-			$terms_cache = [];
+			$counter           = 1;
+			$batch_size        = 50;
+			$failed_items      = [];
+			$imported_items    = [];
+			$terms_cache       = [];
 			$attachments_cache = [];
 
 			$header      = array_keys( $importer->get_header() );
@@ -395,6 +395,15 @@ use Directorist\Listings_Importer as Importer;
 				$counter++;
 			}
 
+			// Defer image resizing
+			if ( $attachments_cache ) {
+				$deferred_resizable_images = [];
+				foreach ( $attachments_cache as $attachment_id ) {
+					$deferred_resizable_images[ $attachment_id ] = get_attached_file( $attachment_id );
+				}
+				directorist_background_image_process( $deferred_resizable_images );
+			}
+
 			$position = (int) $file_object->key();
 
 			$data['position']       = $position;
@@ -508,12 +517,10 @@ use Directorist\Listings_Importer as Importer;
             $id = wp_insert_attachment( $attachment, $upload['file'], $post_id );
 
             // Ensure the required file is included before calling the function
-            if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
-                require_once ABSPATH . 'wp-admin/includes/image.php';
-            }
+            // if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+            //     require_once ABSPATH . 'wp-admin/includes/image.php';
+            // }
 
-			// Process image in the background to make the import faster.
-			// directorist_background_image_process( [ $id => $upload['file'] ] );
             // wp_update_attachment_metadata( $id, wp_generate_attachment_metadata($id, $upload['file']) );
 
             return $id;
@@ -529,6 +536,8 @@ use Directorist\Listings_Importer as Importer;
             }
 
             $upload = directorist_rest_upload_image_from_url( esc_url_raw( $attachment_url ) );
+			// file_put_contents( __DIR__ . '/data.txt', print_r($upload, true), FILE_APPEND);
+
             if ( is_wp_error( $upload ) ) {
                 return $upload;
             }

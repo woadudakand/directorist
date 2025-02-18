@@ -188,7 +188,7 @@ function directorist_rest_allowed_image_mime_types() {
  *
  * @param array $upload Upload information from wp_upload_bits.
  * @param int   $id Post ID. Default to 0.
- * @param bool  $deferred_resize Defer image resizing.
+ * @param bool  $deferred_resize Whether to defer resizing.
  * @return int|WP_Error Attachment ID
  */
 function directorist_rest_set_uploaded_image_as_attachment( $upload, $id = 0, $deferred_resize = false ) {
@@ -223,11 +223,9 @@ function directorist_rest_set_uploaded_image_as_attachment( $upload, $id = 0, $d
 		return $attachment_id;
 	}
 
-	// if ( $deferred_resize ) {
-	// 	directorist_background_image_process( [ $attachment_id => $upload['file'] ] );
-	// } else {
-	// 	wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
-	// }
+	if ( ! $deferred_resize ) {
+		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
+	}
 
 	return $attachment_id;
 }
