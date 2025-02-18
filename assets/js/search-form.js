@@ -1858,8 +1858,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         // Check if the slider is already initialized
         if (!slider || slider.directoristCustomRangeSlider) return;
         var sliderStep = parseInt(slider.getAttribute('step')) || 1;
-        var distanceDefaultValue = parseInt(slider.getAttribute('value'));
+        var sliderMinValue = parseInt(slider.getAttribute('min-value'));
         var sliderMaxValue = parseInt(slider.getAttribute('max-value'));
+        var sliderDefaultValue = parseInt(slider.getAttribute('default-value'));
         var minInput = sliderItem.querySelector('.directorist-custom-range-slider__value__min');
         var maxInput = sliderItem.querySelector('.directorist-custom-range-slider__value__max');
         var sliderRange = sliderItem.querySelector('.directorist-custom-range-slider__range');
@@ -1871,13 +1872,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         var rangeInitLoad = true;
         // Parse the URL parameters
         var milesParams = new URLSearchParams(window.location.search).has('miles');
+        var customParams = new URLSearchParams(window.location.search).has('miles');
         (_directoristCustomRan = directoristCustomRangeSlider) === null || _directoristCustomRan === void 0 || _directoristCustomRan.create(slider, {
-          start: [minInput.value, milesParams ? maxInput.value : distanceDefaultValue || sliderMaxValue],
+          start: [minInput.value, milesParams || customParams ? maxInput.value : sliderDefaultValue || sliderMaxValue],
           connect: true,
           direction: isRTL ? 'rtl' : 'ltr',
           step: sliderStep ? sliderStep : 1,
           range: {
-            'min': Number(distanceDefaultValue ? 0 : minInput.value),
+            'min': Number(sliderMinValue || 0),
             'max': Number(sliderMaxValue || 100)
           }
         });
