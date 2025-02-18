@@ -188,10 +188,9 @@ function directorist_rest_allowed_image_mime_types() {
  *
  * @param array $upload Upload information from wp_upload_bits.
  * @param int   $id Post ID. Default to 0.
- * @param bool  $deferred_resize Whether to defer resizing.
- * @return int|WP_Error Attachment ID
+ * @return int Attachment ID
  */
-function directorist_rest_set_uploaded_image_as_attachment( $upload, $id = 0, $deferred_resize = false ) {
+function directorist_rest_set_uploaded_image_as_attachment( $upload, $id = 0 ) {
 	$info    = wp_check_filetype( $upload['file'] );
 	$title   = '';
 	$content = '';
@@ -219,11 +218,7 @@ function directorist_rest_set_uploaded_image_as_attachment( $upload, $id = 0, $d
 	);
 
 	$attachment_id = wp_insert_attachment( $attachment, $upload['file'], $id );
-	if ( is_wp_error( $attachment_id ) ) {
-		return $attachment_id;
-	}
-
-	if ( ! $deferred_resize ) {
+	if ( ! is_wp_error( $attachment_id ) ) {
 		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
 	}
 
