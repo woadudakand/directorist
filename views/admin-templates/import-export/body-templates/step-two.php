@@ -11,10 +11,11 @@ defined( 'ABSPATH' ) || exit;
 $file_id   = isset( $_GET['file_id'] ) ? absint( $_GET['file_id'] ) : 0;
 $delimiter = isset( $_GET['delimiter'] ) ? sanitize_text_field( wp_unslash( $_GET['delimiter'] ) ) : ',';
 $total     = $args['controller']->get_importer( $file_id )->get_total_items(); // Exclude header row.
+$directories = directory_types();
 ?>
 <div class="csv-wrapper">
 	<div class="csv-center csv-fields">
-		<form class="atbdp-progress-form-content directorist-importer" id="atbdp_csv_step_two" method="post">
+		<form data-total="<?php echo esc_attr( $total ); ?>" class="atbdp-progress-form-content directorist-importer" id="atbdp_csv_step_two" method="post">
 			<header>
 				<h2><?php esc_html_e('Map CSV Columns → Listing Fields', 'directorist'); ?></h2>
 				<p><?php esc_html_e('Select Directorist fields to map it against your CSV file columns, leave it as "Do not import" to skip certain fields.', 'directorist'); ?></p>
@@ -22,17 +23,22 @@ $total     = $args['controller']->get_importer( $file_id )->get_total_items(); /
 
 			<div class="form-content">
 				<section class="atbdp-importer-mapping-table-wrapper">
-					<h3><?php printf( esc_html__('Total %s listings found', 'directorist'), esc_attr( $total ) ); ?></h3>
+					<h3><?php printf( esc_html__( 'Found %s listings.', 'directorist' ), $total ); ?></h3>
 					<div class="directory_type_wrapper">
-						<?php if ( count( directory_types() ) > 1 ) : ?>
-							<label for="directory_type"><?php esc_html_e('Select Directory', 'directorist'); ?></label>
+						<?php if ( count( $directories ) > 1 ) : ?>
+							<label for="directory_type"><?php esc_html_e( 'Select Directory', 'directorist' ); ?></label>
 							<select class="directorist_directory_type_in_import" id="directory_type">
 								<option value="">--Select--</option>
 								<?php
-								foreach( directory_types() as $term ) {
-									$default = get_term_meta( $term->term_id, '_default', true ); ?>
-										<option <?php echo !empty( $default ) ? 'selected' : ''; ?> value="<?php echo esc_attr( $term->term_id); ?>"><?php echo esc_attr( $term->name ); ?></option>
-								<?php } ?>
+								foreach ( $directories as $directory_term ) {
+									$default = get_term_meta( $directory_term->term_id, '_default', true );
+									printf(
+										'<option %s value="%s">%s</option>',
+										empty( $default ) ? '' : 'selected',
+										esc_attr( $directory_term->term_id ),
+										esc_html( $directory_term->name )
+									);
+								} ?>
 							</select>
 						<?php endif; ?>
 

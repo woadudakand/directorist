@@ -1070,6 +1070,7 @@ span.atbdp-tick-cross {
   background-color: #5a5f7d;
   color: #fff;
   font-weight: 500;
+  min-width: 140px;
 }
 .csv-wrapper form .form-content .directorist-importer-options .csv-upload #upload + label .file-name {
   color: #9299b8;
@@ -1244,6 +1245,7 @@ span.atbdp-tick-cross {
 }
 .csv-wrapper .directorist-importer__importing progress::-webkit-progress-value {
   background-color: #3e62f5;
+  border-radius: 15px;
 }
 .csv-wrapper .directorist-importer__importing progress::-moz-progress-bar {
   background-color: #e8f0f8;
@@ -1253,6 +1255,7 @@ span.atbdp-tick-cross {
 }
 .csv-wrapper .directorist-importer__importing progress[value]::-moz-progress-bar {
   background-color: #3e62f5;
+  border-radius: 15px;
 }
 .csv-wrapper .csv-import-done .wc-progress-form-content {
   padding: 100px 30px 80px;
