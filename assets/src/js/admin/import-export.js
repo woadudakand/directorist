@@ -60,13 +60,13 @@ jQuery(document).ready(function ($) {
             .addClass('done');
         $('.atbdp-progress-step').addClass('active');
 
-        let position = 0;
-        let failed   = 0;
-        let imported = 0;
+        $('.importer-details').html(`1/${$(this).data('total')}`);
+        $('.directorist-importer-length').css( 'width', '10%' );
+        $('.directorist-importer-progress').val(10);
 
         const configFields = $( '.directorist-listings-importer-config-field' );
+        let position = 0;
 
-        let counter = 0;
         var run_import = function () {
             const form_data = new FormData();
 
@@ -150,18 +150,15 @@ jQuery(document).ready(function ($) {
                         return;
                     }
 
-                    imported += response.imported;
-                    failed += response.failed;
-
-                    $('.importer-details').html(`${response.percentage}%`);
+                    $('.importer-details').html(`${response.position}/${response.total}`);
                     $('.directorist-importer-progress').val( response.percentage );
 
-                    if ( response.percentage < 100 ) {
+                    if ( ! response.done ) {
                         position = response.position;
+
                         run_import();
-                        counter++;
                     } else {
-                        // window.location = `${response.url}&listing-imported=${imported}&listing-failed=${failed}`;
+                        window.location = `${response.redirect_url}&listing-imported=${response.imported_items.length}&listing-failed=${response.failed_items.length}`;
                     }
 
                     $('.directorist-importer-length').css( 'width', response.percentage + '%' );
