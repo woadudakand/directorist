@@ -30383,8 +30383,8 @@ span.drop-toggle-caret:before {
   border-radius: 50%;
   border: 3px solid #ddd;
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 20px;
+  top: 26px;
   background: transparent;
   border-left-color: #4353ff;
   -webkit-animation: swRotate 2s linear infinite;

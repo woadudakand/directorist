@@ -66,6 +66,7 @@ $directories = directory_types();
 			<header>
 				<h2><?php esc_html_e( 'Importing', 'directorist' ); ?></h2>
 				<p><?php esc_html_e( 'Your listings are now being imported...', 'directorist' ); ?></p>
+				<span class="spinner is-active"></span>
 			</header>
 			<section>
 				<div class="directorist-importer-wrapper">
