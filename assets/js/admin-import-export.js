@@ -208,6 +208,7 @@ jQuery(document).ready(function ($) {
         url: directorist_admin.ajaxurl,
         data: form_data,
         success: function success(response) {
+          console.log(response);
           if (response.error) {
             console.log({
               response: response
@@ -216,14 +217,14 @@ jQuery(document).ready(function ($) {
           }
           imported += response.imported;
           failed += response.failed;
-          $('.importer-details').html("Imported ".concat(response.next_position, " out of ").concat(response.total));
+          $('.importer-details').html("".concat(response.percentage, "%"));
           $('.directorist-importer-progress').val(response.percentage);
-          if (response.percentage != '100') {
-            position = response.next_position;
+          if (response.percentage < 100) {
+            position = response.position;
             run_import();
             counter++;
           } else {
-            window.location = "".concat(response.url, "&listing-imported=").concat(imported, "&listing-failed=").concat(failed);
+            // window.location = `${response.url}&listing-imported=${imported}&listing-failed=${failed}`;
           }
           $('.directorist-importer-length').css('width', response.percentage + '%');
         },

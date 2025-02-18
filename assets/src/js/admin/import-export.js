@@ -143,6 +143,7 @@ jQuery(document).ready(function ($) {
                 url: directorist_admin.ajaxurl,
                 data: form_data,
                 success( response ) {
+                    console.log(response)
 
                     if ( response.error ) {
                         console.log({ response });
@@ -152,18 +153,15 @@ jQuery(document).ready(function ($) {
                     imported += response.imported;
                     failed += response.failed;
 
-                    $('.importer-details').html(
-                        `Imported ${response.next_position} out of ${response.total}`
-                    );
-
+                    $('.importer-details').html(`${response.percentage}%`);
                     $('.directorist-importer-progress').val( response.percentage );
 
-                    if ( response.percentage != '100' ) {
-                        position = response.next_position;
+                    if ( response.percentage < 100 ) {
+                        position = response.position;
                         run_import();
                         counter++;
                     } else {
-                        window.location = `${response.url}&listing-imported=${imported}&listing-failed=${failed}`;
+                        // window.location = `${response.url}&listing-imported=${imported}&listing-failed=${failed}`;
                     }
 
                     $('.directorist-importer-length').css( 'width', response.percentage + '%' );

@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 $file_id   = isset( $_GET['file_id'] ) ? absint( $_GET['file_id'] ) : 0;
 $delimiter = isset( $_GET['delimiter'] ) ? sanitize_text_field( wp_unslash( $_GET['delimiter'] ) ) : ',';
-$total     = $args['controller']->get_importer( $file_id )->get_total_items();
+$total     = $args['controller']->get_importer( $file_id )->get_total_items(); // Exclude header row.
 ?>
 <div class="csv-wrapper">
 	<div class="csv-center csv-fields">
@@ -58,17 +58,18 @@ $total     = $args['controller']->get_importer( $file_id )->get_total_items();
 	<div class="csv-center">
 		<div class="directorist-importer__importing" style="display: none;">
 			<header>
-				<span class="spinner is-active"></span>
 				<h2><?php esc_html_e( 'Importing', 'directorist' ); ?></h2>
 				<p><?php esc_html_e( 'Your listings are now being imported...', 'directorist' ); ?></p>
 			</header>
 			<section>
-				<span class="importer-notice"><?php esc_html_e("Please don't reload the page", 'directorist')?></span>
 				<div class="directorist-importer-wrapper">
 					<progress class="directorist-importer-progress" max="100" value="0"></progress>
 					<span class="directorist-importer-length"></span>
 				</div>
-				<span class="importer-details"></span>
+				<div class="importer-progress-notice">
+					<span class="importer-notice"><?php esc_html_e("Please don't reload the page.", 'directorist' ); ?></span>
+					<span class="importer-details"></span>
+				</div>
 			</section>
 		</div>
 	</div>
