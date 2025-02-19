@@ -2748,6 +2748,21 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     filterListing(searchElm);
   }, 250));
 
+  // sidebar on change location, zipcode changing
+  $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+    e.preventDefault();
+    var searchElm = $(this).closest('.listing-with-sidebar');
+
+    // If it's a location field, ensure it has a value before triggering the filter
+    if ($(this).hasClass('directorist-search-location')) {
+      var locationField = $(this).find('input[name="address"]');
+      if (!locationField.val()) {
+        return;
+      }
+    }
+    filterListing(searchElm);
+  }, 250));
+
   // select on change with value - searching
   $('body').on("change", ".directorist-instant-search .listing-with-sidebar select", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
     e.preventDefault();

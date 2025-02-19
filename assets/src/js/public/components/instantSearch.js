@@ -1460,6 +1460,24 @@ import debounce from '../../global/components/debounce';
         filterListing(searchElm);
     }, 250));
 
+    // sidebar on change location, zipcode changing
+    $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", debounce(function (e) {
+        e.preventDefault();
+        
+        const searchElm = $(this).closest('.listing-with-sidebar');
+        
+        // If it's a location field, ensure it has a value before triggering the filter
+        if ($(this).hasClass('directorist-search-location')) {
+            const locationField = $(this).find('input[name="address"]');
+            if (!locationField.val()) {
+                return;
+            }
+        }
+    
+        filterListing(searchElm);
+    }, 250));
+    
+
     // select on change with value - searching
     $('body').on("change", ".directorist-instant-search .listing-with-sidebar select", debounce( function(e) {
         e.preventDefault();

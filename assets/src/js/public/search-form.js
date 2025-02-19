@@ -904,6 +904,11 @@ import './components/directoristSelect';
                                             $('.directorist-location-js, .atbdp-search-address').attr("data-value", data.display_name);
                                             $('#cityLat').val(lat);
                                             $('#cityLng').val(lng);
+
+                                            const locationSearch = $(".directorist-search-location");
+                                            if (locationSearch.length) {
+                                                locationSearch.trigger("change");
+                                            }
                                           }
                                         });
                                     }
@@ -922,7 +927,9 @@ import './components/directoristSelect';
 
                                     locationAddressField.removeClass('atbdp-form-fade');
 
-                                    $('body').on("click", '.address_result .current-location', function (e) {
+                                    $('body').off("click", '.address_result .current-location').on("click", '.address_result .current-location', function (e) {
+                                        e.preventDefault();
+                                        
                                         navigator.geolocation.getCurrentPosition(function (position) {
                                             return displayLocation(position, e);
                                         });
@@ -941,7 +948,17 @@ import './components/directoristSelect';
 
                 // hide address result when click outside the input field
                 $(document).on('click', function (e) {
-                    if (!$(e.target).closest('.directorist-location-js, #q_addressss, .atbdp-search-address').length) {
+                    if (!$(e.target).closest('.directorist-location-js, #q_addressss, .atbdp-search-address, .current-location').length) {
+                        const locationSearch = $(e.target).closest(".directorist-search-location");
+                        const zipCodeSearch = $(e.target).closest(".directorist-zipcode-search");
+                        
+                        if (locationSearch.length) {
+                            locationSearch.trigger("change");
+                        }
+                        if (zipCodeSearch.length) {
+                            zipCodeSearch.trigger("change");
+                        }
+                        
                         $('.address_result').hide();
                     }
                 });
