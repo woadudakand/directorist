@@ -8,10 +8,18 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$file_id   = isset( $_GET['file_id'] ) ? absint( $_GET['file_id'] ) : 0;
-$delimiter = isset( $_GET['delimiter'] ) ? sanitize_text_field( wp_unslash( $_GET['delimiter'] ) ) : ',';
-$total     = $args['controller']->get_importer( $file_id )->get_total_items(); // Exclude header row.
-$directories = directory_types();
+$file_id       = isset( $_GET['file_id'] ) ? absint( $_GET['file_id'] ) : 0;
+$delimiter     = isset( $_GET['delimiter'] ) ? sanitize_text_field( wp_unslash( $_GET['delimiter'] ) ) : ',';
+$csv_file      = get_attached_file( $file_id );
+$csv_file      = $args['controller']->validate_csv_file( $csv_file );
+$total         = 0;
+$is_valid_file = false;
+
+if ( ! is_wp_error($csv_file ) ) {
+	$total         = $args['controller']->get_importer( $csv_file, $delimiter )->get_total_items();
+	$directories   = directory_types();
+	$is_valid_file = true;
+}
 ?>
 <div class="csv-wrapper">
 	<div class="csv-center csv-fields">
@@ -23,27 +31,38 @@ $directories = directory_types();
 
 			<div class="form-content">
 				<section class="atbdp-importer-mapping-table-wrapper">
-					<h3><?php printf( esc_html__( 'Found %s listings.', 'directorist' ), $total ); ?></h3>
-					<div class="directory_type_wrapper">
-						<?php if ( count( $directories ) > 1 ) : ?>
-							<label for="directory_type"><?php esc_html_e( 'Select Directory', 'directorist' ); ?></label>
-							<select class="directorist_directory_type_in_import" id="directory_type">
-								<option value="">--Select--</option>
-								<?php
-								foreach ( $directories as $directory_term ) {
-									$default = get_term_meta( $directory_term->term_id, '_default', true );
-									printf(
-										'<option %s value="%s">%s</option>',
-										empty( $default ) ? '' : 'selected',
-										esc_attr( $directory_term->term_id ),
-										esc_html( $directory_term->name )
-									);
-								} ?>
-							</select>
-						<?php endif; ?>
+					<?php if ( $is_valid_file ) : ?>
+						<h3><?php printf( esc_html__( 'Found %s listings.', 'directorist' ), $total ); ?></h3>
+						<div class="directory_type_wrapper">
+							<?php if ( count( $directories ) > 1 ) : ?>
+								<label for="directory_type"><?php esc_html_e( 'Select Directory', 'directorist' ); ?></label>
+								<select class="directorist_directory_type_in_import" id="directory_type">
+									<option value="">--Select--</option>
+									<?php
+									foreach ( $directories as $directory_term ) {
+										$default = get_term_meta( $directory_term->term_id, '_default', true );
+										printf(
+											'<option %s value="%s">%s</option>',
+											empty( $default ) ? '' : 'selected',
+											esc_attr( $directory_term->term_id ),
+											esc_html( $directory_term->name )
+										);
+									} ?>
+								</select>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
 
-						<?php $args['controller']->render_field_map_table( $file_id, $delimiter ); ?>
-					</div>
+					<?php
+					if ( $is_valid_file ) {
+						$args['controller']->render_field_map_table( $csv_file, $delimiter );
+					} else {
+						printf(
+							'<p style="font-style:italic; color: #d63638">%s</p>',
+							$csv_file->get_error_message(),
+						);
+					}
+					?>
 				</section>
 			</div>
 
