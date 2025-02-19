@@ -2872,9 +2872,9 @@ if(!function_exists('csv_get_data')){
             $post = array();
 
             // Get first row in CSV, which is of course the headers
-            $header = fgetcsv( $_file, 0, $delimiter );
+            $header = fgetcsv( $_file, 0, $delimiter, '"', '\\' );
 
-            while ( $row = fgetcsv( $_file, 0, $delimiter ) ) {
+            while ( $row = fgetcsv( $_file, 0, $delimiter, '"', '\\' ) ) {
 
                 foreach ( $header as $i => $key ) {
                     $post[ $key ] = $row[ $i ];
