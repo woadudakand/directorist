@@ -1456,8 +1456,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       if (form_data.phone && form_data.phone.length) {
         var query = query && query.length ? query + '&phone=' + form_data.phone : '?phone=' + form_data.phone;
       }
-      if (form_data.custom_field && form_data.custom_field.length) {
-        var query = query && query.length ? query + '&custom_field=' + form_data.custom_field : '?custom_field=' + form_data.custom_field;
+      if (form_data.custom_field && Object.keys(form_data.custom_field).length) {
+        Object.keys(form_data.custom_field).forEach(function (key) {
+          query = query.length ? query + "&".concat(key, "=").concat(form_data.custom_field[key]) : "?".concat(key, "=").concat(form_data.custom_field[key]);
+        });
       }
       if (form_data.open_now && form_data.open_now.length) {
         var query = query && query.length ? query + '&open_now=' + form_data.open_now : '?open_now=' + form_data.open_now;
@@ -2743,6 +2745,21 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   $('body').on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
+    filterListing(searchElm);
+  }, 250));
+
+  // sidebar on change location, zipcode changing
+  $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+    e.preventDefault();
+    var searchElm = $(this).closest('.listing-with-sidebar');
+
+    // If it's a location field, ensure it has a value before triggering the filter
+    if ($(this).hasClass('directorist-search-location')) {
+      var locationField = $(this).find('input[name="address"]');
+      if (!locationField.val()) {
+        return;
+      }
+    }
     filterListing(searchElm);
   }, 250));
 
