@@ -54,7 +54,7 @@ class Localized_Data {
 			],
 			$args
 		);
-		
+
 		return self::get_search_script_data( $args );
 	}
 
@@ -238,7 +238,12 @@ class Localized_Data {
 	}
 
 	public static function get_search_script_data( $args = [] ) {
-		$directory_type = ( is_array( $args ) && isset( $args['directory_type_id'] ) ) ? $args['directory_type_id'] : default_directory_type();
+		if ( ! is_array( $args ) ) {
+			$args = (array) $args;
+		}
+
+		$directory_type = $args['directory_type_id'] ?? directorist_get_default_directory();
+
 		$directory_type_term_data = [
 			'submission_form_fields' => get_term_meta( $directory_type, 'submission_form_fields', true ),
 			'search_form_fields' => get_term_meta( $directory_type, 'search_form_fields', true ),
