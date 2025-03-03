@@ -128,6 +128,7 @@ __webpack_require__.r(__webpack_exports__);
         // replace with your marker icon URL
         scaledSize: new google.maps.Size(40, 40) // set the size of the icon
       };
+
       loc_manual_lat = isNaN(loc_manual_lat) ? loc_default_latitude : loc_manual_lat;
       loc_manual_lng = isNaN(loc_manual_lng) ? loc_default_longitude : loc_manual_lng;
       $manual_lat = $('#manual_lat');
@@ -601,6 +602,7 @@ __webpack_require__.r(__webpack_exports__);
           }
           // ${$marker.data('icon')}
         });
+
         document.querySelectorAll('div').forEach(function (el1, index) {
           if (el1.style.backgroundImage.split('/').pop() === 'm1.png")') {
             el1.addEventListener('click', function () {
@@ -670,7 +672,7 @@ __webpack_require__.r(__webpack_exports__);
 /* Widget google map */
 
 (function ($) {
-  // Single Listing Map Initialize   
+  // Single Listing Map Initialize
   function initSingleMap() {
     if ($('#gmap-widget').length) {
       var MAP_PIN = 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z';
@@ -785,6 +787,7 @@ __webpack_require__.r(__webpack_exports__);
           maxWidth: 400 /*Add configuration for max width*/
         });
       }
+
       function initMap() {
         console.log('initMap');
         /* Create new map instance*/
@@ -834,7 +837,7 @@ __webpack_require__.r(__webpack_exports__);
     initSingleMap();
   });
 
-  // Single Listing Map on Elementor EditMode 
+  // Single Listing Map on Elementor EditMode
   $(window).on('elementor/frontend/init', function () {
     setTimeout(function () {
       if ($('body').hasClass('elementor-editor-active')) {
@@ -977,6 +980,7 @@ __webpack_require__.r(__webpack_exports__);
             maxWidth: 400 /*Add configuration for max width*/
           });
         }
+
         function initMap() {
           /* Create new map instance*/
           map = new google.maps.Map(mapElm, {
@@ -1024,7 +1028,7 @@ __webpack_require__.r(__webpack_exports__);
     initSingleMap();
   });
 
-  // Single Listing Map on Elementor EditMode 
+  // Single Listing Map on Elementor EditMode
   $(window).on('elementor/frontend/init', function () {
     setTimeout(function () {
       if ($('body').hasClass('elementor-editor-active')) {
@@ -1053,27 +1057,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "convertToSelect2", function() { return convertToSelect2; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get_dom_data", function() { return get_dom_data; });
 var $ = jQuery;
-function get_dom_data(key, parent) {
-  // var elmKey = 'directorist-dom-data-' + key;
-  var elmKey = 'directorist-dom-data-' + key;
-  var dataElm = parent ? parent.getElementsByClassName(elmKey) : document.getElementsByClassName(elmKey);
-  if (!dataElm) {
-    return '';
+function get_dom_data(selector, parent) {
+  selector = '.directorist-dom-data-' + selector;
+  if (!parent) {
+    parent = document;
   }
-  var is_script_debugging = directorist && directorist.script_debugging && directorist.script_debugging == '1' ? true : false;
+  var el = parent.querySelector(selector);
+  if (!el || !el.dataset.value) {
+    return {};
+  }
+  var IS_SCRIPT_DEBUGGING = directorist && directorist.script_debugging && directorist.script_debugging == '1';
   try {
-    var dataValue = atob(dataElm[0].dataset.value);
-    dataValue = JSON.parse(dataValue);
-    return dataValue;
+    var value = atob(el.dataset.value);
+    return JSON.parse(value);
   } catch (error) {
-    if (is_script_debugging) {
-      console.warn({
-        key: key,
-        dataElm: dataElm,
-        error: error
-      });
+    if (IS_SCRIPT_DEBUGGING) {
+      console.log(el, error);
     }
-    return '';
+    return {};
   }
 }
 function convertToSelect2(selector) {
