@@ -26,105 +26,228 @@ class Schema {
 		echo '<script type="application/ld+json">' . $schema . '</script>';
 	}
 
+	/**
+	 * Get schema data for the current listing
+	 *
+	 * @since 8.4.0
+	 * @return array|void Schema data array or void if conditions not met
+	 */
 	public static function get_schema() {
 		if ( ! is_singular( ATBDP_POST_TYPE ) ) {
 			return;
 		}
 
+		$post_id      = get_the_ID();
 		$directory_id = static::get_listing_directory_id();
+
 		if ( ! directorist_is_directory( $directory_id ) ) {
-			return [];
+			return array();
 		}
 
 		$data = directorist_get_directory_meta( $directory_id, 'single_listings_contents' );
-		if ( empty( $data ) || empty( $data['fields'] ) ) {
-			return [];
+		if ( empty( $data['fields'] ) ) {
+			return array();
 		}
 
 		$fields = $data['fields'];
+		$schema = static::get_base_schema( $post_id );
 
-		$schema = [
-			'@context'    => 'https://schema.org',
-			'@type'       => 'LocalBusiness',
-			'name'        => get_the_title(),
-			'url'         => get_the_permalink(),
-		];
-
-		if ( isset( $fields['description'] ) ) {
-			$excerpt               = get_post_meta( get_the_ID(), '_excerpt', true );
-			$schema['description'] = empty( $excerpt ) ? get_the_excerpt() : esc_textarea( $excerpt );
-		}
-
-		if ( isset( $fields['map'] ) ) {
-			$schema['geo'] = [
-				'@type'     => 'GeoCoordinates',
-				'latitude'  => esc_html( get_post_meta( get_the_ID(), '_manual_lat', true ) ),
-				'longitude' => esc_html( get_post_meta( get_the_ID(), '_manual_lng', true ) ),
-			];
-		}
-
-		if ( isset( $fields['address'] ) || isset( $fields['zip'] ) ) {
-			$schema['address'] = [
-				'@type'         => 'PostalAddress',
-				'streetAddress' => esc_html( get_post_meta( get_the_ID(), '_address', true ) ),
-				'postalCode'    => esc_html( get_post_meta( get_the_ID(), '_zip', true ) ),
-			];
-		}
-
-		if ( isset( $fields['website'] ) ) {
-			$schema['url'] = esc_url( get_post_meta( get_the_ID(), '_website', true ) );
-		}
-
-		if ( isset( $fields['email'] ) ) {
-			$schema['email'] = get_post_meta( get_the_ID(), '_email', true );
-		}
-
-		if ( isset( $fields['phone'] ) || isset( $fields['phone2'] ) ) {
-			$phone1 = get_post_meta( get_the_ID(), '_phone', true );
-			$phone2 = get_post_meta( get_the_ID(), '_phone2', true );
-
-			if ( $phone1 ) {
-				$schema['contactPoint'][] = [
-					'@type'       => 'ContactPoint',
-					'telephone'   => static::format_phone( $phone1 ),
-					'contactType' => 'customer service',
-				];
-			}
-
-			if ( $phone2 ) {
-				$schema['contactPoint'][] = [
-					'@type'       => 'ContactPoint',
-					'telephone'   => static::format_phone( $phone2 ),
-					'contactType' => 'customer service',
-				];
-			}
-		}
-
-		if ( directorist_is_review_enabled() && directorist_get_listing_review_count( get_the_ID() ) > 0 ) {
-			$schema['aggregateRating'] = [
-				'@type'       => 'AggregateRating',
-				'ratingValue' => directorist_get_listing_rating( get_the_ID() ),
-				'reviewCount' => directorist_get_listing_review_count( get_the_ID() ),
-			];
-		}
-
-		if ( isset( $fields['social_info'] ) ) {
-			$links = get_post_meta( get_the_ID(), '_social', true );
-
-			if ( ! empty( $links ) ) {
-				$schema['sameAs'] = [];
-
-				foreach ( $links as $link ) {
-					if ( empty( $link['url'] ) ) {
-						continue;
-					}
-
-					$schema['sameAs'][] = esc_url( $link['url'] );
-				}
-			}
-		}
+		static::maybe_add_description( $schema, $fields, $post_id );
+		static::maybe_add_geo_data( $schema, $fields, $post_id );
+		static::maybe_add_address( $schema, $fields, $post_id );
+		static::maybe_add_website( $schema, $fields, $post_id );
+		static::maybe_add_email( $schema, $fields, $post_id );
+		static::maybe_add_phone_numbers( $schema, $fields, $post_id );
+		static::maybe_add_ratings( $schema, $post_id );
+		static::maybe_add_social_links( $schema, $fields, $post_id );
 
 		return $schema;
+	}
+
+	/**
+	 * Get base schema structure
+	 *
+	 * @param int $post_id Post ID
+	 * @return array Base schema array
+	 */
+	private static function get_base_schema( $post_id ) {
+		return array(
+			'@context' => 'https://schema.org',
+			'@type'    => 'LocalBusiness',
+			'name'     => get_the_title( $post_id ),
+			'url'      => get_the_permalink( $post_id ),
+		);
+	}
+
+	/**
+	 * Add description to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_description( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['description'] ) ) {
+			return;
+		}
+
+		$excerpt = get_post_meta( $post_id, '_excerpt', true );
+		$schema['description'] = empty( $excerpt ) ? get_the_excerpt( $post_id ) : esc_textarea( $excerpt );
+	}
+
+	/**
+	 * Add geo coordinates to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_geo_data( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['map'] ) ) {
+			return;
+		}
+
+		$schema['geo'] = array(
+			'@type'     => 'GeoCoordinates',
+			'latitude'  => esc_html( get_post_meta( $post_id, '_manual_lat', true ) ),
+			'longitude' => esc_html( get_post_meta( $post_id, '_manual_lng', true ) ),
+		);
+	}
+
+	/**
+	 * Add address to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_address( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['address'] ) && ! isset( $fields['zip'] ) ) {
+			return;
+		}
+
+		$schema['address'] = array(
+			'@type'         => 'PostalAddress',
+			'streetAddress' => esc_html( get_post_meta( $post_id, '_address', true ) ),
+			'postalCode'    => esc_html( get_post_meta( $post_id, '_zip', true ) ),
+		);
+	}
+
+	/**
+	 * Add website URL to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_website( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['website'] ) ) {
+			return;
+		}
+
+		$schema['url'] = esc_url( get_post_meta( $post_id, '_website', true ) );
+	}
+
+	/**
+	 * Add email to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_email( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['email'] ) ) {
+			return;
+		}
+
+		$schema['email'] = sanitize_email( get_post_meta( $post_id, '_email', true ) );
+	}
+
+	/**
+	 * Add phone numbers to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_phone_numbers( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['phone'] ) && ! isset( $fields['phone2'] ) ) {
+			return;
+		}
+
+		$phone1 = get_post_meta( $post_id, '_phone', true );
+		$phone2 = get_post_meta( $post_id, '_phone2', true );
+
+		if ( $phone1 || $phone2 ) {
+			$schema['contactPoint'] = array();
+		}
+
+		if ( $phone1 ) {
+			$schema['contactPoint'][] = array(
+				'@type'       => 'ContactPoint',
+				'telephone'   => static::format_phone( $phone1 ),
+				'contactType' => 'customer service',
+			);
+		}
+
+		if ( $phone2 ) {
+			$schema['contactPoint'][] = array(
+				'@type'       => 'ContactPoint',
+				'telephone'   => static::format_phone( $phone2 ),
+				'contactType' => 'customer service',
+			);
+		}
+	}
+
+	/**
+	 * Add ratings to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_ratings( &$schema, $post_id ) {
+		if ( ! directorist_is_review_enabled() ) {
+			return;
+		}
+
+		$review_count = directorist_get_listing_review_count( $post_id );
+		if ( $review_count <= 0 ) {
+			return;
+		}
+
+		$schema['aggregateRating'] = array(
+			'@type'       => 'AggregateRating',
+			'ratingValue' => directorist_get_listing_rating( $post_id ),
+			'reviewCount' => $review_count,
+		);
+	}
+
+	/**
+	 * Add social links to schema if available
+	 *
+	 * @param array $schema Schema array
+	 * @param array $fields Fields array
+	 * @param int   $post_id Post ID
+	 */
+	private static function maybe_add_social_links( &$schema, $fields, $post_id ) {
+		if ( ! isset( $fields['social_info'] ) ) {
+			return;
+		}
+
+		$links = get_post_meta( $post_id, '_social', true );
+		if ( empty( $links ) ) {
+			return;
+		}
+
+		$schema['sameAs'] = array();
+
+		foreach ( $links as $link ) {
+			if ( empty( $link['url'] ) ) {
+				continue;
+			}
+
+			$schema['sameAs'][] = esc_url( $link['url'] );
+		}
 	}
 
 	protected static function get_listing_directory_id() {
