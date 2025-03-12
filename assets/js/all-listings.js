@@ -1397,7 +1397,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         var query = query && query.length ? query + '&paged=' + form_data.paged : '?paged=' + form_data.paged;
       }
       if (form_data.directory_type && form_data.directory_type.length) {
-        var query = query && query.length ? query + '&view=' + form_data.directory_type : '?directory_type=' + form_data.directory_type;
+        var query = query && query.length ? query + '&directory_type=' + form_data.directory_type : '?directory_type=' + form_data.directory_type;
       }
       if (form_data.view && form_data.view.length) {
         var query = query && query.length ? query + '&view=' + form_data.view : '?view=' + form_data.view;
@@ -2311,9 +2311,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var search_by_rating = activeForm.find('select[name=search_by_rating]').val();
     var cityLat = activeForm.find('#cityLat').val();
     var cityLng = activeForm.find('#cityLng').val();
-    var miles = activeForm.find('input[name="miles"]').val();
     var address = activeForm.find('input[name="address"]').val();
     var zip = activeForm.find('input[name="zip"]').val();
+    var miles = (address.length || zip.length) && activeForm.find('input[name="miles"]').val();
     var fax = activeForm.find('input[name="fax"]').val();
     var email = activeForm.find('input[name="email"]').val();
     var website = activeForm.find('input[name="website"]').val();
@@ -2321,48 +2321,51 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     instant_search_element.find(".directorist-pagination .page-numbers").removeClass('current');
     $(this).addClass("current");
     var paginate_link = $(this).attr('href');
-    var page = paginate_link && paginate_link.length ? paginate_link.match(/page\/.+/) : '';
-    var page_value = page && page.length ? page[0].replace(/page\//, '') : '';
-    var page_no = page_value && page_value.length ? page_value.replace(/\//, '') : '';
-    if (!page_no) {
-      var page = paginate_link && paginate_link.length ? paginate_link.match(/paged=.+/) : '';
-      var page_no = page && page.length ? page[0].replace(/paged=/, '') : '';
+    var page_no = '';
+    if (paginate_link) {
+      var pageMatch = paginate_link.match(/(?:page\/|paged=)(\d+)/);
+      if (pageMatch) {
+        page_no = pageMatch[1]; // Extracts only the numeric value
+      }
     }
-    var form_data = _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({
+
+    var form_data = {
       action: 'directorist_instant_search',
       _nonce: directorist.ajax_nonce,
       current_page_id: directorist.current_page_id,
-      view: view && view.length ? view[0].replace(/view=/, '') : '',
-      q: q || getURLParameter(full_url, 'q'),
-      in_cat: in_cat || getURLParameter(full_url, 'in_cat'),
-      in_loc: in_loc || getURLParameter(full_url, 'in_loc'),
-      in_tag: tag || getURLParameter(full_url, 'in_tag'),
-      price: price || getURLParameter(full_url, 'price'),
-      price_range: price_range || getURLParameter(full_url, 'price_range'),
-      search_by_rating: search_by_rating || getURLParameter(full_url, 'search_by_rating'),
-      cityLat: cityLat || getURLParameter(full_url, 'cityLat'),
-      cityLng: cityLng || getURLParameter(full_url, 'cityLng'),
-      miles: miles || getURLParameter(full_url, 'miles'),
-      address: address || getURLParameter(full_url, 'address'),
-      zip: zip || getURLParameter(full_url, 'zip'),
-      fax: fax || getURLParameter(full_url, 'fax'),
-      email: email || getURLParameter(full_url, 'email'),
-      website: website || getURLParameter(full_url, 'website'),
-      phone: phone || getURLParameter(full_url, 'phone'),
-      custom_field: custom_field || getURLParameter(full_url, 'custom_field')
-    }, "view", view), "paged", page_no), "data_atts", JSON.parse(data_atts));
+      q: q,
+      in_cat: in_cat,
+      in_loc: in_loc,
+      in_tag: tag,
+      price: price,
+      price_range: price_range,
+      search_by_rating: search_by_rating,
+      cityLat: cityLat,
+      cityLng: cityLng,
+      address: address,
+      zip: zip,
+      fax: fax,
+      email: email,
+      website: website,
+      phone: phone,
+      custom_field: custom_field,
+      miles: miles,
+      view: view,
+      paged: page_no,
+      data_atts: JSON.parse(data_atts)
+    };
 
     //business hours
     if ($('input[name="open_now"]').is(':checked')) {
       form_data.open_now = activeForm.find('input[name="open_now"]').val();
     }
-    update_instant_search_url(form_data);
     if (directory_type && directory_type.length) {
       form_data.directory_type = directory_type;
     }
     if (sort && sort.length) {
       form_data.sort = sort;
     }
+    update_instant_search_url(form_data);
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
