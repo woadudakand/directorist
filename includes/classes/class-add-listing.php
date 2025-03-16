@@ -910,19 +910,27 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 		 * @since 3.1.0
 		 */
 		public function handle_listing_renewal() {
-			$temp_token = ! empty( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+			$token      = ! empty( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 			$renew_from = ! empty( $_GET['renew_from'] ) ? sanitize_text_field( wp_unslash( $_GET['renew_from'] ) ) : '';
-
-			if ( empty( $temp_token ) && empty( $renew_from ) ) {
-				return;
-			}
 
 			$action = get_query_var( 'atbdp_action' );
 			if ( empty( $action ) || 'renew' !== $action ) {
 				return;
 			}
 
+			if ( $renew_from !== 'email' || $renew_from !== 'dashboard' ) {
+				return;
+			}
+
+			if ( $renew_from === 'dashboard' && ! wp_verify_nonce( $token, 'directorist_listing_renewal' ) ) {
+				return;
+			}
+
 			$listing_id = get_query_var( 'atbdp_listing_id' );
+			if ( $renew_from === 'email' &&  directorist_renewal_token_hash( $listing_id, get_current_user_id() ) !== $token ) {
+				return;
+			}
+
 			if ( ! directorist_is_listing_post_type( $listing_id ) ) {
 				return;
 			}
@@ -932,7 +940,7 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 			}
 
 			$saved_token = get_post_meta( $listing_id, '_renewal_token', true );
-			if ( ( ! empty( $saved_token ) && $saved_token === $temp_token ) || $renew_from ) {
+			if ( ( ! empty( $saved_token ) && $saved_token === $token && $renew_from === 'email' ) || $renew_from === 'dashboard' ) {
 				$this->renew_listing( $listing_id );
 			}
 
@@ -1005,7 +1013,7 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 
 			do_action( 'atbdp_after_renewal', $listing_id );
 			$r_url = add_query_arg( 'renew', 'success', ATBDP_Permalink::get_dashboard_page_link() );
-			update_post_meta( $listing_id, '_renewal_token', 0 );
+			delete_post_meta( $listing_id, '_renewal_token', 0 );
 			// hook for dev
 			do_action( 'atbdp_before_redirect_after_renewal', $listing_id );
 			wp_safe_redirect( $r_url );
