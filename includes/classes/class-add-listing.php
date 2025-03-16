@@ -932,19 +932,19 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 			}
 
 			$saved_token = get_post_meta( $listing_id, '_renewal_token', true );
-			if ( empty( $saved_token ) || $saved_token !== $temp_token ) {
-				$redirect_url = esc_url_raw( add_query_arg(
-					'renew',
-					'token_expired',
-					ATBDP_Permalink::get_dashboard_page_link()
-					)
-				);
-
-				wp_safe_redirect( $redirect_url );
-				exit;
+			if ( ( ! empty( $saved_token ) && $saved_token === $temp_token ) || $renew_from ) {
+				$this->renew_listing( $listing_id );
 			}
 
-			$this->renew_listing( $listing_id );
+			$redirect_url = esc_url_raw( add_query_arg(
+				'renew',
+				'token_expired',
+				ATBDP_Permalink::get_dashboard_page_link()
+				)
+			);
+
+			wp_safe_redirect( $redirect_url );
+			exit;
 		}
 
 		/**
