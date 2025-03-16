@@ -603,12 +603,13 @@ class Directorist_Listing_Dashboard {
 		$post_id = get_the_ID();
 
 		if ( $this->can_renew() ) {
+			$renewal_url = add_query_arg( 'renew_from', 'dashboard', $this->get_renewal_link( $post_id ) );
 			$dropdown_items['renew'] = array(
-				'class'			    => '',
-				'data_attr'			=>	'',
-				'link'				=>	add_query_arg( 'renew_from', 'dashboard', esc_url( $this->get_renewal_link( $post_id ) ) ),
-				'icon'				=>  directorist_icon( 'las la-hand-holding-usd', false ),
-				'label'				=>  __( 'Renew', 'directorist' )
+				'class'     => '',
+				'data_attr' => '',
+				'link'      => wp_nonce_url( $renewal_url, 'directorist_listing_renewal', '_nonce' ),
+				'icon'      => directorist_icon( 'las la-hand-holding-usd', false ),
+				'label'     => __( 'Renew', 'directorist' )
 			);
 		}
 
