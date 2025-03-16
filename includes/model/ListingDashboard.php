@@ -590,7 +590,11 @@ class Directorist_Listing_Dashboard {
 	}
 
 	public function get_renewal_link( $listing_id ) {
-		return directorist_is_monetization_enabled() && directorist_is_featured_listing_enabled() ? ATBDP_Permalink::get_fee_renewal_checkout_page_link( $listing_id ) : ATBDP_Permalink::get_renewal_page_link( $listing_id );
+		if ( directorist_is_monetization_enabled() && directorist_is_featured_listing_enabled() ) {
+			return ATBDP_Permalink::get_fee_renewal_checkout_page_link( $listing_id );
+		}
+
+		return ATBDP_Permalink::get_renewal_page_link( $listing_id );
 	}
 
 	public function get_action_dropdown_item() {
