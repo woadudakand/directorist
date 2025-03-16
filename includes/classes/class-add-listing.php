@@ -912,13 +912,13 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 		public function handle_listing_renewal() {
 			$token      = ! empty( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 			$renew_from = ! empty( $_GET['renew_from'] ) ? sanitize_text_field( wp_unslash( $_GET['renew_from'] ) ) : '';
+			$action     = get_query_var( 'atbdp_action' );
 
-			$action = get_query_var( 'atbdp_action' );
 			if ( empty( $action ) || 'renew' !== $action ) {
 				return;
 			}
 
-			if ( $renew_from !== 'email' || $renew_from !== 'dashboard' ) {
+			if ( ! in_array( $renew_from, array( 'email', 'dashboard' ), true ) ) {
 				return;
 			}
 
@@ -927,7 +927,7 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 			}
 
 			$listing_id = get_query_var( 'atbdp_listing_id' );
-			if ( $renew_from === 'email' &&  directorist_renewal_token_hash( $listing_id, get_current_user_id() ) !== $token ) {
+			if ( $renew_from === 'email' && directorist_renewal_token_hash( $listing_id, get_current_user_id() ) !== $token ) {
 				return;
 			}
 
