@@ -856,7 +856,7 @@ class Directorist_Single_Listing {
 		$listing_id = isset( $_GET['p'] ) ? sanitize_text_field( wp_unslash( $_GET['p'] ) ) : $listing_id;
 		$link       = '';
 
-		if ( directorist_is_listing_post_type( $listing_id ) ) {
+		if ( ! directorist_is_listing_post_type( $listing_id ) ) {
 			return get_permalink();
 		}
 
