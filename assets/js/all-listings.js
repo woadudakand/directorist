@@ -3395,17 +3395,26 @@ window.addEventListener('load', function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__);
 
+
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Update listings grid view count.
  */
 jQuery(function ($) {
-  var _window$localStorage;
+  var _window$directorist, _window$localStorage;
+  var isDynamicViewCountCacheEnabled = Boolean((_window$directorist = window.directorist) === null || _window$directorist === void 0 ? void 0 : _window$directorist.dynamic_view_count_cache);
+  if (!isDynamicViewCountCacheEnabled) {
+    return;
+  }
   var updateMarkup = function updateMarkup(viewCounts) {
     for (var _i = 0, _Object$entries = Object.entries(viewCounts); _i < _Object$entries.length; _i++) {
-      var _Object$entries$_i = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_Object$entries[_i], 2),
+      var _Object$entries$_i = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_Object$entries[_i], 2),
         id = _Object$entries$_i[0],
         count = _Object$entries$_i[1];
       var $el = $(".directorist-view-count[data-id=\"".concat(id, "\"]"));
@@ -3424,14 +3433,22 @@ jQuery(function ($) {
   if (ids.length === 0) {
     return;
   }
-  var cache = (_window$localStorage = window.localStorage) === null || _window$localStorage === void 0 ? void 0 : _window$localStorage.getItem('directorist_view_count');
   var CACHE_EXPIRATION = 1000 * 60 * 60 * 5; // 5 hours.
-
+  var cache = (_window$localStorage = window.localStorage) === null || _window$localStorage === void 0 ? void 0 : _window$localStorage.getItem('directorist_view_count');
+  var hasCache = false;
   if (cache) {
     var _cache, _cache2;
     cache = JSON.parse(cache);
-    if ((_cache = cache) !== null && _cache !== void 0 && _cache.viewCount && (_cache2 = cache) !== null && _cache2 !== void 0 && _cache2.lastUpdated && Date.now() - cache.lastUpdated < CACHE_EXPIRATION) {
+    var cachedIds = ((_cache = cache) === null || _cache === void 0 ? void 0 : _cache.viewCount) || {};
+    hasCache = Object.keys(cachedIds).length;
+    ids = ids.filter(function (id) {
+      return !(id in cachedIds);
+    });
+    if (hasCache && (_cache2 = cache) !== null && _cache2 !== void 0 && _cache2.lastUpdated && Date.now() - cache.lastUpdated < CACHE_EXPIRATION) {
       updateMarkup(cache.viewCount);
+    }
+    console.log(ids);
+    if (!ids.length) {
       return;
     }
   }
@@ -3446,6 +3463,9 @@ jQuery(function ($) {
       return;
     }
     updateMarkup(response.data.view_count);
+    if (hasCache) {
+      response.data.view_count = _objectSpread(_objectSpread({}, cache.viewCount), response.data.view_count);
+    }
     (_window$localStorage2 = window.localStorage) === null || _window$localStorage2 === void 0 || _window$localStorage2.setItem('directorist_view_count', JSON.stringify({
       lastUpdated: Date.now(),
       viewCount: response.data.view_count

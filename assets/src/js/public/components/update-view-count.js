@@ -2,6 +2,12 @@
  * Update listings grid view count.
  */
 jQuery(($) => {
+    const isDynamicViewCountCacheEnabled = Boolean(window.directorist?.dynamic_view_count_cache);
+
+    if (!isDynamicViewCountCacheEnabled) {
+        return;
+    }
+
     const updateMarkup = (viewCounts) => {
         for (const [id, count] of Object.entries(viewCounts)) {
             const $el = $(`.directorist-view-count[data-id="${id}"]`);
@@ -15,7 +21,7 @@ jQuery(($) => {
         }
     };
 
-    const ids = [];
+    let ids = [];
     $('.directorist-view-count[data-id]').each((i, item) => {
         ids.push(+item.dataset.id);
     });
@@ -24,14 +30,26 @@ jQuery(($) => {
         return;
     }
 
-    let cache = window.localStorage?.getItem('directorist_view_count');
-    const CACHE_EXPIRATION = 1000 * 60 * 60 * 5; // 5 hours.
+    const CACHE_EXPIRATION = 1000 * 60 * 60 * 5;                                      // 5 hours.
+    let   cache            = window.localStorage?.getItem('directorist_view_count');
+    let   hasCache         = false;
 
     if (cache) {
-        cache = JSON.parse(cache);
+              cache     = JSON.parse(cache);
+        const cachedIds = cache?.viewCount || {};
+              hasCache  = Object.keys(cachedIds).length;
 
-        if (cache?.viewCount && cache?.lastUpdated && (Date.now() - cache.lastUpdated) < CACHE_EXPIRATION) {
+        ids = ids.filter((id) => {
+            return !(id in cachedIds);
+        });
+
+        if (hasCache && cache?.lastUpdated && (Date.now() - cache.lastUpdated) < CACHE_EXPIRATION) {
             updateMarkup(cache.viewCount);
+        }
+
+        console.log(ids)
+
+        if (!ids.length) {
             return;
         }
     }
@@ -40,8 +58,8 @@ jQuery(($) => {
         directorist.ajax_url,
         {
             action: 'directorist_update_view_count',
-            nonce: directorist.directorist_nonce,
-            ids: ids,
+            nonce : directorist.directorist_nonce,
+            ids   : ids,
         },
         (response) => {
             if (!response.success) {
@@ -50,6 +68,13 @@ jQuery(($) => {
             }
 
             updateMarkup(response.data.view_count);
+
+            if (hasCache) {
+                response.data.view_count = {
+                    ...cache.viewCount,
+                    ...response.data.view_count,
+                };
+            }
 
             window.localStorage?.setItem('directorist_view_count', JSON.stringify({
                 lastUpdated: Date.now(),
