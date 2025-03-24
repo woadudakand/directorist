@@ -47,8 +47,6 @@ jQuery(($) => {
             updateMarkup(cache.viewCount);
         }
 
-        console.log(ids)
-
         if (!ids.length) {
             return;
         }

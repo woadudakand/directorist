@@ -3447,7 +3447,6 @@ jQuery(function ($) {
     if (hasCache && (_cache2 = cache) !== null && _cache2 !== void 0 && _cache2.lastUpdated && Date.now() - cache.lastUpdated < CACHE_EXPIRATION) {
       updateMarkup(cache.viewCount);
     }
-    console.log(ids);
     if (!ids.length) {
       return;
     }
