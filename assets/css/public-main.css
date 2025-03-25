@@ -8779,7 +8779,7 @@ body.modal-overlay-enabled:before {
     margin-top: 55px;
     margin-bottom: 80px;
     padding: 30px 30px 0;
-    height: calc(100vh - 220px);
+    height: calc(100dvh - 250px);
   }
 }
 .directorist-search-modal__contents__body .directorist-search-field__label {
@@ -9606,6 +9606,9 @@ body.modal-overlay-enabled:before {
   color: var(--directorist-color-dark);
 }
 
+.directorist-content-active.directorist-overlay-active {
+  overflow: hidden;
+}
 .directorist-content-active .directorist-search-modal__input .select2.select2-container .select2-selection {
   border: 0 none !important;
 }
@@ -12141,7 +12144,7 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .directorist-advanced-filter__advanced__element {
   overflow: hidden;
 }
-.directorist-advanced-filter__advanced__element.directorist-search-field-category .directorist-search-field.input-is-focused {
+.directorist-advanced-filter__advanced__element.directorist-search-field-location .directorist-search-field.input-is-focused, .directorist-advanced-filter__advanced__element.directorist-search-field-category .directorist-search-field.input-is-focused {
   margin-top: 0;
 }
 .directorist-advanced-filter__advanced__element .directorist-search-field {
@@ -12831,7 +12834,6 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .directorist-search-contents {
   background-size: cover;
   padding: 100px 0 120px;
-  z-index: 2;
 }
 
 .directorist-search-field__label {
@@ -17797,8 +17799,8 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .directorist-single-map .gm-style-iw-d {
   max-height: unset !important;
 }
-.directorist-single-map .gm-style-iw-chr,
-.directorist-single-map .gm-style-iw-tc {
+.directorist-single-map .gm-style-iw-tc,
+.directorist-single-map .gm-style-iw-chr {
   display: none;
 }
 
@@ -18057,9 +18059,11 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
           animation: atbd_scale 3s linear alternate infinite;
 }
 .atbd_map_shape .directorist-icon-mask:after {
-  width: 16px;
+  width: 9px;
   height: 16px;
   background-color: var(--directorist-color-marker-icon);
+  -webkit-mask: url(../images/ed83bad2b8ea2a7680575ff079fc63af.svg);
+          mask: url(../images/ed83bad2b8ea2a7680575ff079fc63af.svg);
 }
 .atbd_map_shape:hover:before {
   opacity: 1;
