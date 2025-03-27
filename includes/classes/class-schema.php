@@ -12,8 +12,120 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Schema {
 
+	protected static $schema_type_fields = [];
+
 	public static function init() {
 		add_action( 'wp_footer', [ static::class, 'print_schema' ] );
+		add_filter( 'atbdp_listing_type_settings_field_list', [ static::class, 'register_fields' ] );
+		add_filter( 'atbdp_advanced_submenu', [ static::class,'register_section' ] );
+	}
+
+	public static function register_section( $sections ) {
+		if ( isset( $sections['miscellaneous'] ) ) {
+			$temp_section = $sections['miscellaneous'];
+			unset( $sections['miscellaneous'] );
+		}
+
+		$field_keys = [
+			'enable_schema_markup',
+			'apply_schema_markup',
+			'directory_schema_type_global',
+		];
+
+		$_field_keys = array_keys( static::get_schema_type_fields_for_directories() );
+		if ( $_field_keys ) {
+			$field_keys = array_merge( $field_keys, $_field_keys );
+		}
+
+		$sections['schema_markup'] = [
+			'label'    => esc_html__('Schema Markup', 'directorist'),
+			'icon'     => '<i class="fas fa-database"></i>',
+			'sections' => apply_filters('directorist_schema_controls', [
+				'schema_type' => [
+					'fields' => $field_keys,
+				],
+			] ),
+		];
+
+		if ( isset( $temp_section ) ) {
+			$sections['miscellaneous'] = $temp_section;
+		}
+
+		return $sections;
+	}
+
+	public static function register_fields( $fields = [] ) {
+		$fields['enable_schema_markup'] = [
+			'type'  => 'toggle',
+			'label' => __( 'Enable Schema Markup', 'directorist' ),
+			'value' => true,
+		];
+
+		$fields['apply_schema_markup'] = [
+			'schema' => __( 'Apply Schema To', 'directorist' ),
+			'multi_directory_status' => directorist_is_multi_directory_enabled(),
+			'type'    => 'tab',
+			'value'   => 'one',
+			'options' => [
+				[
+					'label' => __('All Directories', 'directorist'),
+					'description' => __('Use the same schema for all directories or select this if Multi-Directory is disabled.', 'directorist'),
+					'value' => 'one',
+				],
+				[
+					'label' => __('Per Directory', 'directorist'),
+					'description' => __('Set different schemas for each directory. Choose this for directory-specific schema types.', 'directorist'),
+					'value' => 'two',
+				],
+			],
+			'show-if' => [
+				[
+					'where' => "enable_schema_markup",
+					'conditions' => [
+						['key' => 'value', 'compare' => '=', 'value' => true],
+					],
+				],
+			],
+		];
+
+		$fields['directory_schema_type_global'] = [
+			'label' => __('Schema Type', 'directorist'),
+			'icon' => '<i class="fas fa-database"></i>',
+			'type'  => 'select',
+			'value' => 'searched_value',
+			'options' => static::get_schema_types_as_dropdown_options(),
+			'show-if' => [
+				[
+					'where' => 'enable_schema_markup',
+					'conditions' => [
+						[
+							'key'     => 'value',
+							'compare' => '=',
+							'value'   => true
+						],
+					],
+				],
+				[
+					'where' => 'apply_schema_markup',
+					'conditions' => [
+						[
+							'key'     => 'value',
+							'compare' => '=',
+							'value'   => 'one',
+						],
+					],
+				],
+			],
+		];
+
+		$_fields = static::get_schema_type_fields_for_directories();
+
+
+		if ( $_fields ) {
+			$fields = array_merge( $fields, $_fields );
+		}
+
+		return $fields;
 	}
 
 	public static function print_schema() {
@@ -320,6 +432,84 @@ class Schema {
 		}
 
 		return $phone;
+	}
+
+	protected static function get_schema_type_fields_for_directories() {
+		if ( ! directorist_is_multi_directory_enabled() || static::$schema_type_fields ) {
+			return static::$schema_type_fields;
+		}
+
+		$field_base = [
+			'label'   => '',
+			'icon'    => '',
+			'type'    => 'select',
+			'options' => static::get_schema_types_as_dropdown_options(),
+			'show-if' => [
+				[
+					'where'      => 'enable_schema_markup',
+					'conditions' => [
+						['key' => 'value', 'compare' => '=', 'value' => true],
+					],
+				],
+				[
+					'where'      => 'apply_schema_markup',
+					'conditions' => [
+						['key' => 'value', 'compare' => '=', 'value' => 'two'],
+					],
+				],
+				[
+					'where'      => 'enable_multi_directory',
+					'conditions' => [
+						['key' => 'value', 'compare' => '=', 'value' => true],
+					],
+				]
+			],
+		];
+
+		$directories = directorist_get_directories_for_template();
+
+		foreach ( $directories as $directory_id => $directory ) {
+			$field_base['label']  = $directory['name'];
+			$field_base['icon']   = '<i class="'. esc_attr( $directory['data']['icon'] ) . '"></i>';
+			$field_key            = 'directory_schema_type_'. $directory_id;
+			static::$schema_type_fields[ $field_key ] = $field_base;
+		}
+
+		unset( $field_base );
+
+		return static::$schema_type_fields;
+	}
+
+	public static function get_schema_types() {
+		$schema_types = array(
+			'BusinessEvent'       => esc_html__( 'BusinessEvent', 'directorist' ),
+			'ApartmentComplex'    => esc_html__( 'ApartmentComplex', 'directorist' ),
+			'Event'               => esc_html__( 'Event', 'directorist' ),
+			'Festival'            => esc_html__( 'Festival', 'directorist' ),
+			'JobPosting'          => esc_html__( 'JobPosting', 'directorist' ),
+			'LocalBusiness'       => esc_html__( 'LocalBusiness', 'directorist' ),
+			'MarketingAgency'     => esc_html__( 'MarketingAgency', 'directorist' ),
+			'Organization'        => esc_html__( 'Organization', 'directorist' ),
+			'ProfessionalService' => esc_html__( 'ProfessionalService', 'directorist' ),
+			'RealEstateAgent'     => esc_html__( 'RealEstateAgent', 'directorist' ),
+			'Service'             => esc_html__( 'Service', 'directorist' ),
+		);
+
+		return apply_filters( 'directorist_schema_types', $schema_types );
+	}
+
+	public static function get_schema_types_as_dropdown_options() {
+		$schema_types = static::get_schema_types();
+
+		$output = array();
+		foreach ( $schema_types as $key => $value ) {
+			$output[] = array(
+				'value' => $key,
+				'label' => $value,
+			);
+		}
+
+		return $output;
 	}
 }
 
