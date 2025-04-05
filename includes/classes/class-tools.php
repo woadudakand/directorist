@@ -309,8 +309,8 @@ use Directorist\Listings_CSV_Importer as Importer;
 				}
 
 				$args = array(
-					'post_title'   => isset( $post[ $title ] ) ? self::unescape_data( html_entity_decode( $post[ $title ] ) ) : '',
-					'post_content' => isset( $post[ $description ] ) ? self::unescape_data( html_entity_decode( $post[ $description ] ) ) : '',
+					'post_title'   => isset( $post[ $title ] ) ? sanitize_text_field( self::unescape_data( html_entity_decode( $post[ $title ] ) ) ) : '',
+					'post_content' => isset( $post[ $description ] ) ? sanitize_textarea_field( self::unescape_data( html_entity_decode( $post[ $description ] ) ) ) : '',
 					'post_type'    => ATBDP_POST_TYPE,
 					'post_status'  => $listing_status
 				);
@@ -324,9 +324,14 @@ use Directorist\Listings_CSV_Importer as Importer;
 				}
 
 				// Create listing
-				$post_id = wp_insert_post( $args );
+				$post_id = wp_insert_post( $args, true );
 				if ( is_wp_error( $post_id ) ) {
-					$failed_items[] = $args['post_title'];
+					$failed_items[] = sprintf(
+						'Row %d - Title %s: %s',
+						$file_object->key(),
+						$args['post_title'],
+						$post_id->get_error_message()
+					);
 					continue;
 				}
 
