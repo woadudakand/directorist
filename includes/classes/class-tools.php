@@ -264,13 +264,27 @@ use Directorist\Listings_CSV_Importer as Importer;
 			$terms_cache       = [];
 			$attachments_cache = [];
 
-			$header      = array_keys( $importer->get_header() );
-			$file_object = $importer->get_file_object();
+			$header        = array_keys( $importer->get_header() );
+			$columns_count = count( $header );
+			$file_object   = $importer->get_file_object();
+
 			$file_object->seek( $position );
 
 			while ( ! $file_object->eof() ) {
 
-				$post = array_combine( $header, $file_object->fgetcsv() );
+				$row = $file_object->fgetcsv();
+
+				if ( empty( $row ) ) {
+					$failed_items[] = sprintf( 'Row %d: Empty row', $file_object->key() );
+					continue;
+				}
+
+				if ( $columns_count !== count( $row ) ) {
+					$failed_items[] = sprintf( 'Row %d: Column count mismatch', $file_object->key() );
+					continue;
+				}
+
+				$post = array_combine( $header, $row );
 
 				// /**
 				//  * Filters whether the listing import process should start.
@@ -316,7 +330,7 @@ use Directorist\Listings_CSV_Importer as Importer;
 					continue;
 				}
 
-				$imported_items[] = $args['post_title'];
+				$imported_items[] = sprintf( 'Row %d - ID %d: %s', $file_object->key(), $post_id, $args['post_title'] );
 
 				// Save listing directory type.
 				update_post_meta( $post_id, '_directory_type', $directory_id );
