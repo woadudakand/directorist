@@ -65,17 +65,17 @@ class Schema {
 			'schema' => __( 'Apply Schema To', 'directorist' ),
 			'multi_directory_status' => directorist_is_multi_directory_enabled(),
 			'type'    => 'tab',
-			'value'   => 'one',
+			'value'   => 'all-directory',
 			'options' => [
 				[
 					'label' => __('All Directories', 'directorist'),
 					'description' => __('Use the same schema for all directories or select this if Multi-Directory is disabled.', 'directorist'),
-					'value' => 'one',
+					'value' => 'all-directory',
 				],
 				[
 					'label' => __('Per Directory', 'directorist'),
 					'description' => __('Set different schemas for each directory. Choose this for directory-specific schema types.', 'directorist'),
-					'value' => 'two',
+					'value' => 'per-directory',
 				],
 			],
 			'show-if' => [
@@ -111,7 +111,7 @@ class Schema {
 						[
 							'key'     => 'value',
 							'compare' => '=',
-							'value'   => 'one',
+							'value'   => 'all-directory',
 						],
 					],
 				],
@@ -185,7 +185,7 @@ class Schema {
 	private static function get_base_schema( $post_id ) {
 		return array(
 			'@context' => 'https://schema.org',
-			'@type'    => 'LocalBusiness',
+			'@type'    => static::get_schema_type( $post_id ),
 			'name'     => get_the_title( $post_id ),
 			'url'      => get_the_permalink( $post_id ),
 		);
@@ -454,7 +454,7 @@ class Schema {
 				[
 					'where'      => 'apply_schema_markup',
 					'conditions' => [
-						['key' => 'value', 'compare' => '=', 'value' => 'two'],
+						['key' => 'value', 'compare' => '=', 'value' => 'per-directory'],
 					],
 				],
 				[
@@ -510,6 +510,23 @@ class Schema {
 		}
 
 		return $output;
+	}
+
+	public static function get_schema_type( $post_id ) {
+		if ( get_directorist_option( 'apply_schema_markup' ) === 'all-directory' ) {
+			$schema_type = get_directorist_option( 'directory_schema_type_global' );
+		} else if ( get_directorist_option( 'apply_schema_markup' ) === 'per-directory' && directorist_is_multi_directory_enabled() ) {
+			$directory_id = directorist_get_listings_directory_type( $post_id );
+			$schema_type  = get_directorist_option( 'directory_schema_type_'. $directory_id );
+		} else {
+			$schema_type = get_directorist_option( 'directory_schema_type_global' );
+		}
+
+		if ( ! $schema_type ) {
+			return 'LocalBusiness';
+		}
+
+		return array_key_exists( $schema_type, static::get_schema_types() ) ? $schema_type : 'LocalBusiness';
 	}
 }
 
