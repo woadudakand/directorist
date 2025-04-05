@@ -309,8 +309,8 @@ use Directorist\Listings_CSV_Importer as Importer;
 				}
 
 				$args = array(
-					'post_title'   => isset( $post[ $title ] ) ? sanitize_text_field( self::unescape_data( html_entity_decode( $post[ $title ] ) ) ) : '',
-					'post_content' => isset( $post[ $description ] ) ? sanitize_textarea_field( self::unescape_data( html_entity_decode( $post[ $description ] ) ) ) : '',
+					'post_title'   => static::sanitize_text( $post[ $title ] ?? '' ),
+					'post_content' => static::sanitize_textarea( $post[ $description ] ?? '' ),
 					'post_type'    => ATBDP_POST_TYPE,
 					'post_status'  => $listing_status
 				);
@@ -348,7 +348,8 @@ use Directorist\Listings_CSV_Importer as Importer;
 							continue;
 						}
 
-						$terms = ! empty( $post[ $value ] ) ? explode( ',', $post[ $value ] ) : array();
+						$terms = static::sanitize_text( $post[ $value ] ?? '' );
+						$terms = empty( $terms ) ? array() : explode( ',', $post[ $value ] );
 						if ( ! $terms ) {
 							continue;
 						}
@@ -895,6 +896,13 @@ use Directorist\Listings_CSV_Importer as Importer;
 
 			return $return;
 		}
-    }
 
+		protected static function sanitize_text( $value ) {
+			return static::unescape_data( sanitize_text_field( $value ) );
+		}
+
+		protected static function sanitize_textarea( $value ) {
+			return static::unescape_data( sanitize_textarea_field( $value ) );
+		}
+    }
 endif;
