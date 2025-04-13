@@ -232,13 +232,14 @@ use Directorist\Listings_CSV_Importer as Importer;
 
 			$supported_post_status = array_keys( get_post_statuses() );
 			$listing_create_status = directorist_get_listing_create_status( $directory_id );
+			$offset                = ! empty( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
 			$position              = ! empty( $_POST['position'] ) ? absint( $_POST['position'] ) : 0;
-            $preview_image         = ! empty( $_POST['listing_img'] ) ? directorist_clean( wp_unslash( $_POST['listing_img'] ) ) : '';
-            $title                 = ! empty( $_POST['listing_title'] ) ? directorist_clean( wp_unslash( $_POST['listing_title'] ) ) : '';
-            $listing_status        = ! empty( $_POST['listing_status'] ) ? directorist_clean( wp_unslash( $_POST['listing_status'] ) ) : '';
-            $description           = ! empty( $_POST['listing_content'] ) ? directorist_clean( wp_unslash( $_POST['listing_content'] ) ) : '';
-            $metas                 = ! empty( $_POST['meta'] ) ? directorist_clean( wp_unslash( $_POST['meta'] ) ) : array();
-            $tax_inputs            = ! empty( $_POST['tax_input'] ) ? directorist_clean( wp_unslash( $_POST['tax_input'] ) ) : array();
+			$preview_image         = ! empty( $_POST['listing_img'] ) ? directorist_clean( wp_unslash( $_POST['listing_img'] ) ) : '';
+			$title                 = ! empty( $_POST['listing_title'] ) ? directorist_clean( wp_unslash( $_POST['listing_title'] ) ) : '';
+			$listing_status        = ! empty( $_POST['listing_status'] ) ? directorist_clean( wp_unslash( $_POST['listing_status'] ) ) : '';
+			$description           = ! empty( $_POST['listing_content'] ) ? directorist_clean( wp_unslash( $_POST['listing_content'] ) ) : '';
+			$metas                 = ! empty( $_POST['meta'] ) ? directorist_clean( wp_unslash( $_POST['meta'] ) ) : array();
+			$tax_inputs            = ! empty( $_POST['tax_input'] ) ? directorist_clean( wp_unslash( $_POST['tax_input'] ) ) : array();
 			$publish_date          = ! empty( $metas['publish_date'] ) ? directorist_clean( $metas['publish_date'] ) : '';
 
 			$total_items = $importer->get_total_items();
@@ -248,13 +249,6 @@ use Directorist\Listings_CSV_Importer as Importer;
 					'error'=> __( 'No data found', 'directorist' )
 				) );
             }
-
-			// Make sure header isn't included in the import.
-			if ( $position < 1 ) {
-				$position = 1;
-			} else {
-				$position += 1;
-			}
 
 			$this->start_time  = time();
 			$counter           = 1;
@@ -268,19 +262,26 @@ use Directorist\Listings_CSV_Importer as Importer;
 			$columns_count = count( $header );
 			$file_object   = $importer->get_file_object();
 
-			$file_object->seek( $position );
+			// Ignore header
+			if ( $offset === 0 ) {
+				$file_object->fgetcsv();
+				$offset = $file_object->ftell();
+			}
+
+			$file_object->fseek( $offset, SEEK_SET );
 
 			while ( ! $file_object->eof() ) {
+				$position++;
 
 				$row = $file_object->fgetcsv();
 
 				if ( empty( $row ) ) {
-					$failed_items[] = sprintf( 'Row %d: Empty row', $file_object->key() );
+					$failed_items[] = sprintf( 'Row %d: Empty row', $position );
 					continue;
 				}
 
 				if ( $columns_count !== count( $row ) ) {
-					$failed_items[] = sprintf( 'Row %d: Column count mismatch', $file_object->key() );
+					$failed_items[] = sprintf( 'Row %d: Column count mismatch', $position );
 					continue;
 				}
 
@@ -451,7 +452,7 @@ use Directorist\Listings_CSV_Importer as Importer;
 				 * @param int $post_id Listing id.
 				 * @param array $post  Listing data.
 				 */
-				do_action( 'directorist_listing_imported', $post_id, $post );
+				// do_action( 'directorist_listing_imported', $post_id, $post );
 
 				if ( $this->time_exceeded() || $this->memory_exceeded() || $batch_size === $counter ) {
 					break;
@@ -469,12 +470,10 @@ use Directorist\Listings_CSV_Importer as Importer;
 			// 	directorist_background_image_process( $deferred_resizable_images );
 			// }
 
-			$position = (int) $file_object->key();
-
-			$data['position']       = $position;
+			$data['offset']         = $file_object->ftell();
 			$data['redirect_url']   = esc_url( admin_url( 'edit.php?post_type=at_biz_dir&page=tools&step=3' ) );
 			$data['total']          = $total_items;
-			$data['percentage']     = ceil( ( $position / $total_items ) * 100 );
+			$data['position']       = $position;
 			$data['imported_items'] = $imported_items;
 			$data['failed_items']   = $failed_items;
 			$data['done']           = ( $position === $total_items );
