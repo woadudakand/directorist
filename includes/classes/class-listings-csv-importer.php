@@ -56,7 +56,7 @@ class Listings_CSV_Importer {
 
 		if ( ! $this->file_object ) {
 			$this->file_object = new SplFileObject( $this->file );
-			$this->file_object->setCsvControl( $this->separator );
+			$this->file_object->setCsvControl( $this->separator, '"', '\\' );
 		}
 
 		return $this->file_object;
