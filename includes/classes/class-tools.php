@@ -452,7 +452,7 @@ use Directorist\Listings_CSV_Importer as Importer;
 				 * @param int $post_id Listing id.
 				 * @param array $post  Listing data.
 				 */
-				// do_action( 'directorist_listing_imported', $post_id, $post );
+				do_action( 'directorist_listing_imported', $post_id, $post );
 
 				if ( $this->time_exceeded() || $this->memory_exceeded() || $batch_size === $counter ) {
 					break;
