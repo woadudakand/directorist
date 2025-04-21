@@ -15,9 +15,12 @@ class Schema {
 	protected static $schema_type_fields = [];
 
 	public static function init() {
-		add_action( 'wp_footer', [ static::class, 'print_schema' ] );
 		add_filter( 'atbdp_listing_type_settings_field_list', [ static::class, 'register_fields' ] );
 		add_filter( 'atbdp_advanced_submenu', [ static::class,'register_section' ] );
+
+		if ( get_directorist_option( 'enable_schema_markup' ) ) {
+			add_action( 'wp_footer', [ static::class, 'print_schema' ] );
+		}
 	}
 
 	public static function register_section( $sections ) {
