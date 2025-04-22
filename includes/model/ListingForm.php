@@ -671,28 +671,17 @@ class Directorist_Listing_Form {
 		}
 
 		$field_data['value'] = $value;
-		$field_data['form'] = $this;
-		$field_data = apply_filters( 'directorist_form_field_data', $field_data );
+		$field_data['form']  = $this;
+		$field_data          = apply_filters( 'directorist_form_field_data', $field_data );
+
+		if ( 'checkbox' === $field_data['type'] && ! is_array( $value ) ) {
+			$value               = trim( preg_replace( '/\n+/', '::separator::', $value ) );
+			$field_data['value'] = explode( '::separator::', $value );
+		}
 
 		if ( $this->is_custom_field( $field_data ) ) {
-
 			$template = 'listing-form/custom-fields/' . $field_data['widget_name'];
-
-			if( 'checkbox' === $field_data['type'] ){
-
-				$options_value = is_array( $value ) ? join( ",",$value ) : $value;
-				$result = explode( ",", $options_value );
-
-				if( ! is_array( $value ) ){
-					$pure_string = trim(preg_replace('/\n+/', ' ', $options_value));
-					$result = explode( " ", $pure_string );
-				}
-
-				$field_data['value'] = $result;
-			}
-
-		}
-		else {
+		} else {
 			$template = 'listing-form/fields/' . $field_data['widget_name'];
 		}
 
@@ -709,18 +698,12 @@ class Directorist_Listing_Form {
 
 			if ( atbdp_has_admin_template( $admin_template ) ) {
 				atbdp_get_admin_template( $admin_template, $args );
-			}
-			else {
+			} else {
 				Helper::get_template( $template, $args );
 			}
+		} elseif ( empty( $field_data['only_for_admin'] ) ) {
+			Helper::get_template( $template, $args );
 		}
-		else {
-
-			if ( empty( $field_data['only_for_admin'] ) ) {
-				Helper::get_template( $template, $args );
-			}
-		}
-
 	}
 
 	protected function get_field_value( $listing_id, $field_data ) {
