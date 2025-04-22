@@ -41,6 +41,11 @@ class Directorist_Listing_Form {
 		return self::$instance;
 	}
 
+	/**
+	 * Listing id
+	 *
+	 * @return int
+	 */
 	public function get_add_listing_id() {
 		return $this->add_listing_id;
 	}
