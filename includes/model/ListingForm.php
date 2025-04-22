@@ -22,6 +22,16 @@ class Directorist_Listing_Form {
 	protected static $instance = null;
 
 	private function __construct( $id ) {
+		$this->set_id( $id );
+		$this->set_directory();
+		$this->load_listing();
+	}
+
+	protected function load_listing() {
+		$this->add_listing_post = get_post( $this->add_listing_id );
+	}
+
+	public function set_id( $id ) {
 		if ( $id ) {
 			$this->add_listing_id = absint( $id );
 		} else {
@@ -30,8 +40,7 @@ class Directorist_Listing_Form {
 			$this->add_listing_id = $id;
 		}
 
-		$this->add_listing_post     = get_post( $this->add_listing_id );
-		$this->current_listing_type = $this->get_current_listing_type();
+		return $this->add_listing_id;
 	}
 
 	public static function instance( $id = '' ) {
@@ -749,25 +758,37 @@ class Directorist_Listing_Form {
 	}
 
 	public function get_current_listing_type() {
-		$listing_types      = $this->get_listing_types();
-		$listing_type_count = count( $listing_types );
-		$get_listing_type   = directorist_get_listing_directory( $this->add_listing_id );
-
-		if ( $listing_type_count == 1 ) {
-			$type = array_key_first( $listing_types );
-		}
-		elseif( ! empty( $get_listing_type ) ) {
-			$type = $get_listing_type;
-		}
-		else {
-			$type = isset( $_REQUEST['directory_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['directory_type'] ) ) : '';
-		}
-		if( !empty( $type ) && ! is_numeric( $type ) ) {
-			$term = get_term_by( 'slug', $type, ATBDP_TYPE );
-			$type = $term->term_id;
+		if ( ! $this->current_listing_type ) {
+			$this->set_directory();
 		}
 
-		return (int) $type;
+		return $this->current_listing_type;
+	}
+
+	protected function set_directory() {
+		if ( $this->current_listing_type ) {
+			return $this->current_listing_type;
+		}
+
+		$listing_types             = $this->get_listing_types();
+		$current_listing_directory = directorist_get_listing_directory( $this->add_listing_id );
+
+		if ( count( $listing_types ) === 1 ) {
+			$maybe_directory_id = array_key_first( $listing_types );
+		} elseif ( $current_listing_directory ) {
+			$maybe_directory_id = $current_listing_directory;
+		} else {
+			$maybe_directory_id = isset( $_REQUEST['directory_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['directory_type'] ) ) : '';
+		}
+
+		if ( ! empty( $maybe_directory_id ) && ! is_numeric( $maybe_directory_id ) ) {
+			$term = get_term_by( 'slug', $maybe_directory_id, ATBDP_TYPE );
+			$maybe_directory_id = $term->term_id;
+		}
+
+		$this->current_listing_type = (int) $maybe_directory_id;
+
+		return $this->current_listing_type;
 	}
 
 	public function build_form_data( $type ) {
@@ -891,5 +912,9 @@ class Directorist_Listing_Form {
 			$template = Helper::get_template_contents( 'listing-form/add-listing-type', [ 'listing_form' => $this ] );
 			return apply_filters( 'atbdp_add_listing_page_template', $template, $args );
 		}
+	}
+
+	public function get_category_field_relations() {
+		return directorist_get_category_custom_field_relations( $this->get_current_listing_type() );
 	}
 }
