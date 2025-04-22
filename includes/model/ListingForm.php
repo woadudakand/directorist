@@ -914,7 +914,7 @@ class Directorist_Listing_Form {
 		}
 	}
 
-	public function get_category_field_relations() {
+	public function get_category_custom_field_relations() {
 		return directorist_get_category_custom_field_relations( $this->get_current_listing_type() );
 	}
 }

@@ -124,6 +124,10 @@ class Localized_Data {
 			'dynamic_view_count_cache'        => (bool) get_directorist_option( 'dynamic_view_count_cache', false ),
 		);
 
+		if ( is_page( get_directorist_option( 'add_listing_page' ) ) ) {
+			$data['category_custom_field_relations'] = \Directorist\Directorist_Listing_Form::instance()->get_category_custom_field_relations();
+		}
+
 		return $data;
 	}
 
