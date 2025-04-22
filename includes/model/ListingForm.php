@@ -11,25 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Directorist_Listing_Form {
 
-	protected static $instance = null;
 	public static $directory_type = '';
 
 	public $add_listing_id;
+
 	public $add_listing_post;
+
 	public $current_listing_type;
 
+	protected static $instance = null;
+
 	private function __construct( $id ) {
-
 		if ( $id ) {
+			$this->add_listing_id = absint( $id );
+		} else {
+			$id                   = get_query_var( 'atbdp_listing_id', 0 );
+			$id                   = empty( $id ) && ! empty( $_REQUEST['edit'] ) ? absint( $_REQUEST['edit'] ) : $id;
 			$this->add_listing_id = $id;
-			$this->add_listing_post = get_post( $id );
-		}
-		else {
-			add_action( 'wp', array( $this, 'init' ) );
 		}
 
+		$this->add_listing_post     = get_post( $this->add_listing_id );
 		$this->current_listing_type = $this->get_current_listing_type();
-
 	}
 
 	public static function instance( $id = '' ) {
@@ -37,13 +39,6 @@ class Directorist_Listing_Form {
 			self::$instance = new self( $id );
 		}
 		return self::$instance;
-	}
-
-	public function init() {
-		$listing_id = get_query_var( 'atbdp_listing_id', 0 );
-		$listing_id = empty( $listing_id ) && ! empty( $_REQUEST['edit'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['edit'] ) ) : $listing_id;
-
-		$this->add_listing_post = ! empty( $this->add_listing_id ) ? get_post( $this->add_listing_id ) : '';
 	}
 
 	public function get_add_listing_id() {
