@@ -287,49 +287,55 @@ class Directorist_Listing_Form {
 	}
 
 	public function get_listing_info() {
-		$listing_info = array();
+		$listing_id = $this->get_add_listing_id();
 
-		$p_id = $this->get_add_listing_id();
-
-		if ( ! empty( $p_id ) ) {
-			$listing_info['never_expire']            = get_post_meta( $p_id, '_never_expire', true );
-			$listing_info['featured']                = get_post_meta( $p_id, '_featured', true );
-			$listing_info['listing_type']            = get_post_meta( $p_id, '_listing_type', true );
-			$listing_info['price']                   = get_post_meta( $p_id, '_price', true );
-			$listing_info['videourl']                = get_post_meta( $p_id, '_videourl', true );
-			$listing_info['price_range']             = get_post_meta( $p_id, '_price_range', true );
-			$listing_info['atbd_listing_pricing']    = get_post_meta( $p_id, '_atbd_listing_pricing', true );
-			// TODO: Status has been migrated, remove related code.
-			// $listing_info['listing_status']          = get_post_meta( $p_id, '_listing_status', true );
-			$listing_info['listing_status']          = get_post_status( $p_id );
-			$listing_info['tagline']                 = get_post_meta( $p_id, '_tagline', true );
-			$listing_info['atbdp_post_views_count']  = directorist_get_listing_views_count( $p_id );
-			$listing_info['excerpt']                 = get_post_meta( $p_id, '_excerpt', true );
-			$listing_info['address']                 = get_post_meta( $p_id, '_address', true );
-			$listing_info['phone']                   = get_post_meta( $p_id, '_phone', true );
-			$listing_info['phone2']                  = get_post_meta( $p_id, '_phone2', true );
-			$listing_info['fax']                     = get_post_meta( $p_id, '_fax', true );
-			$listing_info['email']                   = get_post_meta( $p_id, '_email', true );
-			$listing_info['website']                 = get_post_meta( $p_id, '_website', true );
-			$listing_info['zip']                     = get_post_meta( $p_id, '_zip', true );
-			$listing_info['social']                  = get_post_meta( $p_id, '_social', true );
-			$listing_info['faqs']                    = get_post_meta( $p_id, '_faqs', true );
-			$listing_info['manual_lat']              = get_post_meta( $p_id, '_manual_lat', true );
-			$listing_info['manual_lng']              = get_post_meta( $p_id, '_manual_lng', true );
-			$listing_info['hide_map']                = get_post_meta( $p_id, '_hide_map', true );
-			$listing_info['bdbh']                    = get_post_meta( $p_id, '_bdbh', true );
-			$listing_info['enable247hour']           = get_post_meta( $p_id, '_enable247hour', true );
-			$listing_info['disable_bz_hour_listing'] = get_post_meta( $p_id, '_disable_bz_hour_listing', true );
-			$listing_info['bdbh_version'] 			 = get_post_meta( $p_id, '_bdbh_version', true );
-			$listing_info['hide_contact_info']       = get_post_meta( $p_id, '_hide_contact_info', true );
-			$listing_info['hide_contact_owner']      = get_post_meta( $p_id, '_hide_contact_owner', true );
-			$listing_info['expiry_date']             = get_post_meta( $p_id, '_expiry_date', true );
-			$listing_info['t_c_check']               = get_post_meta( $p_id, '_t_c_check', true );
-			$listing_info['privacy_policy']          = get_post_meta( $p_id, '_privacy_policy', true );
-			$listing_info['id_itself']               = $p_id;
+		if ( ! $listing_id ) {
+			return array();
 		}
 
-		return $listing_info;
+        $data_keys = array(
+            'never_expire',
+            'featured',
+            'listing_type',
+            'price',
+            'videourl',
+            'price_range',
+            'atbd_listing_pricing',
+            'tagline',
+            'excerpt',
+            'address',
+            'phone',
+            'phone2',
+            'fax',
+            'email',
+            'website',
+            'zip',
+            'social',
+            'faqs',
+            'manual_lat',
+            'manual_lng',
+            'hide_map',
+            'bdbh',
+            'enable247hour',
+            'disable_bz_hour_listing',
+            'bdbh_version',
+            'hide_contact_info',
+            'hide_contact_owner',
+            'expiry_date',
+            't_c_check',
+            'privacy_policy'
+		);
+
+        $data = array();
+        foreach ( $data_keys as $data_key ) {
+            $data[ $data_key ] = get_post_meta( $listing_id, "_{$data_key}", true );
+        }
+
+        $data['id_itself']              = $listing_id;
+        $data['listing_status']         = get_post_status( $listing_id );
+        $data['atbdp_post_views_count'] = directorist_get_listing_views_count( $listing_id );
+
+		return $data;
 	}
 
 	public function add_listing_location_fields() {
