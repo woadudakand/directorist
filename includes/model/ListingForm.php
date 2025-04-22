@@ -649,33 +649,21 @@ class Directorist_Listing_Form {
 	}
 
 	public function field_template( $field_data ) {
+		// if( ! empty( $field_data['assign_to'] ) ) {
+		// 	return;
+		// }
 
-		if( ! empty( $field_data['assign_to'] ) ) {
-			return;
-		}
-
-		$listing_id = $this->get_add_listing_id();
+		$listing_id = (int) $this->get_add_listing_id();
 		$value = '';
 
 		$field_data['lazy_load'] = get_directorist_option( 'lazy_load_taxonomy_fields', true );
 
 		if ( ! empty( $listing_id ) ) {
-			if ( $field_data['widget_name'] == 'title' ) {
-				$value = $this->add_listing_post->post_title;
-			}
-			elseif ( $field_data['widget_name'] == 'description' ) {
-				$value = $this->add_listing_post->post_content;
-			}
-			elseif ( $field_data['widget_name'] == 'terms_privacy' ) {
+			if ( $field_data['widget_name'] === 'terms_privacy' ) {
 				$field_data['privacy_checked'] = (bool) get_post_meta( $listing_id, '_privacy_policy', true );
 			}
-			elseif ( !empty( $field_data['field_key'] ) ) {
-				$value = get_post_meta( $listing_id, '_'.$field_data['field_key'], true );
 
-				if ( empty( $value ) ) {
-					$value = get_post_meta( $listing_id, $field_data['field_key'], true );
-				}
-			}
+			$value = $this->get_field_value( $listing_id, $field_data );
 		}
 
 		if ( $field_data['field_key'] === 'hide_contact_owner' && $value == 1 ) {
@@ -685,7 +673,6 @@ class Directorist_Listing_Form {
 		$field_data['value'] = $value;
 		$field_data['form'] = $this;
 		$field_data = apply_filters( 'directorist_form_field_data', $field_data );
-
 
 		if ( $this->is_custom_field( $field_data ) ) {
 
@@ -734,6 +721,24 @@ class Directorist_Listing_Form {
 			}
 		}
 
+	}
+
+	protected function get_field_value( $listing_id, $field_data ) {
+		$value = null;
+
+		if ( $field_data['widget_name'] === 'title' ) {
+			$value = $this->add_listing_post->post_title;
+		} elseif ( $field_data['widget_name'] === 'description' ) {
+			$value = $this->add_listing_post->post_content;
+		} elseif ( ! empty( $field_data['field_key'] ) ) {
+			$value = get_post_meta( $listing_id, '_' . $field_data['field_key'], true );
+
+			if ( empty( $value ) ) {
+				$value = get_post_meta( $listing_id, $field_data['field_key'], true );
+			}
+		}
+
+		return $value;
 	}
 
 	public function is_custom_field( $data ) {
