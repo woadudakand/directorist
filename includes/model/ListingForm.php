@@ -766,10 +766,6 @@ class Directorist_Listing_Form {
 	}
 
 	protected function set_directory() {
-		if ( $this->current_listing_type ) {
-			return $this->current_listing_type;
-		}
-
 		$listing_types             = $this->get_listing_types();
 		$current_listing_directory = directorist_get_listing_directory( $this->add_listing_id );
 
