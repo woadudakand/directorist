@@ -167,7 +167,6 @@ final class Directorist_Base
 	public $multi_directory_manager;
 	public $settings_panel;
 	public $hooks;
-	public $announcement;
 	public $review;
 	public $beta;
 
@@ -237,7 +236,6 @@ final class Directorist_Base
 			// self::$instance->validator = new ATBDP_Validator;
 			// self::$instance->ATBDP_Single_Templates = new ATBDP_Single_Templates;
 			self::$instance->tools = new ATBDP_Tools();
-			self::$instance->announcement = new ATBDP_Announcement();
 
 			self::$instance->background_image_process = new \Directorist\Background_Image_Process();
 
@@ -899,6 +897,5 @@ function ATBDP()
 	return Directorist_Base::instance();
 }
 
-add_action( 'plugins_loaded', 'ATBDP' );
-
+ATBDP();
 register_activation_hook(__FILE__, array('Directorist_Base', 'prepare_plugin'));
