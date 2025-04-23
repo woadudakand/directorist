@@ -683,13 +683,13 @@ class Directorist_Listing_Form {
 		$field_data['form']  = $this;
 		$field_data          = apply_filters( 'directorist_form_field_data', $field_data );
 
-		if ( 'checkbox' === $field_data['type'] && ! is_array( $value ) ) {
-			$value               = trim( preg_replace( '/\n+/', '::separator::', $value ) );
-			$field_data['value'] = explode( '::separator::', $value );
-		}
-
 		if ( $this->is_custom_field( $field_data ) ) {
 			$template = 'listing-form/custom-fields/' . $field_data['widget_name'];
+
+			if ( 'checkbox' === $field_data['type'] && ! is_array( $value ) ) {
+				$value               = trim( preg_replace( '/\n+/', '::separator::', $value ) );
+				$field_data['value'] = explode( '::separator::', $value );
+			}
 		} else {
 			$template = 'listing-form/fields/' . $field_data['widget_name'];
 		}
