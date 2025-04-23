@@ -441,11 +441,13 @@ $(function () {
       $watchableSections.show.removeAttr('style');
       $watchableSections.show.find('.directorist-content-module__title').show();
       $watchableSections.show.find('.directorist-content-module__contents').show();
+      $("a[href=\"#".concat($watchableSections.show.attr('id'), "\"]")).show();
     }
     if ($watchableSections.hide && $watchableSections.hide.find('.directorist-form-group:visible').length) {
       $watchableSections.hide.removeAttr('style');
       $watchableSections.hide.find('.directorist-content-module__title').show();
       $watchableSections.hide.find('.directorist-content-module__contents').show();
+      $("a[href=\"#".concat($watchableSections.hide.attr('id'), "\"]")).show();
     } else if ($watchableSections.hide) {
       $watchableSections.hide.css({
         display: 'none',
@@ -457,6 +459,7 @@ $(function () {
       });
       $watchableSections.hide.find('.directorist-content-module__title').hide();
       $watchableSections.hide.find('.directorist-content-module__contents').hide();
+      $("a[href=\"#".concat($watchableSections.hide.attr('id'), "\"]")).hide();
     }
 
     // loadCategoryCustomFields( {
