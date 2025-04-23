@@ -446,7 +446,7 @@ $(function () {
       $watchableSections.hide.removeAttr('style');
       $watchableSections.hide.find('.directorist-content-module__title').show();
       $watchableSections.hide.find('.directorist-content-module__contents').show();
-    } else {
+    } else if ($watchableSections.hide) {
       $watchableSections.hide.css({
         display: 'none',
         height: 0,

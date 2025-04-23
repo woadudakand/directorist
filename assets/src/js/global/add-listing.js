@@ -364,7 +364,7 @@ $(function() {
             $watchableSections.hide.removeAttr('style')
             $watchableSections.hide.find('.directorist-content-module__title').show();
             $watchableSections.hide.find('.directorist-content-module__contents').show();
-        } else {
+        } else if ( $watchableSections.hide ) {
             $watchableSections.hide.css({display: 'none', height: 0, padding: 0, margin: 0, border: 0, overflow: 'hidden'});
             $watchableSections.hide.find('.directorist-content-module__title').hide();
             $watchableSections.hide.find('.directorist-content-module__contents').hide();
