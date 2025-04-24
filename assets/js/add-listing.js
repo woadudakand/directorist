@@ -95,8 +95,10 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../global/components/cache-category-custom-fields */ "./assets/src/js/global/components/cache-category-custom-fields.js");
-/* harmony import */ var _global_components_load_category_custom_fields__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../global/components/load-category-custom-fields */ "./assets/src/js/global/components/load-category-custom-fields.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _global_components_setup_select2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../global/components/setup-select2 */ "./assets/src/js/global/components/setup-select2.js");
 /* harmony import */ var _public_components_colorPicker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../public/components/colorPicker */ "./assets/src/js/public/components/colorPicker.js");
 /* harmony import */ var _public_components_colorPicker__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_public_components_colorPicker__WEBPACK_IMPORTED_MODULE_3__);
@@ -105,12 +107,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _public_components_directoristSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../public/components/directoristSelect */ "./assets/src/js/public/components/directoristSelect.js");
 /* harmony import */ var _public_components_directoristSelect__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_public_components_directoristSelect__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _components_debounce__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/debounce */ "./assets/src/js/global/components/debounce.js");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
+
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 // General Components
-
-
+// import { cacheCategoryCustomFields, getCategoryCustomFieldsCache } from '../global/components/cache-category-custom-fields';
+// import loadCategoryCustomFields from '../global/components/load-category-custom-fields';
 
 
 
@@ -401,103 +405,148 @@ $(function () {
     return b;
   }(window.location.search.substr(1).split('&'));
   function renderCategoryCustomFields() {
+    if (_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default()(localized_data === null || localized_data === void 0 ? void 0 : localized_data.category_custom_field_relations) !== 'object') {
+      return;
+    }
     var categoryIds = [];
-    var listingId = 0;
-    var directoryId = 0;
-    if (directorist.is_admin) {
-      listingId = Number($('#post_ID').val());
-      directoryId = $('select[name="directory_type"]', getWrapper()).val();
-      if (!directoryId) {
-        directoryId = $('input[name="directory_type"]', getWrapper()).val();
-      }
-      var $selectedCategories = $('#at_biz_dir-categorychecklist input:checked');
-      if ($selectedCategories.length) {
-        categoryIds = $selectedCategories.toArray().map(function (el) {
-          return Number(el.value);
-        });
-      }
-    } else {
-      listingId = Number($('input[name="listing_id"]', getWrapper()).val());
-      directoryId = $('input[name="directory_type"]', getWrapper()).val();
-      var _$selectedCategories = $('#at_biz_dir-categories option:selected');
-      if (_$selectedCategories.length) {
-        categoryIds = _$selectedCategories.toArray().map(function (el) {
-          return Number(el.value);
-        });
+    var categoryInputSelector = directorist.is_admin ? '#at_biz_dir-categorychecklist input:checked' : '#at_biz_dir-categories option:selected';
+    var $selectedCategories = $(categoryInputSelector);
+    if ($selectedCategories.length) {
+      categoryIds = $selectedCategories.toArray().map(function (el) {
+        return Number(el.value);
+      });
+    }
+    var $watchableSections = {
+      hide: null,
+      show: null
+    };
+    categoryIds = new Set(categoryIds);
+    for (var _i = 0, _Object$entries = Object.entries(localized_data.category_custom_field_relations); _i < _Object$entries.length; _i++) {
+      var _Object$entries$_i = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_Object$entries[_i], 2),
+        fieldKey = _Object$entries$_i[0],
+        categoryId = _Object$entries$_i[1];
+      var $input = $(fieldKey.includes('checkbox') ? "[name=\"".concat(fieldKey, "[]\"]") : "[name=\"".concat(fieldKey, "\"]"));
+      var $wrapper = $input.closest('.directorist-form-group');
+      if (categoryIds.has(categoryId)) {
+        $input.removeAttr('disabled');
+        $wrapper.show();
+        $watchableSections.show = $wrapper.closest('.directorist-form-section');
+      } else {
+        $input.attr('disabled', true);
+        $wrapper.hide();
+        $watchableSections.hide = $wrapper.closest('.directorist-form-section');
       }
     }
-    Object(_global_components_load_category_custom_fields__WEBPACK_IMPORTED_MODULE_1__["default"])({
-      categoryIds: categoryIds,
-      listingId: listingId,
-      directoryId: directoryId,
-      onBeforeSend: function onBeforeSend() {
-        console.log('before send!');
-      },
-      onSuccess: function onSuccess(response) {
-        if (!response.success) {
-          $('.atbdp_category_custom_fields', getWrapper()).empty();
-          $('.atbdp_category_custom_fields-wrapper', getWrapper()).hide();
-          return;
-        }
-        $('.atbdp_category_custom_fields', getWrapper()).empty();
-        $.each(response.data, function (fieldId, fieldMarkup) {
-          var $newMarkup = $(fieldMarkup);
-          if ($newMarkup.find('.directorist-form-element')[0] !== undefined) {
-            $newMarkup.find('.directorist-form-element')[0].setAttribute('data-id', "".concat(fieldId));
-          }
-          if ($($newMarkup[0]).find('.directorist-radio input, .directorist-checkbox input').length) {
-            $($newMarkup[0]).find('.directorist-radio input, .directorist-checkbox input').each(function (i, item) {
-              $(item).attr('id', "directorist-cf-".concat(fieldId, "-").concat(i));
-              $(item).attr('data-id', "directorist-cf-".concat(fieldId, "-").concat(i));
-              $(item).addClass('directorist-form-checks');
-            });
-            $($newMarkup[0]).find('.directorist-radio label, .directorist-checkbox label').each(function (i, item) {
-              $(item).attr('for', "directorist-cf-".concat(fieldId, "-").concat(i));
-            });
-          }
-          $('.atbdp_category_custom_fields', getWrapper()).append($newMarkup);
-        });
-        $('.atbdp_category_custom_fields-wrapper', getWrapper()).show();
-        customFieldSeeMore();
-        var fieldsCache = Object(_global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__["getCategoryCustomFieldsCache"])();
-        Object.keys(fieldsCache).forEach(function (key) {
-          var el = document.querySelector("[data-id=\"".concat(key, "\"]"));
-          if (el === null) {
-            return;
-          }
-          if (el.classList.contains('directorist-form-element')) {
-            el.value = fieldsCache[key];
-          } else {
-            el.checked = fieldsCache[key];
-          }
-        });
-        initColorField();
-      }
-    });
+    if ($watchableSections.show) {
+      $watchableSections.show.removeAttr('style');
+      $watchableSections.show.find('.directorist-content-module__title').show();
+      $watchableSections.show.find('.directorist-content-module__contents').show();
+      $("a[href=\"#".concat($watchableSections.show.attr('id'), "\"]")).show();
+    }
+    if ($watchableSections.hide && $watchableSections.hide.find('.directorist-form-group:visible').length) {
+      $watchableSections.hide.removeAttr('style');
+      $watchableSections.hide.find('.directorist-content-module__title').show();
+      $watchableSections.hide.find('.directorist-content-module__contents').show();
+      $("a[href=\"#".concat($watchableSections.hide.attr('id'), "\"]")).show();
+    } else if ($watchableSections.hide) {
+      $watchableSections.hide.css({
+        display: 'none',
+        height: 0,
+        padding: 0,
+        margin: 0,
+        border: 0,
+        overflow: 'hidden'
+      });
+      $watchableSections.hide.find('.directorist-content-module__title').hide();
+      $watchableSections.hide.find('.directorist-content-module__contents').hide();
+      $("a[href=\"#".concat($watchableSections.hide.attr('id'), "\"]")).hide();
+    }
+
+    // loadCategoryCustomFields( {
+    //     categoryIds,
+    //     listingId,
+    //     directoryId,
+    //     onBeforeSend: function() {
+    //         console.log('before send!');
+    //     },
+    //     onSuccess: function( response ) {
+    //         if ( ! response.success ) {
+    //             $('.atbdp_category_custom_fields', getWrapper() ).empty();
+    //             $('.atbdp_category_custom_fields-wrapper', getWrapper() ).hide();
+    //             return;
+    //         }
+
+    //         $('.atbdp_category_custom_fields', getWrapper() ).empty();
+
+    //         $.each( response.data, function( fieldId, fieldMarkup ) {
+    //             let $newMarkup  = $( fieldMarkup );
+
+    //             if ( $newMarkup.find( '.directorist-form-element' )[0] !== undefined ) {
+    //                 $newMarkup.find( '.directorist-form-element' )[0].setAttribute( 'data-id', `${fieldId}` );
+    //             }
+
+    //             if($($newMarkup[0]).find('.directorist-radio input, .directorist-checkbox input').length){
+    //                 $($newMarkup[0]).find('.directorist-radio input, .directorist-checkbox input').each((i, item)=>{
+    //                     $(item).attr('id', `directorist-cf-${fieldId}-${i}`);
+    //                     $(item).attr('data-id', `directorist-cf-${fieldId}-${i}`);
+    //                     $(item).addClass('directorist-form-checks');
+    //                 })
+    //                 $($newMarkup[0]).find('.directorist-radio label, .directorist-checkbox label').each((i, item)=>{
+    //                     $(item).attr('for', `directorist-cf-${fieldId}-${i}`);
+    //                 })
+    //             }
+
+    //             $( '.atbdp_category_custom_fields', getWrapper() ).append( $newMarkup );
+    //         } );
+
+    //         $( '.atbdp_category_custom_fields-wrapper', getWrapper() ).show();
+
+    //         customFieldSeeMore();
+
+    //         const fieldsCache = getCategoryCustomFieldsCache();
+
+    //         Object.keys( fieldsCache ).forEach( key => {
+    //             const el = document.querySelector( `[data-id="${key}"]` );
+
+    //             if ( el === null ) {
+    //                 return;
+    //             }
+
+    //             if ( el.classList.contains( 'directorist-form-element' ) ) {
+    //                 el.value = fieldsCache[ key ];
+    //             } else {
+    //                 el.checked = fieldsCache[ key ];
+    //             }
+    //         } );
+
+    //         initColorField();
+    //     }
+    // } );
   }
 
   // Create container div after category (in frontend)
-  $('.directorist-form-categories-field').after('<div class="directorist-form-group  atbdp_category_custom_fields"></div>');
+  // $('.directorist-form-categories-field').after('<div class="directorist-form-group  atbdp_category_custom_fields"></div>');
+
   window.addEventListener('load', function () {
     renderCategoryCustomFields();
-    Object(_global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__["cacheCategoryCustomFields"])();
+    // cacheCategoryCustomFields();
   });
   window.addEventListener('directorist-type-change', function () {
     renderCategoryCustomFields();
-    Object(_global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__["cacheCategoryCustomFields"])();
+    // cacheCategoryCustomFields();
   });
 
   // Render category based fields on category change (frontend)
-  $('#at_biz_dir-categories').on('change', Object(_components_debounce__WEBPACK_IMPORTED_MODULE_6__["default"])(function () {
+  $('#at_biz_dir-categories').on('change', function () {
     renderCategoryCustomFields();
-    Object(_global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__["cacheCategoryCustomFields"])();
-  }, 270));
+    // cacheCategoryCustomFields();
+  });
 
   // Render category based fields on category change (backend)
-  $('#at_biz_dir-categorychecklist').on('change', Object(_components_debounce__WEBPACK_IMPORTED_MODULE_6__["default"])(function () {
+  $('#at_biz_dir-categorychecklist').on('change', function () {
     renderCategoryCustomFields();
-    Object(_global_components_cache_category_custom_fields__WEBPACK_IMPORTED_MODULE_0__["cacheCategoryCustomFields"])();
-  }, 270));
+    // cacheCategoryCustomFields();
+  });
 
   // Make sure to place the following event trigger after the event bindings.
   if (!directorist.is_admin) {
@@ -571,8 +620,8 @@ $(function () {
     var selectedImages = [];
     var uploadedImages = [];
     if (mediaUploaders.length) {
-      for (var _i = 0, _mediaUploaders = mediaUploaders; _i < _mediaUploaders.length; _i++) {
-        var uploader = _mediaUploaders[_i];
+      for (var _i2 = 0, _mediaUploaders = mediaUploaders; _i2 < _mediaUploaders.length; _i2++) {
+        var uploader = _mediaUploaders[_i2];
         if (!uploader.media_uploader || $(uploader.media_uploader.container).parents('form').get(0) !== $form.get(0)) {
           continue;
         }
@@ -676,7 +725,7 @@ $(function () {
       }
       if (mediaUploaders.length) {
         var _loop = function _loop() {
-          var uploader = _mediaUploaders2[_i2];
+          var uploader = _mediaUploaders2[_i3];
           if (!uploader.media_uploader || $(uploader.media_uploader.container).parents('form').get(0) !== $form.get(0)) {
             return 1; // continue
           }
@@ -696,7 +745,7 @@ $(function () {
             }
           }
         };
-        for (var _i2 = 0, _mediaUploaders2 = mediaUploaders; _i2 < _mediaUploaders2.length; _i2++) {
+        for (var _i3 = 0, _mediaUploaders2 = mediaUploaders; _i3 < _mediaUploaders2.length; _i3++) {
           if (_loop()) continue;
         }
       }
@@ -1133,7 +1182,6 @@ function defaultAddListing() {
         requestAnimationFrame(scrollAnimation); // Continue the scrollAnimation
       }
     }
-
     function easeInOutQuad(t, b, c, d) {
       t /= d / 2;
       if (t < 1) return c / 2 * t * t + b;
@@ -1202,38 +1250,6 @@ function regenerate_and_update_nonce() {
 
 /***/ }),
 
-/***/ "./assets/src/js/global/components/cache-category-custom-fields.js":
-/*!*************************************************************************!*\
-  !*** ./assets/src/js/global/components/cache-category-custom-fields.js ***!
-  \*************************************************************************/
-/*! exports provided: cacheCategoryCustomFields, getCategoryCustomFieldsCache */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cacheCategoryCustomFields", function() { return cacheCategoryCustomFields; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCategoryCustomFieldsCache", function() { return getCategoryCustomFieldsCache; });
-var cache = {};
-function cacheCategoryCustomFields() {
-  var customFields = document.querySelectorAll('.atbdp_category_custom_fields .directorist-form-element');
-  var checksField = document.querySelectorAll('.atbdp_category_custom_fields .directorist-form-checks');
-  if (customFields.length) {
-    customFields.forEach(function (el) {
-      return cache[el.getAttribute('data-id')] = el.value;
-    });
-  }
-  if (checksField.length) {
-    checksField.forEach(function (el) {
-      return cache[el.getAttribute('data-id')] = el.checked;
-    });
-  }
-}
-function getCategoryCustomFieldsCache() {
-  return cache;
-}
-
-/***/ }),
-
 /***/ "./assets/src/js/global/components/debounce.js":
 /*!*****************************************************!*\
   !*** ./assets/src/js/global/components/debounce.js ***!
@@ -1263,46 +1279,6 @@ function debounce(func, wait, immediate) {
 
 /***/ }),
 
-/***/ "./assets/src/js/global/components/load-category-custom-fields.js":
-/*!************************************************************************!*\
-  !*** ./assets/src/js/global/components/load-category-custom-fields.js ***!
-  \************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return loadCategoryCustomFields; });
-function loadCategoryCustomFields() {
-  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    directoryId: null,
-    listingId: null,
-    categoryIds: null,
-    onBeforeSending: null,
-    onSuccess: null
-  };
-  var directory_id = args.directoryId,
-    listing_id = args.listingId,
-    category_ids = args.categoryIds,
-    onBeforeSending = args.onBeforeSending,
-    onSuccess = args.onSuccess;
-  var payload = {
-    action: 'directorist_load_category_custom_fields',
-    directorist_nonce: directorist.directorist_nonce,
-    listing_id: listing_id,
-    category_ids: category_ids,
-    directory_id: directory_id
-  };
-  return jQuery.ajax({
-    method: 'POST',
-    url: directorist.add_listing_data.ajaxurl,
-    data: payload,
-    beforeSend: onBeforeSending
-  }).done(onSuccess);
-}
-
-/***/ }),
-
 /***/ "./assets/src/js/global/components/select2-custom-control.js":
 /*!*******************************************************************!*\
   !*** ./assets/src/js/global/components/select2-custom-control.js ***!
@@ -1310,9 +1286,9 @@ function loadCategoryCustomFields() {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 var $ = jQuery;
 window.addEventListener('load', waitAndInit);
 window.addEventListener('directorist-search-form-nav-tab-reloaded', waitAndInit);
@@ -1548,7 +1524,6 @@ function initSelect2() {
   // Not found in any template
   '.bdas-category-search' // Not found in any template
   ];
-
   selectors.forEach(function (selector) {
     return Object(_lib_helper__WEBPACK_IMPORTED_MODULE_1__["convertToSelect2"])(selector);
   });
@@ -1675,7 +1650,6 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       if (level > 1) {
         $state.addClass('item-level-' + level); // Add class for the level (e.g., level-1, level-2, etc.)
       }
-
       $state.html(combinedText); // Set the combined content (icon + text)
 
       return $state;
@@ -2033,6 +2007,36 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/arrayLikeToArray.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _arrayLikeToArray(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
+}
+module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/arrayWithHoles.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _arrayWithHoles(r) {
+  if (Array.isArray(r)) return r;
+}
+module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/defineProperty.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
@@ -2041,21 +2045,85 @@ window.addEventListener('load', function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 var toPropertyKey = __webpack_require__(/*! ./toPropertyKey.js */ "./node_modules/@babel/runtime/helpers/toPropertyKey.js");
-function _defineProperty(obj, key, value) {
-  key = toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
+function _defineProperty(e, r, t) {
+  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
 }
 module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = !0,
+      o = !1;
+    try {
+      if (i = (t = t.call(r)).next, 0 === l) {
+        if (Object(t) !== t) return;
+        f = !1;
+      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+    } catch (r) {
+      o = !0, n = r;
+    } finally {
+      try {
+        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+module.exports = _iterableToArrayLimit, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/nonIterableRest.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/nonIterableRest.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+module.exports = _nonIterableRest, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/slicedToArray.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/slicedToArray.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithHoles = __webpack_require__(/*! ./arrayWithHoles.js */ "./node_modules/@babel/runtime/helpers/arrayWithHoles.js");
+var iterableToArrayLimit = __webpack_require__(/*! ./iterableToArrayLimit.js */ "./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js");
+var unsupportedIterableToArray = __webpack_require__(/*! ./unsupportedIterableToArray.js */ "./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js");
+var nonIterableRest = __webpack_require__(/*! ./nonIterableRest.js */ "./node_modules/@babel/runtime/helpers/nonIterableRest.js");
+function _slicedToArray(r, e) {
+  return arrayWithHoles(r) || iterableToArrayLimit(r, e) || unsupportedIterableToArray(r, e) || nonIterableRest();
+}
+module.exports = _slicedToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -2067,17 +2135,17 @@ module.exports = _defineProperty, module.exports.__esModule = true, module.expor
 /***/ (function(module, exports, __webpack_require__) {
 
 var _typeof = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js")["default"];
-function _toPrimitive(input, hint) {
-  if (_typeof(input) !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (_typeof(res) !== "object") return res;
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return ("string" === r ? String : Number)(t);
 }
-module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -2090,11 +2158,11 @@ module.exports = _toPrimitive, module.exports.__esModule = true, module.exports[
 
 var _typeof = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js")["default"];
 var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ "./node_modules/@babel/runtime/helpers/toPrimitive.js");
-function _toPropertyKey(arg) {
-  var key = toPrimitive(arg, "string");
-  return _typeof(key) === "symbol" ? key : String(key);
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : i + "";
 }
-module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -2108,13 +2176,32 @@ module.exports = _toPropertyKey, module.exports.__esModule = true, module.export
 function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+  return module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
     return typeof o;
   } : function (o) {
     return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports, _typeof(o);
 }
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray.js */ "./node_modules/@babel/runtime/helpers/arrayLikeToArray.js");
+function _unsupportedIterableToArray(r, a) {
+  if (r) {
+    if ("string" == typeof r) return arrayLikeToArray(r, a);
+    var t = {}.toString.call(r).slice(8, -1);
+    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? arrayLikeToArray(r, a) : void 0;
+  }
+}
+module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
