@@ -15484,6 +15484,8 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
   padding: 25px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #e9e9e9;
 }
 .directorist-authentication__form__recover-pass-modal p {
   font-size: 14px;
