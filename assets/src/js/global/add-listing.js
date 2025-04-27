@@ -327,9 +327,20 @@ $(function() {
         }
 
         let   categoryIds           = [];
+        let   directoryId           = 0;
+        const fieldsMap             = localized_data.category_custom_field_relations;
         const categoryInputSelector = directorist.is_admin ?
             '#at_biz_dir-categorychecklist input:checked':
             '#at_biz_dir-categories option:selected';
+
+        directoryId = $( 'select[name="directory_type"]', getWrapper() ).val();
+        if ( ! directoryId ) {
+            directoryId = $( 'input[name="directory_type"]', getWrapper() ).val();
+        }
+
+        if ( typeof fieldsMap[ directoryId ] === 'undefined' || fieldsMap[ directoryId ].length === 0 ) {
+            return;
+        }
 
         const $selectedCategories = $( categoryInputSelector );
         if ( $selectedCategories.length ) {
@@ -339,7 +350,7 @@ $(function() {
         let $watchableSections = { hide: null, show: null };
             categoryIds     = new Set( categoryIds );
 
-        for ( const [ fieldKey, categoryId ] of Object.entries( localized_data.category_custom_field_relations ) ) {
+        for ( const [ fieldKey, categoryId ] of Object.entries( fieldsMap[ directoryId ] ) ) {
             const $input   = $( fieldKey.includes( 'checkbox' ) ? `[name="${fieldKey}[]"]` : `[name="${fieldKey}"]` );
             const $wrapper = $input.closest( '.directorist-form-group' );
 

@@ -409,7 +409,16 @@ $(function () {
       return;
     }
     var categoryIds = [];
+    var directoryId = 0;
+    var fieldsMap = localized_data.category_custom_field_relations;
     var categoryInputSelector = directorist.is_admin ? '#at_biz_dir-categorychecklist input:checked' : '#at_biz_dir-categories option:selected';
+    directoryId = $('select[name="directory_type"]', getWrapper()).val();
+    if (!directoryId) {
+      directoryId = $('input[name="directory_type"]', getWrapper()).val();
+    }
+    if (typeof fieldsMap[directoryId] === 'undefined' || fieldsMap[directoryId].length === 0) {
+      return;
+    }
     var $selectedCategories = $(categoryInputSelector);
     if ($selectedCategories.length) {
       categoryIds = $selectedCategories.toArray().map(function (el) {
@@ -421,7 +430,7 @@ $(function () {
       show: null
     };
     categoryIds = new Set(categoryIds);
-    for (var _i = 0, _Object$entries = Object.entries(localized_data.category_custom_field_relations); _i < _Object$entries.length; _i++) {
+    for (var _i = 0, _Object$entries = Object.entries(fieldsMap[directoryId]); _i < _Object$entries.length; _i++) {
       var _Object$entries$_i = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_Object$entries[_i], 2),
         fieldKey = _Object$entries$_i[0],
         categoryId = _Object$entries$_i[1];
