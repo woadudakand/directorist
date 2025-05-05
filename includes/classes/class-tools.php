@@ -273,9 +273,10 @@ use Directorist\Listings_CSV_Importer as Importer;
 			while ( ! $file_object->eof() ) {
 				$position++;
 
-				$row = $file_object->fgetcsv();
+				$row          = $file_object->fgetcsv();
+				$empty_filter = array_filter( $row );
 
-				if ( empty( $row ) ) {
+				if ( empty( $empty_filter ) ) {
 					$failed_items[] = sprintf( 'Row %d: Empty row', $position );
 					continue;
 				}
