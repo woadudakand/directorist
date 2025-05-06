@@ -65,16 +65,16 @@ jQuery(document).ready(function ($) {
         $('.directorist-importer-progress').val(10);
 
         const configFields = $( '.directorist-listings-importer-config-field' );
-        let position = 0;
-        let offset   = 0;
 
-        var run_import = function () {
+        const runImporter = function(position = 0, offset = 0) {
             const form_data = new FormData();
 
             // ajax action
             form_data.append( 'action', 'directorist_import_listings' );
-            form_data.append( 'position', position );
-            form_data.append( 'offset', offset );
+            form_data.append( '_position', position );
+            form_data.append( '_offset', offset );
+
+            console.log(position, offset)
 
             form_data.append('directorist_nonce', directorist_admin.directorist_nonce);
 
@@ -150,19 +150,17 @@ jQuery(document).ready(function ($) {
                         return;
                     }
 
+                    const percentage = (response.position / response.total) * 100;
+
                     $('.importer-details').html(`${response.position}/${response.total}`);
-                    $('.directorist-importer-progress').val( ( response.position * 100 ) / response.total );
+                    $('.directorist-importer-length').css( 'width', percentage + '%' );
+                    $('.directorist-importer-progress').val( percentage );
 
                     if ( ! response.done ) {
-                        position = response.position;
-                        offset   = response.offset;
-
-                        run_import();
+                        runImporter(response.position, response.offset);
                     } else {
                         window.location = `${response.redirect_url}&listing-imported=${response.imported_items.length}&listing-failed=${response.failed_items.length}`;
                     }
-
-                    $('.directorist-importer-length').css( 'width', response.percentage + '%' );
                 },
 
                 error(response) {
@@ -172,7 +170,7 @@ jQuery(document).ready(function ($) {
 
         };
 
-        run_import();
+        runImporter();
     });
 
     /* csv upload */

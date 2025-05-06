@@ -232,8 +232,8 @@ use Directorist\Listings_CSV_Importer as Importer;
 
 			$supported_post_status = array_keys( get_post_statuses() );
 			$listing_create_status = directorist_get_listing_create_status( $directory_id );
-			$offset                = ! empty( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
-			$position              = ! empty( $_POST['position'] ) ? absint( $_POST['position'] ) : 0;
+			$offset                = ! empty( $_POST['_offset'] ) ? absint( $_POST['_offset'] ) : 0;
+			$position              = ! empty( $_POST['_position'] ) ? absint( $_POST['_position'] ) : 0;
 			$preview_image         = ! empty( $_POST['listing_img'] ) ? directorist_clean( wp_unslash( $_POST['listing_img'] ) ) : '';
 			$title                 = ! empty( $_POST['listing_title'] ) ? directorist_clean( wp_unslash( $_POST['listing_title'] ) ) : '';
 			$listing_status        = ! empty( $_POST['listing_status'] ) ? directorist_clean( wp_unslash( $_POST['listing_status'] ) ) : '';
@@ -271,12 +271,11 @@ use Directorist\Listings_CSV_Importer as Importer;
 			$file_object->fseek( $offset, SEEK_SET );
 
 			while ( ! $file_object->eof() ) {
-				$position++;
+				$position += 1;
 
-				$row          = $file_object->fgetcsv();
-				$empty_filter = array_filter( $row );
+				$row = $file_object->fgetcsv();
 
-				if ( empty( $empty_filter ) ) {
+				if ( empty( array_filter( $row ) ) ) {
 					$failed_items[] = sprintf( 'Row %d: Empty row', $position );
 					continue;
 				}
@@ -325,135 +324,137 @@ use Directorist\Listings_CSV_Importer as Importer;
 					$args['post_date'] = date( 'Y-m-d H:i:s', $post_date );
 				}
 
-				// Create listing
-				$post_id = wp_insert_post( $args, true );
-				if ( is_wp_error( $post_id ) ) {
-					$failed_items[] = sprintf(
-						'Row %d - Title %s: %s',
-						$file_object->key(),
-						$args['post_title'],
-						$post_id->get_error_message()
-					);
-					continue;
-				}
+				file_put_contents( __DIR__. '/test.txt', print_r( $args['post_title'] . "\n", true ), FILE_APPEND );
 
-				$imported_items[] = sprintf( 'Row %d - ID %d: %s', $file_object->key(), $post_id, $args['post_title'] );
+				// // Create listing
+				// $post_id = wp_insert_post( $args, true );
+				// if ( is_wp_error( $post_id ) ) {
+				// 	$failed_items[] = sprintf(
+				// 		'Row %d - Title %s: %s',
+				// 		$file_object->key(),
+				// 		$args['post_title'],
+				// 		$post_id->get_error_message()
+				// 	);
+				// 	continue;
+				// }
 
-				// Save listing directory type.
-				update_post_meta( $post_id, '_directory_type', $directory_id );
-				wp_set_object_terms( $post_id,  $directory_id, ATBDP_DIRECTORY_TYPE );
+				// $imported_items[] = sprintf( 'Row %d - ID %d: %s', $file_object->key(), $post_id, $args['post_title'] );
 
-				// Process taxonomies
-				if ( $tax_inputs ) {
-					foreach ( $tax_inputs as $taxonomy => $value ) {
-						if ( ! $value ) {
-							continue;
-						}
+				// // Save listing directory type.
+				// update_post_meta( $post_id, '_directory_type', $directory_id );
+				// wp_set_object_terms( $post_id,  $directory_id, ATBDP_DIRECTORY_TYPE );
 
-						$terms = static::sanitize_text( $post[ $value ] ?? '' );
-						$terms = empty( $terms ) ? array() : explode( ',', $post[ $value ] );
-						if ( ! $terms ) {
-							continue;
-						}
+				// // Process taxonomies
+				// if ( $tax_inputs ) {
+				// 	foreach ( $tax_inputs as $taxonomy => $value ) {
+				// 		if ( ! $value ) {
+				// 			continue;
+				// 		}
 
-						if ( 'category' === $taxonomy ) {
-							$taxonomy = ATBDP_CATEGORY;
-						} elseif ( 'location' === $taxonomy ) {
-							$taxonomy = ATBDP_LOCATION;
-						} else {
-							$taxonomy = ATBDP_TAGS;
-						}
+				// 		$terms = static::sanitize_text( $post[ $value ] ?? '' );
+				// 		$terms = empty( $terms ) ? array() : explode( ',', $post[ $value ] );
+				// 		if ( ! $terms ) {
+				// 			continue;
+				// 		}
 
-						$term_ids = array();
-						$multiple = count( $terms ) > 0;
+				// 		if ( 'category' === $taxonomy ) {
+				// 			$taxonomy = ATBDP_CATEGORY;
+				// 		} elseif ( 'location' === $taxonomy ) {
+				// 			$taxonomy = ATBDP_LOCATION;
+				// 		} else {
+				// 			$taxonomy = ATBDP_TAGS;
+				// 		}
 
-						foreach ( $terms as $term ) {
-							$term = trim( $term );
+				// 		$term_ids = array();
+				// 		$multiple = count( $terms ) > 0;
 
-							if ( isset( $terms_cache[ $term ] ) ) {
-								$term_id = $terms_cache[ $term ];
-							} else {
-								$term_id = $this->maybe_create_term( $term, $taxonomy );
-							}
+				// 		foreach ( $terms as $term ) {
+				// 			$term = trim( $term );
 
-							if ( empty( $term_id ) ) {
-								continue;
-							}
+				// 			if ( isset( $terms_cache[ $term ] ) ) {
+				// 				$term_id = $terms_cache[ $term ];
+				// 			} else {
+				// 				$term_id = $this->maybe_create_term( $term, $taxonomy );
+				// 			}
 
-							if ( $taxonomy === ATBDP_CATEGORY || $taxonomy === ATBDP_LOCATION ) {
-								directorist_update_term_directory( $term_id, array( $directory_id ), true );
-							}
+				// 			if ( empty( $term_id ) ) {
+				// 				continue;
+				// 			}
 
-							$term_ids[] = $term_id;
-							$terms_cache[ $term ] = $term_id;
-						}
+				// 			if ( $taxonomy === ATBDP_CATEGORY || $taxonomy === ATBDP_LOCATION ) {
+				// 				directorist_update_term_directory( $term_id, array( $directory_id ), true );
+				// 			}
 
-						wp_set_object_terms( $post_id, $term_ids, $taxonomy, $multiple );
-					}
-				}
+				// 			$term_ids[] = $term_id;
+				// 			$terms_cache[ $term ] = $term_id;
+				// 		}
 
-				foreach ( $metas as $index => $value ) {
-				    $meta_value = $post[ $value ] ? self::unescape_data( $post[ $value ] ) : '';
-				    $meta_value = $this->maybe_unserialize_csv_string( $meta_value );
+				// 		wp_set_object_terms( $post_id, $term_ids, $taxonomy, $multiple );
+				// 	}
+				// }
 
-				    if ( $meta_value ) {
-				        update_post_meta( $post_id, '_' . $index, $meta_value );
-				    }
-				}
+				// foreach ( $metas as $index => $value ) {
+				//     $meta_value = $post[ $value ] ? self::unescape_data( $post[ $value ] ) : '';
+				//     $meta_value = $this->maybe_unserialize_csv_string( $meta_value );
 
-				$expire_date = calc_listing_expiry_date( '', '', $directory_id );
-				update_post_meta( $post_id, '_expiry_date', $expire_date );
-				update_post_meta( $post_id, '_featured', 0 );
+				//     if ( $meta_value ) {
+				//         update_post_meta( $post_id, '_' . $index, $meta_value );
+				//     }
+				// }
 
-				// TODO: Status has been migrated, remove related code.
-				update_post_meta( $post_id, '_listing_status', 'post_status' );
+				// $expire_date = calc_listing_expiry_date( '', '', $directory_id );
+				// update_post_meta( $post_id, '_expiry_date', $expire_date );
+				// update_post_meta( $post_id, '_featured', 0 );
 
-				$image_urls = $post[ $preview_image ] ?? '';
-				$image_urls = empty( $image_urls ) ? [] : explode( ',', $image_urls );
+				// // TODO: Status has been migrated, remove related code.
+				// update_post_meta( $post_id, '_listing_status', 'post_status' );
 
-				if ( $image_urls ) {
-				    $attachment_ids = [];
+				// $image_urls = $post[ $preview_image ] ?? '';
+				// $image_urls = empty( $image_urls ) ? [] : explode( ',', $image_urls );
 
-				    foreach ( $image_urls as $image_url ) {
-				        $image_url = trim( $image_url );
+				// if ( $image_urls ) {
+				//     $attachment_ids = [];
 
-				        if ( isset( $attachments_cache[ $image_url ] ) ) {
-				            $attachment_id = $attachments_cache[ $image_url ];
-				        } else {
-							$attachment_id = self::atbdp_insert_attachment_from_url( $image_url, $post_id );
-						}
+				//     foreach ( $image_urls as $image_url ) {
+				//         $image_url = trim( $image_url );
 
-						if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
-							continue;
-						}
+				//         if ( isset( $attachments_cache[ $image_url ] ) ) {
+				//             $attachment_id = $attachments_cache[ $image_url ];
+				//         } else {
+				// 			$attachment_id = self::atbdp_insert_attachment_from_url( $image_url, $post_id );
+				// 		}
 
-						$attachment_ids[]                = $attachment_id;
-						$attachments_cache[ $image_url ] = $attachment_id;
-				    }
+				// 		if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
+				// 			continue;
+				// 		}
 
-					if ( $attachment_ids ) {
-						update_post_meta( $post_id, '_listing_prv_img', $attachment_ids[0] );
-						array_shift( $attachment_ids );
-					}
+				// 		$attachment_ids[]                = $attachment_id;
+				// 		$attachments_cache[ $image_url ] = $attachment_id;
+				//     }
 
-					if ( $attachment_ids ) {
-						update_post_meta( $post_id, '_listing_img', $attachment_ids );
-						/**
-						 * Add Listing Meta - to track which listings are imported by CSV
-						 */
-						update_post_meta( $post_id, '_directorist_imported_by_csv', 'yes' );
-					}
-				}
+				// 	if ( $attachment_ids ) {
+				// 		update_post_meta( $post_id, '_listing_prv_img', $attachment_ids[0] );
+				// 		array_shift( $attachment_ids );
+				// 	}
 
-				/**
-				 * Fire this event once a listing is successfully imported from CSV.
-				 *
-				 * @since 7.2.0
-				 *
-				 * @param int $post_id Listing id.
-				 * @param array $post  Listing data.
-				 */
-				do_action( 'directorist_listing_imported', $post_id, $post );
+				// 	if ( $attachment_ids ) {
+				// 		update_post_meta( $post_id, '_listing_img', $attachment_ids );
+				// 		/**
+				// 		 * Add Listing Meta - to track which listings are imported by CSV
+				// 		 */
+				// 		update_post_meta( $post_id, '_directorist_imported_by_csv', 'yes' );
+				// 	}
+				// }
+
+				// /**
+				//  * Fire this event once a listing is successfully imported from CSV.
+				//  *
+				//  * @since 7.2.0
+				//  *
+				//  * @param int $post_id Listing id.
+				//  * @param array $post  Listing data.
+				//  */
+				// do_action( 'directorist_listing_imported', $post_id, $post );
 
 				if ( $this->time_exceeded() || $this->memory_exceeded() || $batch_size === $counter ) {
 					break;
@@ -470,6 +471,12 @@ use Directorist\Listings_CSV_Importer as Importer;
 			// 	}
 			// 	directorist_background_image_process( $deferred_resizable_images );
 			// }
+
+			file_put_contents( __DIR__. '/test-status.txt', print_r( [
+				'position' => $position,
+				'total' => $total_items,
+				'done' => ( $position === $total_items ),
+			], true ) . "\n", FILE_APPEND );
 
 			$data['offset']         = $file_object->ftell();
 			$data['redirect_url']   = esc_url( admin_url( 'edit.php?post_type=at_biz_dir&page=tools&step=3' ) );
