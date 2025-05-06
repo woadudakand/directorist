@@ -9,30 +9,29 @@ use Directorist\Multi_Directory\Multi_Directory_Manager;
  *
  * Walkthrough to the basic setup upon installation
  */
-class SetupWizard
-{
-    /** @var string Currenct Step */
-    public $step   = '';
+class Directorist_Setup_Wizard {
 
-    /** @var array Steps for the setup wizard */
-    public $steps  = array();
+	/**
+	 * Current step
+	 * @var string
+	 */
+    public $step = '';
 
     /**
-     * Actions to be executed after the HTTP response has completed
-     *
+     * Steps
      * @var array
      */
-    private $deferred_actions = array();
+    public $steps = array();
 
     /**
      * Hook in tabs.
      */
     public function __construct() {
-            add_action( 'admin_menu', array( $this, 'admin_menus' ) );
-            add_action( 'admin_init', array( $this, 'setup_wizard' ), 99 );
-            add_action( 'admin_notices', array( $this, 'render_run_admin_setup_wizard_notice' ) );
-            add_action( 'wp_ajax_directorist_setup_wizard', array( $this, 'directorist_setup_wizard' ) );
-            add_action( 'wp_loaded', array( $this, 'hide_notices' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menus' ) );
+		add_action( 'admin_init', array( $this, 'setup_wizard' ), 99 );
+		add_action( 'admin_notices', array( $this, 'render_run_admin_setup_wizard_notice' ) );
+		add_action( 'wp_ajax_directorist_setup_wizard', array( $this, 'directorist_setup_wizard' ) );
+		add_action( 'wp_loaded', array( $this, 'hide_notices' ) );
     }
 
     public function directorist_setup_wizard() {
@@ -1117,4 +1116,4 @@ class SetupWizard
 <?php
     }
 }
-new SetupWizard();
+new Directorist_Setup_Wizard();
