@@ -1903,7 +1903,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         (_slider$directoristCu = slider.directoristCustomRangeSlider) === null || _slider$directoristCu === void 0 || _slider$directoristCu.on('update', function (values, handle) {
           var value = values[handle];
           handle === 0 ? minInput.value = Math.round(value) : maxInput.value = Math.round(value);
-          var rangeValue = minInput.value + '-' + maxInput.value;
+          var minVal = minInput.value.trim();
+          var maxVal = maxInput.value.trim();
+          var rangeValue = '';
+          if (minVal && maxVal) {
+            rangeValue = "".concat(minVal, "-").concat(maxVal);
+          }
           sliderRange.value = rangeValue;
           sliderRangeShow && (sliderRangeShow.innerHTML = rangeValue);
           if (sliderRangeValue) {
@@ -2061,8 +2066,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (value > 0) {
         var customSliderMin = targetNode.closest('.directorist-custom-range-slider').querySelector('.directorist-custom-range-slider__value__min');
         var customSliderRange = targetNode.closest('.directorist-custom-range-slider').querySelector('.directorist-custom-range-slider__range');
-        customSliderMin.value = customSliderMin.value ? customSliderMin.value : 0;
-        customSliderRange.value = customSliderMin.value + '-' + value;
+        var minVal = customSliderMin.value ? customSliderMin.value.trim() : '';
+        var maxVal = value ? value.trim() : '';
+        customSliderRange.value = minVal && maxVal ? "".concat(minVal, "-").concat(maxVal) : '';
         enableResetButton(searchForm);
       } else {
         initForm(searchForm);

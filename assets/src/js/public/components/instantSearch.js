@@ -6,85 +6,60 @@ import debounce from '../../global/components/debounce';
 
     // Update search URL with form data
     function update_instant_search_url(form_data) {
-        if (history.pushState) {
-            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
-            if (form_data.paged && form_data.paged.length) {
-                var query = (query && query.length) ? query + '&paged=' + form_data.paged : '?paged=' + form_data.paged;
+        console.log('update_instant_search_url', { form_data });
+        if (!history.pushState) return;
+    
+        let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        let query = '';
+    
+        const appendQuery = (key, value) => {
+            if (value !== undefined && value !== null && value !== '' && (!Array.isArray(value) || value.length)) {
+                if (Array.isArray(value)) {
+                    value.forEach(v => {
+                        if (v !== undefined && v !== null && v !== '') {
+                            query += (query.length ? '&' : '?') + `${key}[]=${encodeURIComponent(v)}`;
+                        }
+                    });
+                } else {
+                    query += (query.length ? '&' : '?') + `${key}=${encodeURIComponent(value)}`;
+                }
             }
-            if (form_data.directory_type && form_data.directory_type.length) {
-                var query = (query && query.length) ? query + '&directory_type=' + form_data.directory_type : '?directory_type=' + form_data.directory_type;
-            }
-            if (form_data.view && form_data.view.length) {
-                var query = (query && query.length) ? query + '&view=' + form_data.view : '?view=' + form_data.view;
-            }
-            if (form_data.q && form_data.q.length) {
-                var query = (query && query.length) ? query + '&q=' + form_data.q : '?q=' + form_data.q;
-            }
-            if (form_data.in_cat && form_data.in_cat.length) {
-                var query = (query && query.length) ? query + '&in_cat=' + form_data.in_cat : '?in_cat=' + form_data.in_cat;
-            }
-            if (form_data.in_loc && form_data.in_loc.length) {
-                var query = (query && query.length) ? query + '&in_loc=' + form_data.in_loc : '?in_loc=' + form_data.in_loc;
-            }
-            if (form_data.in_tag && form_data.in_tag.length) {
-                var query = (query && query.length) ? query + '&in_tag=' + form_data.in_tag : '?in_tag=' + form_data.in_tag;
-            }
-            if (form_data.price && form_data.price[0] && form_data.price[0] > 0) {
-                var query = (query && query.length) ? query + '&price%5B0%5D=' + form_data.price[0] : '?price%5B0%5D=' + form_data.price[0];
-            }
-            if (form_data.price && form_data.price[1] && form_data.price[1] > 0) {
-                var query = (query && query.length) ? query + '&price%5B1%5D=' + form_data.price[1] : '?price%5B1%5D=' + form_data.price[1];
-            }
-            if (form_data.price_range && form_data.price_range.length) {
-                var query = (query && query.length) ? query + '&price_range=' + form_data.price_range : '?price_range=' + form_data.price_range;
-            }
-            if (form_data.search_by_rating && form_data.search_by_rating.length) {
-                var query = (query && query.length) ? query + '&search_by_rating=' + form_data.search_by_rating : '?search_by_rating=' + form_data.search_by_rating;
-            }
-            if (form_data.cityLat && form_data.cityLat.length && form_data.address && form_data.address.length) {
-                var query = (query && query.length) ? query + '&cityLat=' + form_data.cityLat : '?cityLat=' + form_data.cityLat;
-            }
-            if (form_data.cityLng && form_data.cityLng.length && form_data.address && form_data.address.length) {
-                var query = (query && query.length) ? query + '&cityLng=' + form_data.cityLng : '?cityLng=' + form_data.cityLng;
-            }
-            if (form_data.miles && form_data.miles.length) {
-                var query = (query && query.length) ? query + '&miles=' + form_data.miles : '?miles=' + form_data.miles;
-            }
-            if (form_data.address && form_data.address.length) {
-                var query = (query && query.length) ? query + '&address=' + form_data.address : '?address=' + form_data.address;
-            }
-            if (form_data.zip && form_data.zip.length) {
-                var query = (query && query.length) ? query + '&zip=' + form_data.zip : '?zip=' + form_data.zip;
-            }
-            if (form_data.fax && form_data.fax.length) {
-                var query = (query && query.length) ? query + '&fax=' + form_data.fax : '?fax=' + form_data.fax;
-            }
-            if (form_data.email && form_data.email.length) {
-                var query = (query && query.length) ? query + '&email=' + form_data.email : '?email=' + form_data.email;
-            }
-            if (form_data.website && form_data.website.length) {
-                var query = (query && query.length) ? query + '&website=' + form_data.website : '?website=' + form_data.website;
-            }
-            if (form_data.phone && form_data.phone.length) {
-                var query = (query && query.length) ? query + '&phone=' + form_data.phone : '?phone=' + form_data.phone;
-            }
-            if (form_data.custom_field && Object.keys(form_data.custom_field).length) {
-                Object.keys(form_data.custom_field).forEach((key) => {
-                    query = (query.length) ? query + `&${key}=${form_data.custom_field[key]}` : `?${key}=${form_data.custom_field[key]}`;
-                });
-            }
-            if (form_data.open_now && form_data.open_now.length) {
-                var query = (query && query.length) ? query + '&open_now=' + form_data.open_now : '?open_now=' + form_data.open_now;
-            }
-
-            var newurl = query ? newurl + query : newurl;
-
-            window.history.pushState({
-                path: newurl
-            }, '', newurl);
+        };
+    
+        appendQuery('paged', form_data.paged);
+        appendQuery('directory_type', form_data.directory_type);
+        appendQuery('view', form_data.view);
+        appendQuery('q', form_data.q);
+        appendQuery('in_cat', form_data.in_cat);
+        appendQuery('in_loc', form_data.in_loc);
+        appendQuery('in_tag', form_data.in_tag);
+        appendQuery('price%5B0%5D', form_data.price && form_data.price[0] > 0 ? form_data.price[0] : '');
+        appendQuery('price%5B1%5D', form_data.price && form_data.price[1] > 0 ? form_data.price[1] : '');
+        appendQuery('price_range', form_data.price_range);
+        appendQuery('search_by_rating', form_data.search_by_rating);
+    
+        if (form_data.cityLat && form_data.address) appendQuery('cityLat', form_data.cityLat);
+        if (form_data.cityLng && form_data.address) appendQuery('cityLng', form_data.cityLng);
+    
+        appendQuery('miles', form_data.miles);
+        appendQuery('address', form_data.address);
+        appendQuery('zip', form_data.zip);
+        appendQuery('fax', form_data.fax);
+        appendQuery('email', form_data.email);
+        appendQuery('website', form_data.website);
+        appendQuery('phone', form_data.phone);
+        appendQuery('open_now', form_data.open_now);
+    
+        // Handle custom_field
+        if (form_data.custom_field && typeof form_data.custom_field === 'object') {
+            Object.entries(form_data.custom_field).forEach(([key, val]) => {
+                appendQuery(key, val);
+            });
         }
-    }
+    
+        const finalUrl = query ? newurl + query : newurl;
+        window.history.pushState({ path: finalUrl }, '', finalUrl);
+    }    
 
     // Get URL Parameter
     function getURLParameter( url, name ) {
@@ -1294,27 +1269,33 @@ import debounce from '../../global/components/debounce';
             price.push($(el).val())
         });
 
-        searchElm.find('[name^="custom_field"]').each(function (index, el) {
-            var name = $(el).attr('name');
-            var type = $(el).attr('type');
-            var post_id = name.replace(/(custom_field\[)/, '').replace(/\]/, '');
-            if ('radio' === type) {
-                $.each($("input[name='custom_field[" + post_id + "]']:checked"), function () {
-                    value                 = $(this).val();;
-                    custom_field[post_id] = value;
-                });
-            } else if ('checkbox' === type) {
-                post_id = post_id.split('[]')[0];
-                if (!custom_field[post_id]) {
-                    custom_field[post_id] = [];
+        searchElm.find('[name^="custom_field"]').each(function (_, el) {
+            const $el = $(el);
+            const name = $el.attr('name');
+            const type = $el.attr('type');
+            let post_id = name.replace(/^custom_field\[/, '').replace(/\]$/, '').replace(/\[\]$/, '');
+
+            if (type === 'radio') {
+                const checked = searchElm.find(`input[name="custom_field[${post_id}]"]:checked`).val();
+                if (checked !== undefined && checked !== null && checked !== '') {
+                    custom_field[post_id] = checked;
                 }
-                $.each($("input[name='custom_field[" + post_id + "][]']:checked"), function () {
-                    var value = $(this).val();
-                    custom_field[post_id].push(value);
+            } else if (type === 'checkbox') {
+                const checkedValues = [];
+                searchElm.find(`input[name="custom_field[${post_id}][]"]:checked`).each(function () {
+                    const val = $(this).val();
+                    if (val !== undefined && val !== null && val !== '') {
+                        checkedValues.push(val);
+                    }
                 });
+                if (checkedValues.length) {
+                    custom_field[post_id] = checkedValues;
+                }
             } else {
-                var value = $(el).val();
-                custom_field[post_id] = value;
+                const value = $el.val();
+                if (value !== undefined && value !== null && value !== '') {
+                    custom_field[post_id] = value;
+                }
             }
         });
 
@@ -1379,6 +1360,8 @@ import debounce from '../../global/components/debounce';
         if (directory_type && directory_type.length) {
             form_data.directory_type = directory_type;
         }
+
+        console.log('@formData', {form_data});
 
         update_instant_search_url(form_data);
 
@@ -1505,6 +1488,7 @@ import debounce from '../../global/components/debounce';
 
     // sidebar on keyup searching
     $('body').on("keyup", ".directorist-instant-search .listing-with-sidebar form", debounce( function(e) {
+        console.log('keyup event triggered');
         if ($(e.target).closest('.directorist-custom-range-slider__value').length > 0) {
             return; // Skip calling `filterListing` for this element
         }
@@ -1515,7 +1499,8 @@ import debounce from '../../global/components/debounce';
     }, 250));
 
     // sidebar on change searching
-    $('body').on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", debounce( function(e) {
+    $('body').on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", debounce( function(e) {
+        console.log('change event triggered(radio/checkbox/location/range)');
         e.preventDefault();
         var searchElm = $(this).closest('.listing-with-sidebar');
         filterListing(searchElm);
@@ -1523,6 +1508,7 @@ import debounce from '../../global/components/debounce';
 
     // sidebar on change location, zipcode changing
     $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", debounce(function (e) {
+        console.log('change event triggered (zipcode/location)');
         e.preventDefault();
 
         const searchElm = $(this).closest('.listing-with-sidebar');
@@ -1541,6 +1527,11 @@ import debounce from '../../global/components/debounce';
 
     // select on change with value - searching
     $('body').on("change", ".directorist-instant-search .listing-with-sidebar select", debounce( function(e) {
+        if (!$(this).val()) {
+            return; // Skip calling `filterListing` if the value is empty
+        }
+
+        console.log('change event triggered (select)', {value: $(this).val()});
         e.preventDefault();
         var searchElm = $(this).val() && $(this).closest('.listing-with-sidebar');
         filterListing(searchElm);
@@ -1549,6 +1540,7 @@ import debounce from '../../global/components/debounce';
 
     // select on change with value - searching
     $('body').on("click", ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon", debounce( function(e) {
+        console.log('click event triggered (location icon)');
         e.preventDefault();
         var searchElm = $(this).closest('.listing-with-sidebar');
         filterListing(searchElm);
@@ -1559,13 +1551,15 @@ import debounce from '../../global/components/debounce';
     $('body').on("click", ".directorist-instant-search .directorist-search-field__btn--clear", function(e) {
         let inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]), select').val('');
 
+        console.log('clear input value triggered', inputValue);
+
         if (inputValue) {
             let searchElm = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));
             if (searchElm) {
                 filterListing(searchElm);
             }
         }
-    })
+    });
 
     if( $('.directorist-instant-search').length === 0 ) {
         $('body').on("submit", ".listing-with-sidebar .directorist-basic-search, .listing-with-sidebar .directorist-advanced-search", function (e) {

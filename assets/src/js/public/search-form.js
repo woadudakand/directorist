@@ -1059,8 +1059,16 @@ import './components/directoristSelect';
                 slider.directoristCustomRangeSlider?.on('update', function (values, handle) {
                     let value = values[handle];
                     handle === 0 ? minInput.value = Math.round(value) : maxInput.value = Math.round(value);
-                    let rangeValue = minInput.value + '-' + maxInput.value;
+                    let minVal = minInput.value.trim();
+                    let maxVal = maxInput.value.trim();
+
+                    let rangeValue = '';
+                    if (minVal && maxVal) {
+                        rangeValue = `${minVal}-${maxVal}`;
+                    }
+
                     sliderRange.value = rangeValue;
+
                     sliderRangeShow && (sliderRangeShow.innerHTML = rangeValue);
                     if (sliderRangeValue) {
                         sliderRangeValue.setAttribute('value', rangeValue);
@@ -1233,8 +1241,11 @@ import './components/directoristSelect';
             if (value > 0) {
                 let customSliderMin = targetNode.closest('.directorist-custom-range-slider').querySelector('.directorist-custom-range-slider__value__min');
                 let customSliderRange = targetNode.closest('.directorist-custom-range-slider').querySelector('.directorist-custom-range-slider__range');
-                customSliderMin.value = customSliderMin.value ? customSliderMin.value : 0;
-                customSliderRange.value = customSliderMin.value + '-' + value;
+                const minVal = customSliderMin.value ? customSliderMin.value.trim() : '';
+                const maxVal = value ? value.trim() : '';
+
+                customSliderRange.value = (minVal && maxVal) ? `${minVal}-${maxVal}` : '';
+
                 enableResetButton(searchForm);
             } else {
                 initForm(searchForm);

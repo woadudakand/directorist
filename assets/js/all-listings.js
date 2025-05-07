@@ -1377,7 +1377,13 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _global_components_debounce__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../global/components/debounce */ "./assets/src/js/global/components/debounce.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _global_components_debounce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../global/components/debounce */ "./assets/src/js/global/components/debounce.js");
+
+
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -1391,81 +1397,60 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
-    if (history.pushState) {
-      var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      if (form_data.paged && form_data.paged.length) {
-        var query = query && query.length ? query + '&paged=' + form_data.paged : '?paged=' + form_data.paged;
+    console.log('update_instant_search_url', {
+      form_data: form_data
+    });
+    if (!history.pushState) return;
+    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    var query = '';
+    var appendQuery = function appendQuery(key, value) {
+      if (value !== undefined && value !== null && value !== '' && (!Array.isArray(value) || value.length)) {
+        if (Array.isArray(value)) {
+          value.forEach(function (v) {
+            if (v !== undefined && v !== null && v !== '') {
+              query += (query.length ? '&' : '?') + "".concat(key, "[]=").concat(encodeURIComponent(v));
+            }
+          });
+        } else {
+          query += (query.length ? '&' : '?') + "".concat(key, "=").concat(encodeURIComponent(value));
+        }
       }
-      if (form_data.directory_type && form_data.directory_type.length) {
-        var query = query && query.length ? query + '&directory_type=' + form_data.directory_type : '?directory_type=' + form_data.directory_type;
-      }
-      if (form_data.view && form_data.view.length) {
-        var query = query && query.length ? query + '&view=' + form_data.view : '?view=' + form_data.view;
-      }
-      if (form_data.q && form_data.q.length) {
-        var query = query && query.length ? query + '&q=' + form_data.q : '?q=' + form_data.q;
-      }
-      if (form_data.in_cat && form_data.in_cat.length) {
-        var query = query && query.length ? query + '&in_cat=' + form_data.in_cat : '?in_cat=' + form_data.in_cat;
-      }
-      if (form_data.in_loc && form_data.in_loc.length) {
-        var query = query && query.length ? query + '&in_loc=' + form_data.in_loc : '?in_loc=' + form_data.in_loc;
-      }
-      if (form_data.in_tag && form_data.in_tag.length) {
-        var query = query && query.length ? query + '&in_tag=' + form_data.in_tag : '?in_tag=' + form_data.in_tag;
-      }
-      if (form_data.price && form_data.price[0] && form_data.price[0] > 0) {
-        var query = query && query.length ? query + '&price%5B0%5D=' + form_data.price[0] : '?price%5B0%5D=' + form_data.price[0];
-      }
-      if (form_data.price && form_data.price[1] && form_data.price[1] > 0) {
-        var query = query && query.length ? query + '&price%5B1%5D=' + form_data.price[1] : '?price%5B1%5D=' + form_data.price[1];
-      }
-      if (form_data.price_range && form_data.price_range.length) {
-        var query = query && query.length ? query + '&price_range=' + form_data.price_range : '?price_range=' + form_data.price_range;
-      }
-      if (form_data.search_by_rating && form_data.search_by_rating.length) {
-        var query = query && query.length ? query + '&search_by_rating=' + form_data.search_by_rating : '?search_by_rating=' + form_data.search_by_rating;
-      }
-      if (form_data.cityLat && form_data.cityLat.length && form_data.address && form_data.address.length) {
-        var query = query && query.length ? query + '&cityLat=' + form_data.cityLat : '?cityLat=' + form_data.cityLat;
-      }
-      if (form_data.cityLng && form_data.cityLng.length && form_data.address && form_data.address.length) {
-        var query = query && query.length ? query + '&cityLng=' + form_data.cityLng : '?cityLng=' + form_data.cityLng;
-      }
-      if (form_data.miles && form_data.miles.length) {
-        var query = query && query.length ? query + '&miles=' + form_data.miles : '?miles=' + form_data.miles;
-      }
-      if (form_data.address && form_data.address.length) {
-        var query = query && query.length ? query + '&address=' + form_data.address : '?address=' + form_data.address;
-      }
-      if (form_data.zip && form_data.zip.length) {
-        var query = query && query.length ? query + '&zip=' + form_data.zip : '?zip=' + form_data.zip;
-      }
-      if (form_data.fax && form_data.fax.length) {
-        var query = query && query.length ? query + '&fax=' + form_data.fax : '?fax=' + form_data.fax;
-      }
-      if (form_data.email && form_data.email.length) {
-        var query = query && query.length ? query + '&email=' + form_data.email : '?email=' + form_data.email;
-      }
-      if (form_data.website && form_data.website.length) {
-        var query = query && query.length ? query + '&website=' + form_data.website : '?website=' + form_data.website;
-      }
-      if (form_data.phone && form_data.phone.length) {
-        var query = query && query.length ? query + '&phone=' + form_data.phone : '?phone=' + form_data.phone;
-      }
-      if (form_data.custom_field && Object.keys(form_data.custom_field).length) {
-        Object.keys(form_data.custom_field).forEach(function (key) {
-          query = query.length ? query + "&".concat(key, "=").concat(form_data.custom_field[key]) : "?".concat(key, "=").concat(form_data.custom_field[key]);
-        });
-      }
-      if (form_data.open_now && form_data.open_now.length) {
-        var query = query && query.length ? query + '&open_now=' + form_data.open_now : '?open_now=' + form_data.open_now;
-      }
-      var newurl = query ? newurl + query : newurl;
-      window.history.pushState({
-        path: newurl
-      }, '', newurl);
+    };
+    appendQuery('paged', form_data.paged);
+    appendQuery('directory_type', form_data.directory_type);
+    appendQuery('view', form_data.view);
+    appendQuery('q', form_data.q);
+    appendQuery('in_cat', form_data.in_cat);
+    appendQuery('in_loc', form_data.in_loc);
+    appendQuery('in_tag', form_data.in_tag);
+    appendQuery('price%5B0%5D', form_data.price && form_data.price[0] > 0 ? form_data.price[0] : '');
+    appendQuery('price%5B1%5D', form_data.price && form_data.price[1] > 0 ? form_data.price[1] : '');
+    appendQuery('price_range', form_data.price_range);
+    appendQuery('search_by_rating', form_data.search_by_rating);
+    if (form_data.cityLat && form_data.address) appendQuery('cityLat', form_data.cityLat);
+    if (form_data.cityLng && form_data.address) appendQuery('cityLng', form_data.cityLng);
+    appendQuery('miles', form_data.miles);
+    appendQuery('address', form_data.address);
+    appendQuery('zip', form_data.zip);
+    appendQuery('fax', form_data.fax);
+    appendQuery('email', form_data.email);
+    appendQuery('website', form_data.website);
+    appendQuery('phone', form_data.phone);
+    appendQuery('open_now', form_data.open_now);
+
+    // Handle custom_field
+    if (form_data.custom_field && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(form_data.custom_field) === 'object') {
+      Object.entries(form_data.custom_field).forEach(function (_ref) {
+        var _ref2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref, 2),
+          key = _ref2[0],
+          val = _ref2[1];
+        appendQuery(key, val);
+      });
     }
+    var finalUrl = query ? newurl + query : newurl;
+    window.history.pushState({
+      path: finalUrl
+    }, '', finalUrl);
   }
 
   // Get URL Parameter
@@ -2578,28 +2563,32 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     searchElm.find('input[name^="price["]').each(function (index, el) {
       price.push($(el).val());
     });
-    searchElm.find('[name^="custom_field"]').each(function (index, el) {
-      var name = $(el).attr('name');
-      var type = $(el).attr('type');
-      var post_id = name.replace(/(custom_field\[)/, '').replace(/\]/, '');
-      if ('radio' === type) {
-        $.each($("input[name='custom_field[" + post_id + "]']:checked"), function () {
-          value = $(this).val();
-          ;
-          custom_field[post_id] = value;
-        });
-      } else if ('checkbox' === type) {
-        post_id = post_id.split('[]')[0];
-        if (!custom_field[post_id]) {
-          custom_field[post_id] = [];
+    searchElm.find('[name^="custom_field"]').each(function (_, el) {
+      var $el = $(el);
+      var name = $el.attr('name');
+      var type = $el.attr('type');
+      var post_id = name.replace(/^custom_field\[/, '').replace(/\]$/, '').replace(/\[\]$/, '');
+      if (type === 'radio') {
+        var checked = searchElm.find("input[name=\"custom_field[".concat(post_id, "]\"]:checked")).val();
+        if (checked !== undefined && checked !== null && checked !== '') {
+          custom_field[post_id] = checked;
         }
-        $.each($("input[name='custom_field[" + post_id + "][]']:checked"), function () {
-          var value = $(this).val();
-          custom_field[post_id].push(value);
+      } else if (type === 'checkbox') {
+        var checkedValues = [];
+        searchElm.find("input[name=\"custom_field[".concat(post_id, "][]\"]:checked")).each(function () {
+          var val = $(this).val();
+          if (val !== undefined && val !== null && val !== '') {
+            checkedValues.push(val);
+          }
         });
+        if (checkedValues.length) {
+          custom_field[post_id] = checkedValues;
+        }
       } else {
-        var value = $(el).val();
-        custom_field[post_id] = value;
+        var value = $el.val();
+        if (value !== undefined && value !== null && value !== '') {
+          custom_field[post_id] = value;
+        }
       }
     });
     var view_href = $(".directorist-viewas .directorist-viewas__item.active").attr('href');
@@ -2653,6 +2642,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     if (directory_type && directory_type.length) {
       form_data.directory_type = directory_type;
     }
+    console.log('@formData', {
+      form_data: form_data
+    });
     update_instant_search_url(form_data);
     $.ajax({
       url: directorist.ajaxurl,
@@ -2783,7 +2775,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }
 
   // sidebar on keyup searching
-  $('body').on("keyup", ".directorist-instant-search .listing-with-sidebar form", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+  $('body').on("keyup", ".directorist-instant-search .listing-with-sidebar form", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    console.log('keyup event triggered');
     if ($(e.target).closest('.directorist-custom-range-slider__value').length > 0) {
       return; // Skip calling `filterListing` for this element
     }
@@ -2794,14 +2787,16 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }, 250));
 
   // sidebar on change searching
-  $('body').on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+  $('body').on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    console.log('change event triggered(radio/checkbox/location/range)');
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
     filterListing(searchElm);
   }, 250));
 
   // sidebar on change location, zipcode changing
-  $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+  $('body').on("change", ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    console.log('change event triggered (zipcode/location)');
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
 
@@ -2816,14 +2811,22 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }, 250));
 
   // select on change with value - searching
-  $('body').on("change", ".directorist-instant-search .listing-with-sidebar select", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+  $('body').on("change", ".directorist-instant-search .listing-with-sidebar select", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    if (!$(this).val()) {
+      return; // Skip calling `filterListing` if the value is empty
+    }
+
+    console.log('change event triggered (select)', {
+      value: $(this).val()
+    });
     e.preventDefault();
     var searchElm = $(this).val() && $(this).closest('.listing-with-sidebar');
     filterListing(searchElm);
   }, 250));
 
   // select on change with value - searching
-  $('body').on("click", ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function (e) {
+  $('body').on("click", ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    console.log('click event triggered (location icon)');
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
     filterListing(searchElm);
@@ -2832,6 +2835,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Clear Input Value
   $('body').on("click", ".directorist-instant-search .directorist-search-field__btn--clear", function (e) {
     var inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]), select').val('');
+    console.log('clear input value triggered', inputValue);
     if (inputValue) {
       var searchElm = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));
       if (searchElm) {
@@ -2850,7 +2854,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     });
   }
   window.addEventListener('load', function () {
-    Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(initObserver(), 250);
+    Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(initObserver(), 250);
     singleCategoryLocationInit();
   });
 })(jQuery);
