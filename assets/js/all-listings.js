@@ -1404,12 +1404,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var query = "";
     var appendQuery = function appendQuery(key, value) {
       if (value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length)) {
-        if (Array.isArray(value)) {
-          value.forEach(function (v) {
-            if (v !== undefined && v !== null && v !== "") {
-              query += (query.length ? "&" : "?") + "".concat(key, "[]=").concat(encodeURIComponent(v));
-            }
-          });
+        if (Array.isArray(value) && value.length) {
+          query += (query.length ? "&" : "?") + "".concat(key, "[]=").concat(value);
         } else {
           query += (query.length ? "&" : "?") + "".concat(key, "=").concat(encodeURIComponent(value));
         }
@@ -1422,8 +1418,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     appendQuery("in_cat", form_data.in_cat);
     appendQuery("in_loc", form_data.in_loc);
     appendQuery("in_tag", form_data.in_tag);
-    appendQuery("price%5B0%5D", form_data.price && form_data.price[0] > 0 ? form_data.price[0] : "");
-    appendQuery("price%5B1%5D", form_data.price && form_data.price[1] > 0 ? form_data.price[1] : "");
+    appendQuery("price[0]", form_data.price && form_data.price[0] > 0 ? form_data.price[0] : "");
+    appendQuery("price[1]", form_data.price && form_data.price[1] > 0 ? form_data.price[1] : "");
     appendQuery("price_range", form_data.price_range);
     appendQuery("search_by_rating", form_data.search_by_rating);
     if (form_data.cityLat && form_data.address) appendQuery("cityLat", form_data.cityLat);
@@ -1443,6 +1439,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         var _ref2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref, 2),
           key = _ref2[0],
           val = _ref2[1];
+        console.log("custom_field", {
+          key: key,
+          val: val
+        });
         appendQuery(key, val);
       });
     }

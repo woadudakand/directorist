@@ -21,14 +21,8 @@ import debounce from "../../global/components/debounce";
         value !== "" &&
         (!Array.isArray(value) || value.length)
       ) {
-        if (Array.isArray(value)) {
-          value.forEach((v) => {
-            if (v !== undefined && v !== null && v !== "") {
-              query +=
-                (query.length ? "&" : "?") +
-                `${key}[]=${encodeURIComponent(v)}`;
-            }
-          });
+        if (Array.isArray(value) && value.length) {
+          query += (query.length ? "&" : "?") + `${key}[]=${value}`;
         } else {
           query +=
             (query.length ? "&" : "?") + `${key}=${encodeURIComponent(value)}`;
@@ -44,11 +38,11 @@ import debounce from "../../global/components/debounce";
     appendQuery("in_loc", form_data.in_loc);
     appendQuery("in_tag", form_data.in_tag);
     appendQuery(
-      "price%5B0%5D",
+      "price[0]",
       form_data.price && form_data.price[0] > 0 ? form_data.price[0] : ""
     );
     appendQuery(
-      "price%5B1%5D",
+      "price[1]",
       form_data.price && form_data.price[1] > 0 ? form_data.price[1] : ""
     );
     appendQuery("price_range", form_data.price_range);
@@ -71,6 +65,7 @@ import debounce from "../../global/components/debounce";
     // Handle custom_field
     if (form_data.custom_field && typeof form_data.custom_field === "object") {
       Object.entries(form_data.custom_field).forEach(([key, val]) => {
+        console.log("custom_field", { key, val });
         appendQuery(key, val);
       });
     }
