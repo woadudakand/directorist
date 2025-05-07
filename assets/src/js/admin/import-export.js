@@ -69,14 +69,10 @@ jQuery(document).ready(function ($) {
         const runImporter = function(position = 0, offset = 0) {
             const form_data = new FormData();
 
-            // ajax action
-            form_data.append( 'action', 'directorist_import_listings' );
-            form_data.append( '_position', position );
-            form_data.append( '_offset', offset );
-
-            console.log(position, offset)
-
-            form_data.append('directorist_nonce', directorist_admin.directorist_nonce);
+            form_data.set( 'action', 'directorist_import_listings' );
+            form_data.set( '_position', position );
+            form_data.set( '_offset', offset );
+            form_data.set( 'directorist_nonce', directorist_admin.directorist_nonce );
 
             // Get Config Fields Value
             if ( configFields.length ) {
@@ -152,17 +148,18 @@ jQuery(document).ready(function ($) {
 
                     const percentage = (response.position / response.total) * 100;
 
-                    $('.importer-details').html(`${response.position}/${response.total}`);
+                    $('.importer-details').html(`${Math.min(response.position, response.total)}/${response.total}`);
                     $('.directorist-importer-length').css( 'width', percentage + '%' );
                     $('.directorist-importer-progress').val( percentage );
+
+                    console.log(response.logs.join('\n'));
 
                     if ( ! response.done ) {
                         runImporter(response.position, response.offset);
                     } else {
-                        window.location = `${response.redirect_url}&listing-imported=${response.imported_items.length}&listing-failed=${response.failed_items.length}`;
+                        window.location = response.redirect_url;
                     }
                 },
-
                 error(response) {
                     window.console.log(response);
                 },

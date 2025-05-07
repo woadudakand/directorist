@@ -157,13 +157,10 @@ jQuery(document).ready(function ($) {
       var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
       var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var form_data = new FormData();
-
-      // ajax action
-      form_data.append('action', 'directorist_import_listings');
-      form_data.append('_position', position);
-      form_data.append('_offset', offset);
-      console.log(position, offset);
-      form_data.append('directorist_nonce', directorist_admin.directorist_nonce);
+      form_data.set('action', 'directorist_import_listings');
+      form_data.set('_position', position);
+      form_data.set('_offset', offset);
+      form_data.set('directorist_nonce', directorist_admin.directorist_nonce);
 
       // Get Config Fields Value
       if (configFields.length) {
@@ -218,13 +215,14 @@ jQuery(document).ready(function ($) {
             return;
           }
           var percentage = response.position / response.total * 100;
-          $('.importer-details').html("".concat(response.position, "/").concat(response.total));
+          $('.importer-details').html("".concat(Math.min(response.position, response.total), "/").concat(response.total));
           $('.directorist-importer-length').css('width', percentage + '%');
           $('.directorist-importer-progress').val(percentage);
+          console.log(response.logs.join('\n'));
           if (!response.done) {
             _runImporter(response.position, response.offset);
           } else {
-            window.location = "".concat(response.redirect_url, "&listing-imported=").concat(response.imported_items.length, "&listing-failed=").concat(response.failed_items.length);
+            window.location = response.redirect_url;
           }
         },
         error: function error(response) {
