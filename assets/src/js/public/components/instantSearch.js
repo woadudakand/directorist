@@ -1,5 +1,9 @@
 import debounce from "../../global/components/debounce";
 (function ($) {
+  /** 
+    Global Variables 
+  */
+
   // Globally accessible form_data
   let form_data = {};
 
@@ -7,6 +11,152 @@ import debounce from "../../global/components/debounce";
   let page = 1;
   let infinitePaginationIsLoading = false;
   let infinitePaginationCompleted = false;
+
+  /** 
+    Main Functions 
+  */
+
+  // Filter on AJAX Search
+  function filterListing(searchElm) {
+    // Passing form_data to build form data
+    buildFormData(searchElm);
+
+    // Passing form_data to update the URL
+    update_instant_search_url(form_data);
+
+    console.log("@filterListing", { searchElm, form_data });
+
+    // Get the parent element
+    const instant_search_element = searchElm.closest(
+      ".directorist-instant-search"
+    );
+    // Get the data attributes from the parent element
+    const dataAtts = JSON.parse(instant_search_element.attr("data-atts"));
+
+    // Prepare final payload for search
+    const ajaxData = {
+      ...form_data,
+      action: "directorist_instant_search",
+      _nonce: directorist.ajax_nonce,
+      current_page_id: directorist.current_page_id,
+      data_atts: dataAtts,
+    };
+
+    // 🔍 Run the search with the updated data
+    performInstantSearch(ajaxData, instant_search_element);
+  }
+
+  // Perform Instant Search
+  function performInstantSearch(ajaxData, contextElm) {
+    $.ajax({
+      url: directorist.ajaxurl,
+      type: "POST",
+      data: ajaxData,
+      beforeSend: function () {
+        contextElm
+          .find(".directorist-advanced-filter__form .directorist-btn-sm")
+          .attr("disabled", true);
+        contextElm
+          .find(".directorist-archive-items")
+          .addClass("atbdp-form-fade");
+        contextElm
+          .find(".directorist-header-bar .directorist-advanced-filter")
+          .removeClass("directorist-advanced-filter--show")
+          .hide();
+
+        if (contextElm.offset()?.top > 0) {
+          $(document).scrollTop(contextElm.offset().top);
+        }
+
+        closeAllSearchModal();
+      },
+      success: function (html) {
+        if (html.search_result) {
+          contextElm
+            .find(".directorist-header-found-title, .dsa-save-search-container")
+            .remove();
+          if (html.header_title) {
+            contextElm
+              .find(".directorist-listings-header__left")
+              .append(html.header_title);
+            contextElm
+              .find(".directorist-header-found-title span")
+              .text(html.count);
+          }
+          contextElm
+            .find(".directorist-archive-items")
+            .replaceWith(html.search_result)
+            .removeClass("atbdp-form-fade");
+          contextElm
+            .find(".directorist-advanced-filter__form .directorist-btn-sm")
+            .attr("disabled", false);
+
+          window.dispatchEvent(
+            new CustomEvent("directorist-instant-search-reloaded")
+          );
+          window.dispatchEvent(
+            new CustomEvent("directorist-reload-listings-map-archive")
+          );
+
+          // Optional: Update meta title
+          let new_meta_title = "";
+          if (html.category_name) new_meta_title += html.category_name;
+          if (html.location_name)
+            new_meta_title +=
+              (new_meta_title ? " within " : "") + html.location_name;
+          if (form_data.address)
+            new_meta_title +=
+              (form_data.in_cat || form_data.in_loc ? " near " : "") +
+              form_data.address;
+          document.title = new_meta_title
+            ? `${new_meta_title} | ${directorist.site_name}`
+            : directorist.site_name;
+        }
+      },
+    });
+  }
+
+  // AJAX call to load more listings
+  function loadMoreListings(formData) {
+    let loadingDiv;
+    const container = $(
+      ".directorist-infinite-scroll .directorist-container-fluid .directorist-row"
+    );
+
+    $.ajax({
+      url: directorist.ajaxurl,
+      type: "POST",
+      data: formData,
+      beforeSend: function () {
+        loadingDiv = $("<div>", {
+          class: "directorist-on-scroll-loading",
+        }).append(
+          $("<div>", { class: "directorist-spinner" }),
+          $("<span>").text("Loading more...")
+        );
+        container.append(loadingDiv);
+      },
+      success: function (html) {
+        if (loadingDiv) loadingDiv.remove();
+
+        if (html.count > 0) {
+          container.append(html.render_listings);
+        } else {
+          infinitePaginationCompleted = true;
+        }
+
+        triggerCustomEvents();
+      },
+      complete: function () {
+        infinitePaginationIsLoading = false;
+        if (loadingDiv) loadingDiv.remove();
+      },
+    });
+  }
+
+  /**
+    Helper Functions  
+  **/
 
   // Update or retain existing keys in form_data
   const updateFormData = (newData = {}) => {
@@ -43,6 +193,9 @@ import debounce from "../../global/components/debounce";
       }
     };
 
+    // These keys will be ignored
+    // and will not be appended to the URL
+    // when updating the URL
     const ignoreKeys = [
       "data_atts",
       "custom_field",
@@ -83,7 +236,7 @@ import debounce from "../../global/components/debounce";
     window.history.pushState({ path: finalUrl }, "", finalUrl);
   }
 
-  // Helper function to build form data
+  // Build form data
   function buildFormData(searchElm) {
     console.log("buildFormData", { searchElm, form_data });
 
@@ -270,7 +423,7 @@ import debounce from "../../global/components/debounce";
     }
   }
 
-  // Close Search Modal
+  // Close all search modal
   function closeAllSearchModal() {
     var searchModalElement = document.querySelectorAll(
       ".directorist-search-modal"
@@ -303,14 +456,14 @@ import debounce from "../../global/components/debounce";
     });
   }
 
-  // Helper function for form data validation
+  // Form data validate
   const formDataValidation = (key, value) => {
     return value !== undefined && value !== null && value !== ""
       ? value
       : undefined;
   };
 
-  // Helper function to determine the active form
+  // Determine the active form
   function getActiveForm(instantSearchElement) {
     const sidebarListing = instantSearchElement.find(".listing-with-sidebar");
     const advancedForm = instantSearchElement.find(
@@ -324,19 +477,19 @@ import debounce from "../../global/components/debounce";
       : searchForm;
   }
 
-  // Helper function to get directory type
+  // Get directory type
   function getDirectoryType(directoryTypeLink) {
     const typeMatch = directoryTypeLink.attr("href")?.match(/type=([^&]+)/);
     return typeMatch ? typeMatch[1] : "";
   }
 
-  // Helper function to get view as
+  // Get view as
   function getViewAs(viewAsLink) {
     const viewMatch = viewAsLink.attr("href")?.match(/view=([^&]+)/);
     return viewMatch ? viewMatch[1] : "";
   }
 
-  // Helper function to get sort value
+  // Get sort value
   function getSortValue(sortByLink) {
     let sort_href = sortByLink.attr("data-link");
     let sort_by =
@@ -344,153 +497,7 @@ import debounce from "../../global/components/debounce";
     return sort_by && sort_by.length ? sort_by[0].replace(/sort=/, "") : "";
   }
 
-  // Filter on AJAX Search
-  function filterListing(searchElm) {
-    buildFormData(searchElm);
-
-    // Passing form_data to update the URL
-    update_instant_search_url(form_data);
-
-    console.log("@filterListing", { searchElm, form_data });
-
-    // Get the parent element
-    const instant_search_element = searchElm.closest(
-      ".directorist-instant-search"
-    );
-    // Get the data attributes from the parent element
-    const dataAtts = JSON.parse(instant_search_element.attr("data-atts"));
-
-    // Prepare final payload for search
-    const ajaxData = {
-      ...form_data,
-      action: "directorist_instant_search",
-      _nonce: directorist.ajax_nonce,
-      current_page_id: directorist.current_page_id,
-      data_atts: dataAtts,
-    };
-
-    // 🔍 Run the search with the updated data
-    performInstantSearch(ajaxData, instant_search_element);
-  }
-
-  // Perform Instant Search
-  function performInstantSearch(ajaxData, contextElm) {
-    console.log("performInstantSearch", {
-      ajaxData,
-      contextElm,
-    });
-
-    $.ajax({
-      url: directorist.ajaxurl,
-      type: "POST",
-      data: ajaxData,
-      beforeSend: function () {
-        contextElm
-          .find(".directorist-advanced-filter__form .directorist-btn-sm")
-          .attr("disabled", true);
-        contextElm
-          .find(".directorist-archive-items")
-          .addClass("atbdp-form-fade");
-        contextElm
-          .find(".directorist-header-bar .directorist-advanced-filter")
-          .removeClass("directorist-advanced-filter--show")
-          .hide();
-
-        if (contextElm.offset()?.top > 0) {
-          $(document).scrollTop(contextElm.offset().top);
-        }
-
-        closeAllSearchModal();
-      },
-      success: function (html) {
-        console.log("AJAX succeed", {
-          html,
-          search_result: html.search_result,
-        });
-        if (html.search_result) {
-          contextElm
-            .find(".directorist-header-found-title, .dsa-save-search-container")
-            .remove();
-          if (html.header_title) {
-            contextElm
-              .find(".directorist-listings-header__left")
-              .append(html.header_title);
-            contextElm
-              .find(".directorist-header-found-title span")
-              .text(html.count);
-          }
-          contextElm
-            .find(".directorist-archive-items")
-            .replaceWith(html.search_result)
-            .removeClass("atbdp-form-fade");
-          contextElm
-            .find(".directorist-advanced-filter__form .directorist-btn-sm")
-            .attr("disabled", false);
-
-          window.dispatchEvent(
-            new CustomEvent("directorist-instant-search-reloaded")
-          );
-          window.dispatchEvent(
-            new CustomEvent("directorist-reload-listings-map-archive")
-          );
-
-          // Optional: Update meta title
-          let new_meta_title = "";
-          if (html.category_name) new_meta_title += html.category_name;
-          if (html.location_name)
-            new_meta_title +=
-              (new_meta_title ? " within " : "") + html.location_name;
-          if (form_data.address)
-            new_meta_title +=
-              (form_data.in_cat || form_data.in_loc ? " near " : "") +
-              form_data.address;
-          document.title = new_meta_title
-            ? `${new_meta_title} | ${directorist.site_name}`
-            : directorist.site_name;
-        }
-      },
-    });
-  }
-
-  // AJAX call to load more listings
-  function loadMoreListings(formData) {
-    let loadingDiv;
-    const container = $(
-      ".directorist-infinite-scroll .directorist-container-fluid .directorist-row"
-    );
-
-    $.ajax({
-      url: directorist.ajaxurl,
-      type: "POST",
-      data: formData,
-      beforeSend: function () {
-        loadingDiv = $("<div>", {
-          class: "directorist-on-scroll-loading",
-        }).append(
-          $("<div>", { class: "directorist-spinner" }),
-          $("<span>").text("Loading more...")
-        );
-        container.append(loadingDiv);
-      },
-      success: function (html) {
-        if (loadingDiv) loadingDiv.remove();
-
-        if (html.count > 0) {
-          container.append(html.render_listings);
-        } else {
-          infinitePaginationCompleted = true;
-        }
-
-        triggerCustomEvents();
-      },
-      complete: function () {
-        infinitePaginationIsLoading = false;
-        if (loadingDiv) loadingDiv.remove();
-      },
-    });
-  }
-
-  // Helper function to trigger custom events
+  // Trigger custom events
   function triggerCustomEvents() {
     window.dispatchEvent(new Event("directorist-instant-search-reloaded"));
     window.dispatchEvent(new Event("directorist-reload-listings-map-archive"));
@@ -567,6 +574,10 @@ import debounce from "../../global/components/debounce";
     }
   }
 
+  /** 
+    Event Listeners 
+  */
+
   // sidebar on keyup searching
   $("body").on(
     "keyup",
@@ -586,7 +597,7 @@ import debounce from "../../global/components/debounce";
     }, 250)
   );
 
-  // sidebar on change searching
+  // sidebar on change searching - radio/checkbox/location/range
   $("body").on(
     "change",
     ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name",
@@ -598,7 +609,7 @@ import debounce from "../../global/components/debounce";
     }, 250)
   );
 
-  // sidebar on change location, zipcode changing
+  // sidebar on change searching - zipcode/location
   $("body").on(
     "change",
     ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search",
@@ -620,7 +631,7 @@ import debounce from "../../global/components/debounce";
     }, 250)
   );
 
-  // select on change with value - searching
+  // sidebar on change searching - select
   $("body").on(
     "change",
     ".directorist-instant-search .listing-with-sidebar select",
@@ -636,7 +647,7 @@ import debounce from "../../global/components/debounce";
     }, 250)
   );
 
-  // select on change with value - searching
+  // sidebar on click searching - location icon
   $("body").on(
     "click",
     ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon",
@@ -688,9 +699,9 @@ import debounce from "../../global/components/debounce";
       const activeForm = getActiveForm(instant_search_element);
 
       // Filter Listing
-      setTimeout(() => {
+      debounce(function (e) {
         filterListing(activeForm);
-      }, 100);
+      }, 250);
     }
   );
 
@@ -802,7 +813,7 @@ import debounce from "../../global/components/debounce";
     }
   );
 
-  // Directorist pagination
+  // Directorist pagination changes
   $("body").on(
     "click",
     ".directorist-instant-search .directorist-pagination .page-numbers",
@@ -872,6 +883,7 @@ import debounce from "../../global/components/debounce";
     handleScroll();
   });
 
+  // Initialize the observer for single category location
   window.addEventListener("load", function () {
     debounce(initObserver(), 250);
 
