@@ -1432,11 +1432,15 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         key = _ref4[0],
         value = _ref4[1];
       if (ignoreKeys.includes(key)) return;
+      if (key === "paged" && Number(value) === 1) {
+        return; // ❌ Skip default page 1
+      }
+
       if (key === "price" && Array.isArray(value)) {
         appendQuery("price[0]", value[0] > 0 ? value[0] : "");
         appendQuery("price[1]", value[1] > 0 ? value[1] : "");
       } else if ((key === "cityLat" || key === "cityLng") && !form_data.address) {
-        return; // Skip cityLat/cityLng if no address
+        return; // ❌ Skip lat/lng if no address
       } else {
         appendQuery(key, value);
       }
@@ -1466,176 +1470,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     }
     return decodeURIComponent(results[2]);
   }
-
-  // Close Search Modal
-  function closeAllSearchModal() {
-    var searchModalElement = document.querySelectorAll(".directorist-search-modal");
-    searchModalElement.forEach(function (modal) {
-      var modalOverlay = modal.querySelector(".directorist-search-modal__overlay");
-      var modalContent = modal.querySelector(".directorist-search-modal__contents");
-      var modalBodyOverlay = document.querySelector(".directorist-content-active");
-
-      // Overlay Style
-      if (modalOverlay) {
-        modalOverlay.style.cssText = "opacity: 0; visibility: hidden; transition: 0.5s ease";
-        // remove overlay class on body
-        modalBodyOverlay.classList.remove("directorist-overlay-active");
-      }
-
-      // Modal Content Style
-      if (modalContent) {
-        modalContent.style.cssText = "opacity: 0; visibility: hidden; bottom: -200px;";
-      }
-    });
-  }
-
-  // Scrolling Pagination
-  var page = 1;
-  var infinitePaginationIsLoading = false;
-  var infinitePaginationCompleted = false;
-  function handleScroll() {
-    var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
-    if (!container.length || infinitePaginationIsLoading) return;
-    var containerBottom = container.offset().top + container.outerHeight();
-    var scrollBottom = window.scrollY + window.innerHeight;
-    if (scrollBottom >= containerBottom) {
-      infinitePaginationIsLoading = true;
-      page++;
-      var instantSearchElement = $(".directorist-instant-search");
-      var activeForm = getActiveForm(instantSearchElement);
-      var formData = buildFormData(activeForm, instantSearchElement);
-      loadMoreListings(formData);
-    }
-  }
-  window.addEventListener("scroll", function () {
-    if (infinitePaginationCompleted) return;
-    handleScroll();
-  });
-
-  /* Directorist instant search submit */
-  $("body").on("submit", ".directorist-instant-search form", function (e) {
-    e.preventDefault();
-    var _this = $(this);
-
-    // Filter Listing
-    filterListing(_this);
-  });
-
-  /* Directorist instant search reset */
-  $("body").on("click", ".directorist-instant-search .directorist-btn-reset-js", function (e) {
-    console.log("reset button clicked");
-    e.preventDefault();
-    var instant_search_element = $(this).closest(".directorist-instant-search");
-    var activeForm = getActiveForm(instant_search_element);
-
-    // Filter Listing
-    filterListing(activeForm);
-  });
-  $("body").on("submit", ".widget .default-ad-search:not(.directorist_single) .directorist-advanced-filter__form", function (e) {
-    if ($(".directorist-instant-search").length) {
-      e.preventDefault();
-      var _this = $(this);
-
-      // Filter Listing
-      filterListing(_this);
-    }
-  });
-
-  // Directorist type changes
-  $("body").on("click", ".directorist-instant-search .directorist-type-nav__link", function (e) {
-    var _$$attr;
-    e.preventDefault();
-    var $parentLi = $(this).closest("li");
-    $parentLi.addClass("directorist-type-nav__list__current").siblings("li").removeClass("directorist-type-nav__list__current");
-    var typeMatch = (_$$attr = $(this).attr("href")) === null || _$$attr === void 0 ? void 0 : _$$attr.match(/type=([^&]+)/);
-    var directory_type = typeMatch ? typeMatch[1] : "";
-    updateFormData({
-      directory_type: directory_type
-    }); // ✅ only update `directory_type`, preserve others
-
-    update_instant_search_url(form_data);
-    var instant_search_element = $(this).closest(".directorist-instant-search");
-    var activeForm = getActiveForm(instant_search_element);
-
-    // Filter Listing
-    filterListing(activeForm);
-  });
-  $("body").on("click", ".disabled-link", function (e) {
-    e.preventDefault();
-  });
-
-  // Directorist view as changes
-  $("body").on("click", ".directorist-instant-search .directorist-viewas .directorist-viewas__item", function (e) {
-    var _$$attr2;
-    e.preventDefault();
-    var viewMatch = (_$$attr2 = $(this).attr("href")) === null || _$$attr2 === void 0 ? void 0 : _$$attr2.match(/view=([^&]+)/);
-    var view = viewMatch ? viewMatch[1] : "";
-    updateFormData({
-      view: view
-    }); // ✅ only update `view`, preserve others
-
-    update_instant_search_url(form_data);
-    var instant_search_element = $(this).closest(".directorist-instant-search");
-    var activeForm = getActiveForm(instant_search_element);
-
-    // Filter Listing
-    filterListing(activeForm);
-  });
-  $(".directorist-instant-search .directorist-dropdown__links__single-js").off("click");
-
-  // Directorist sort by changes
-  $("body").on("click", ".directorist-instant-search .directorist-sortby-dropdown .directorist-dropdown__links__single-js", function (e) {
-    e.preventDefault();
-    $(this).addClass("active").siblings(".directorist-dropdown__links__single-js").removeClass("active");
-    var sort_href = $(this).attr("data-link");
-    var sort_by = sort_href && sort_href.length ? sort_href.match(/sort=.+/) : "";
-    var sort = sort_by && sort_by.length ? sort_by[0].replace(/sort=/, "") : "";
-    console.log("CHK", {
-      sort: sort,
-      sort_by: sort_by
-    });
-    updateFormData({
-      sort: sort
-    }); // ✅ only update `sort`, preserve others
-
-    update_instant_search_url(form_data);
-    var instant_search_element = $(this).closest(".directorist-instant-search");
-    var activeForm = getActiveForm(instant_search_element);
-
-    // Filter Listing
-    filterListing(activeForm);
-  });
-
-  // Directorist pagination
-  $("body").on("click", ".directorist-instant-search .directorist-pagination .page-numbers", function (e) {
-    e.preventDefault();
-    var currentPage = $(this).text();
-    if (currentPage) {
-      page = parseInt(currentPage);
-    } else if ($(this).hasClass("next")) {
-      page = parseInt(page) + 1;
-    } else if ($(this).hasClass("prev")) {
-      page = parseInt(page) - 1;
-    }
-    var instant_search_element = $(this).closest(".directorist-instant-search");
-    var activeForm = getActiveForm(instant_search_element);
-
-    // Filter Listing
-    filterListing(activeForm);
-  });
-
-  // Helper function to determine the active form
-  function getActiveForm(instantSearchElement) {
-    var sidebarListing = instantSearchElement.find(".listing-with-sidebar");
-    var advancedForm = instantSearchElement.find(".directorist-advanced-filter__form");
-    var searchForm = instantSearchElement.find(".directorist-search-form");
-    return sidebarListing.length ? instantSearchElement : screen.width > 575 ? advancedForm : searchForm;
-  }
-
-  // Helper function for form data validation
-  var formDataValidation = function formDataValidation(key, value) {
-    return value !== undefined && value !== null && value !== "" ? value : undefined;
-  };
 
   // Helper function to build form data
   function buildFormData(searchElm) {
@@ -1768,54 +1602,81 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     }
   }
 
-  // Helper function to get sort value
-  function getSortValue(instantSearchElement) {
-    var sortHref = instantSearchElement.find(".directorist-sortby-dropdown .directorist-dropdown__links__single.active").data("link");
-    return sortHref ? sortHref.split("sort=")[1] : "";
-  }
+  // Scrolling Pagination
+  var page = 1;
+  var infinitePaginationIsLoading = false;
+  var infinitePaginationCompleted = false;
 
-  // Helper function to get directory type
-  function getDirectoryType(instantSearchElement) {
-    var typeHref = instantSearchElement.find(".directorist-type-nav__list .directorist-type-nav__list__current a").attr("href");
-    return typeHref ? getURLParameter(typeHref, "directory_type") : "";
-  }
-
-  // AJAX call to load more listings
-  function loadMoreListings(formData) {
-    var loadingDiv;
+  // Handle Infinite Scroll
+  function handleScroll() {
     var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
-    $.ajax({
-      url: directorist.ajaxurl,
-      type: "POST",
-      data: formData,
-      beforeSend: function beforeSend() {
-        loadingDiv = $("<div>", {
-          class: "directorist-on-scroll-loading"
-        }).append($("<div>", {
-          class: "directorist-spinner"
-        }), $("<span>").text("Loading more..."));
-        container.append(loadingDiv);
-      },
-      success: function success(html) {
-        if (loadingDiv) loadingDiv.remove();
-        if (html.count > 0) {
-          container.append(html.render_listings);
-        } else {
-          infinitePaginationCompleted = true;
-        }
-        triggerCustomEvents();
-      },
-      complete: function complete() {
-        infinitePaginationIsLoading = false;
-        if (loadingDiv) loadingDiv.remove();
+    if (!container.length || infinitePaginationIsLoading) return;
+    var containerBottom = container.offset().top + container.outerHeight();
+    var scrollBottom = window.scrollY + window.innerHeight;
+    if (scrollBottom >= containerBottom) {
+      infinitePaginationIsLoading = true;
+      page++;
+      var instantSearchElement = $(".directorist-instant-search");
+      var activeForm = getActiveForm(instantSearchElement);
+      var formData = buildFormData(activeForm, instantSearchElement);
+      loadMoreListings(formData);
+    }
+  }
+
+  // Close Search Modal
+  function closeAllSearchModal() {
+    var searchModalElement = document.querySelectorAll(".directorist-search-modal");
+    searchModalElement.forEach(function (modal) {
+      var modalOverlay = modal.querySelector(".directorist-search-modal__overlay");
+      var modalContent = modal.querySelector(".directorist-search-modal__contents");
+      var modalBodyOverlay = document.querySelector(".directorist-content-active");
+
+      // Overlay Style
+      if (modalOverlay) {
+        modalOverlay.style.cssText = "opacity: 0; visibility: hidden; transition: 0.5s ease";
+        // remove overlay class on body
+        modalBodyOverlay.classList.remove("directorist-overlay-active");
+      }
+
+      // Modal Content Style
+      if (modalContent) {
+        modalContent.style.cssText = "opacity: 0; visibility: hidden; bottom: -200px;";
       }
     });
   }
 
-  // Helper function to trigger custom events
-  function triggerCustomEvents() {
-    window.dispatchEvent(new Event("directorist-instant-search-reloaded"));
-    window.dispatchEvent(new Event("directorist-reload-listings-map-archive"));
+  // Helper function for form data validation
+  var formDataValidation = function formDataValidation(key, value) {
+    return value !== undefined && value !== null && value !== "" ? value : undefined;
+  };
+
+  // Helper function to determine the active form
+  function getActiveForm(instantSearchElement) {
+    var sidebarListing = instantSearchElement.find(".listing-with-sidebar");
+    var advancedForm = instantSearchElement.find(".directorist-advanced-filter__form");
+    var searchForm = instantSearchElement.find(".directorist-search-form");
+    return sidebarListing.length ? instantSearchElement : screen.width > 575 ? advancedForm : searchForm;
+  }
+
+  // Helper function to get directory type
+  function getDirectoryType(directoryTypeLink) {
+    var _directoryTypeLink$at;
+    var typeMatch = (_directoryTypeLink$at = directoryTypeLink.attr("href")) === null || _directoryTypeLink$at === void 0 ? void 0 : _directoryTypeLink$at.match(/type=([^&]+)/);
+    return typeMatch ? typeMatch[1] : "";
+  }
+
+  // Helper function to get view as
+  function getViewAs(viewAsLink) {
+    var _viewAsLink$attr;
+    var viewMatch = (_viewAsLink$attr = viewAsLink.attr("href")) === null || _viewAsLink$attr === void 0 ? void 0 : _viewAsLink$attr.match(/view=([^&]+)/);
+    return viewMatch ? viewMatch[1] : "";
+  }
+
+  // Helper function to get sort value
+  function getSortValue(sortByLink) {
+    var sort_href = sortByLink.attr("data-link");
+    var sort_by = sort_href && sort_href.length ? sort_href.match(/sort=.+/) : "";
+    return sort_by && sort_by.length ? sort_by[0].replace(/sort=/, "") : "";
   }
 
   // Filter on AJAX Search
@@ -1891,6 +1752,44 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         }
       }
     });
+  }
+
+  // AJAX call to load more listings
+  function loadMoreListings(formData) {
+    var loadingDiv;
+    var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
+    $.ajax({
+      url: directorist.ajaxurl,
+      type: "POST",
+      data: formData,
+      beforeSend: function beforeSend() {
+        loadingDiv = $("<div>", {
+          class: "directorist-on-scroll-loading"
+        }).append($("<div>", {
+          class: "directorist-spinner"
+        }), $("<span>").text("Loading more..."));
+        container.append(loadingDiv);
+      },
+      success: function success(html) {
+        if (loadingDiv) loadingDiv.remove();
+        if (html.count > 0) {
+          container.append(html.render_listings);
+        } else {
+          infinitePaginationCompleted = true;
+        }
+        triggerCustomEvents();
+      },
+      complete: function complete() {
+        infinitePaginationIsLoading = false;
+        if (loadingDiv) loadingDiv.remove();
+      }
+    });
+  }
+
+  // Helper function to trigger custom events
+  function triggerCustomEvents() {
+    window.dispatchEvent(new Event("directorist-instant-search-reloaded"));
+    window.dispatchEvent(new Event("directorist-reload-listings-map-archive"));
   }
 
   // Range Slider searching observer
@@ -2023,6 +1922,116 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       }
     }
   });
+
+  /* Directorist instant search reset */
+  $("body").on("click", ".directorist-instant-search .directorist-btn-reset-js", function (e) {
+    e.preventDefault();
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+    updateFormData({
+      paged: 1
+    }); // Reset page to 1
+
+    var activeForm = getActiveForm(instant_search_element);
+
+    // Filter Listing
+    setTimeout(function () {
+      filterListing(activeForm);
+    }, 100);
+  });
+
+  /* Directorist instant search submit */
+  $("body").on("submit", ".directorist-instant-search form", function (e) {
+    e.preventDefault();
+    var _this = $(this);
+
+    // Filter Listing
+    filterListing(_this);
+  });
+
+  // Directorist instant search submit - for advanced filter
+  $("body").on("submit", ".widget .default-ad-search:not(.directorist_single) .directorist-advanced-filter__form", function (e) {
+    if ($(".directorist-instant-search").length) {
+      e.preventDefault();
+      var _this = $(this);
+
+      // Filter Listing
+      filterListing(_this);
+    }
+  });
+
+  // Directorist type changes
+  $("body").on("click", ".directorist-instant-search .directorist-type-nav__link", function (e) {
+    e.preventDefault();
+    var $parentLi = $(this).closest("li");
+    $parentLi.addClass("directorist-type-nav__list__current").siblings("li").removeClass("directorist-type-nav__list__current");
+    var directory_type = getDirectoryType($(this));
+    updateFormData({
+      directory_type: directory_type
+    }); // ✅ only update `directory_type`, preserve others
+
+    // update_instant_search_url(form_data);
+
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+    var activeForm = getActiveForm(instant_search_element);
+
+    // Filter Listing
+    filterListing(activeForm);
+  });
+
+  // Directorist view as changes
+  $("body").on("click", ".directorist-instant-search .directorist-viewas .directorist-viewas__item", function (e) {
+    e.preventDefault();
+    var view = getViewAs($(this));
+    updateFormData({
+      view: view
+    }); // ✅ only update `view`, preserve others
+
+    // update_instant_search_url(form_data);
+
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+    var activeForm = getActiveForm(instant_search_element);
+
+    // Filter Listing
+    filterListing(activeForm);
+  });
+
+  // Directorist sort by changes
+  $("body").on("click", ".directorist-instant-search .directorist-sortby-dropdown .directorist-dropdown__links__single-js", function (e) {
+    e.preventDefault();
+    $(this).addClass("active").siblings(".directorist-dropdown__links__single-js").removeClass("active");
+    var sort = getSortValue($(this));
+    updateFormData({
+      sort: sort
+    }); // ✅ only update `sort`, preserve others
+
+    // update_instant_search_url(form_data);
+
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+    var activeForm = getActiveForm(instant_search_element);
+
+    // Filter Listing
+    filterListing(activeForm);
+  });
+
+  // Directorist pagination
+  $("body").on("click", ".directorist-instant-search .directorist-pagination .page-numbers", function (e) {
+    e.preventDefault();
+    var currentPage = $(this).text();
+    if (currentPage) {
+      page = parseInt(currentPage);
+    } else if ($(this).hasClass("next")) {
+      page = parseInt(page) + 1;
+    } else if ($(this).hasClass("prev")) {
+      page = parseInt(page) - 1;
+    }
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+    var activeForm = getActiveForm(instant_search_element);
+
+    // Filter Listing
+    filterListing(activeForm);
+  });
+
+  // Submit on sidebar form
   if ($(".directorist-instant-search").length === 0) {
     $("body").on("submit", ".listing-with-sidebar .directorist-basic-search, .listing-with-sidebar .directorist-advanced-search", function (e) {
       e.preventDefault();
@@ -2030,9 +2039,29 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       var advanced_data = $(".listing-with-sidebar .directorist-advanced-search").serialize();
       var action_value = $(".directorist-advanced-search").attr("action");
       var url = action_value + "?" + basic_data + "&" + advanced_data;
+      console.log("submit on sidebar form", {
+        basic_data: basic_data,
+        advanced_data: advanced_data,
+        action_value: action_value,
+        url: url
+      });
       window.location.href = url;
     });
   }
+
+  // Prevent disabled links from being clicked
+  $("body").on("click", ".disabled-link", function (e) {
+    e.preventDefault();
+  });
+
+  // Prevent default action for dropdown links
+  $(".directorist-instant-search .directorist-dropdown__links__single-js").off("click");
+
+  // Initialize Infinite Scroll
+  window.addEventListener("scroll", function () {
+    if (infinitePaginationCompleted) return;
+    handleScroll();
+  });
   window.addEventListener("load", function () {
     Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(initObserver(), 250);
     singleCategoryLocationInit();
