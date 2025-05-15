@@ -1392,9 +1392,13 @@ function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbol
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 
 (function ($) {
-  var full_url = window.location.href;
   // Globally accessible form_data
   var form_data = {};
+
+  // Scrolling Pagination
+  var page = 1;
+  var infinitePaginationIsLoading = false;
+  var infinitePaginationCompleted = false;
 
   // Update or retain existing keys in form_data
   var updateFormData = function updateFormData() {
@@ -1459,16 +1463,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     window.history.pushState({
       path: finalUrl
     }, "", finalUrl);
-  }
-
-  // Get URL Parameter
-  function getURLParameter(url, name) {
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
-    var results = regex.exec(url);
-    if (!results || !results[2]) {
-      return "";
-    }
-    return decodeURIComponent(results[2]);
   }
 
   // Helper function to build form data
@@ -1601,11 +1595,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       });
     }
   }
-
-  // Scrolling Pagination
-  var page = 1;
-  var infinitePaginationIsLoading = false;
-  var infinitePaginationCompleted = false;
 
   // Handle Infinite Scroll
   function handleScroll() {

@@ -1,8 +1,12 @@
 import debounce from "../../global/components/debounce";
 (function ($) {
-  let full_url = window.location.href;
   // Globally accessible form_data
   let form_data = {};
+
+  // Scrolling Pagination
+  let page = 1;
+  let infinitePaginationIsLoading = false;
+  let infinitePaginationCompleted = false;
 
   // Update or retain existing keys in form_data
   const updateFormData = (newData = {}) => {
@@ -77,17 +81,6 @@ import debounce from "../../global/components/debounce";
 
     const finalUrl = query ? newurl + query : newurl;
     window.history.pushState({ path: finalUrl }, "", finalUrl);
-  }
-
-  // Get URL Parameter
-  function getURLParameter(url, name) {
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
-    var results = regex.exec(url);
-    if (!results || !results[2]) {
-      return "";
-    }
-
-    return decodeURIComponent(results[2]);
   }
 
   // Helper function to build form data
@@ -254,11 +247,6 @@ import debounce from "../../global/components/debounce";
       updateFormData({ paged: page });
     }
   }
-
-  // Scrolling Pagination
-  let page = 1;
-  let infinitePaginationIsLoading = false;
-  let infinitePaginationCompleted = false;
 
   // Handle Infinite Scroll
   function handleScroll() {
