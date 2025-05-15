@@ -16,24 +16,24 @@ import debounce from "../../global/components/debounce";
     Main Functions 
   */
 
-  // Filter on AJAX Search
+  // Filter Listings
   function filterListing(searchElm) {
-    // Passing form_data to build form data
-    buildFormData(searchElm);
-
-    // Passing form_data to update the URL
+    const requiredFieldsAreValid = buildFormData(searchElm);
+    console.log("filterListing:", { requiredFieldsAreValid, form_data });
+    // Update URL with form data
     update_instant_search_url(form_data);
 
-    console.log("@filterListing", { searchElm, form_data });
+    if (!requiredFieldsAreValid) return;
 
-    // Get the parent element
+    // get parent element
     const instant_search_element = searchElm.closest(
       ".directorist-instant-search"
     );
-    // Get the data attributes from the parent element
+
+    // Get dataAtts
     const dataAtts = JSON.parse(instant_search_element.attr("data-atts"));
 
-    // Prepare final payload for search
+    // make ajax data
     const ajaxData = {
       ...form_data,
       action: "directorist_instant_search",
@@ -42,12 +42,13 @@ import debounce from "../../global/components/debounce";
       data_atts: dataAtts,
     };
 
-    // 🔍 Run the search with the updated data
+    // perform instant search
     performInstantSearch(ajaxData, instant_search_element);
   }
 
   // Perform Instant Search
   function performInstantSearch(ajaxData, contextElm) {
+    console.log("Performing instant search with data:", { ajaxData });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
@@ -159,15 +160,27 @@ import debounce from "../../global/components/debounce";
   **/
 
   // Update or retain existing keys in form_data
+
+  // Filter on AJAX Search
   const updateFormData = (newData = {}) => {
     Object.entries(newData).forEach(([key, value]) => {
-      form_data[key] = value;
+      if (
+        value === undefined ||
+        value === null ||
+        (Array.isArray(value) && value.length === 0) ||
+        (typeof value === "object" &&
+          !Array.isArray(value) &&
+          Object.keys(value).length === 0)
+      ) {
+        delete form_data[key];
+      } else {
+        form_data[key] = value;
+      }
     });
   };
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
-    console.log("update_instant_search_url", { form_data });
     if (!history.pushState) return;
 
     let newurl =
@@ -236,61 +249,64 @@ import debounce from "../../global/components/debounce";
     window.history.pushState({ path: finalUrl }, "", finalUrl);
   }
 
-  // Build form data
+  //  Build form_data from searchElm inputs.
+  //  Returns true if required fields are valid, false otherwise.
   function buildFormData(searchElm) {
-    console.log("buildFormData", { searchElm, form_data });
-
     let tag = [];
     let price = [];
     let custom_field = {};
     let search_by_rating = [];
 
     // Collect selected tags
-    searchElm.find('input[name^="in_tag["]:checked').each(function () {
-      tag.push($(this).val());
+    searchElm.find('input[name^="in_tag["]:checked').each((_, el) => {
+      tag.push($(el).val());
     });
 
-    // Collect selected search by rating
-    searchElm
-      .find('input[name^="search_by_rating["]:checked')
-      .each(function () {
-        search_by_rating.push($(this).val());
-      });
-
-    // Collect selected price values
-    searchElm.find('input[name^="price["]').each(function () {
-      price.push($(this).val());
+    // Collect selected ratings
+    searchElm.find('input[name^="search_by_rating["]:checked').each((_, el) => {
+      search_by_rating.push($(el).val());
     });
 
-    // Collect custom field values
-    searchElm.find('[name^="custom_field"]').each(function (_, el) {
+    // Collect price values
+    searchElm.find('input[name^="price["]').each((_, el) => {
+      price.push($(el).val());
+    });
+
+    // Collect custom fields
+    const seenCustomFields = new Set();
+    searchElm.find('[name^="custom_field"]').each((_, el) => {
       const $el = $(el);
       const name = $el.attr("name");
-      const type = $el.attr("type");
+      if (!name) return;
       const match = name.match(/^custom_field\[(.+?)\]/);
-      const post_id = match ? match[1] : "";
+      if (!match) return;
+      const post_id = match[1];
 
+      if (seenCustomFields.has(post_id)) return;
+      seenCustomFields.add(post_id);
+
+      const type = $el.attr("type");
       if (type === "radio") {
         const checked = searchElm
           .find(`input[name="custom_field[${post_id}]"]:checked`)
           .val();
         if (checked) custom_field[post_id] = checked;
       } else if (type === "checkbox") {
-        const values = [];
+        let values = [];
         searchElm
           .find(`input[name="custom_field[${post_id}][]"]:checked`)
-          .each(function () {
-            const val = $(this).val();
+          .each((_, c) => {
+            const val = $(c).val();
             if (val) values.push(val);
           });
         if (values.length) custom_field[post_id] = values;
       } else {
-        const value = $el.val();
-        if (value) custom_field[post_id] = value;
+        const val = $el.val();
+        if (val) custom_field[post_id] = val;
       }
     });
 
-    // Collect form values
+    // Collect basic form values
     const q = searchElm.find('input[name="q"]').val();
     const in_cat = searchElm.find(".directorist-category-select").val();
     const in_loc = searchElm.find(".directorist-location-select").val();
@@ -304,101 +320,97 @@ import debounce from "../../global/components/debounce";
     const website = searchElm.find('input[name="website"]').val();
     const phone = searchElm.find('input[name="phone"]').val();
 
-    const isQueryRequired = searchElm.find('input[name="q"]').prop("required");
-    const isCategoryRequired = searchElm
-      .find(".directorist-category-select")
-      .prop("required");
-    const isLocationRequired = searchElm
-      .find(".directorist-location-select")
-      .prop("required");
-
-    let requiredFieldsAreValid = true;
-    if (isQueryRequired && !q) requiredFieldsAreValid = false;
-    if (isCategoryRequired && (!in_cat || in_cat.length === 0))
-      requiredFieldsAreValid = false;
-    if (isLocationRequired && (!in_loc || in_loc.length === 0))
-      requiredFieldsAreValid = false;
-
-    // const page_no = searchElm.find(".page-numbers.current").text();
-
-    // ✅ Update global form_data
+    // Update form_data
     updateFormData({
-      q: formDataValidation("q", q),
-      in_cat: formDataValidation("in_cat", in_cat),
-      in_loc: formDataValidation("in_loc", in_loc),
-      in_tag: formDataValidation("in_tag", tag),
-      price: formDataValidation("price", price),
-      price_range: formDataValidation("price_range", price_range),
-      search_by_rating: formDataValidation(
-        "search_by_rating",
-        search_by_rating
-      ),
-      address: formDataValidation("address", address),
-      zip: formDataValidation("zip", zip),
-      fax: formDataValidation("fax", fax),
-      email: formDataValidation("email", email),
-      website: formDataValidation("website", website),
-      phone: formDataValidation("phone", phone),
-      custom_field: formDataValidation("custom_field", custom_field),
+      q,
+      in_cat,
+      in_loc,
+      in_tag: tag,
+      price,
+      price_range,
+      search_by_rating,
+      address,
+      zip,
+      fax,
+      email,
+      website,
+      phone,
+      custom_field,
     });
 
-    // Check if "open_now" checkbox is checked and update form_data
-    if (searchElm.find('input[name="open_now"]').is(":checked")) {
-      updateFormData({
-        open_now: formDataValidation(
-          "open_now",
-          searchElm.find('input[name="open_now"]').val()
-        ),
-      });
-    }
+    // open_now checkbox
+    const open_now_val = searchElm.find('input[name="open_now"]').is(":checked")
+      ? searchElm.find('input[name="open_now"]').val()
+      : undefined;
+    updateFormData({ open_now: open_now_val });
 
-    // Check if address is available and update cityLat, cityLng, and miles
-    if (formDataValidation("address", form_data.address)) {
-      updateFormData({
-        cityLat: formDataValidation(
-          "cityLat",
-          searchElm.find("#cityLat").val()
-        ),
-        cityLng: formDataValidation(
-          "cityLng",
-          searchElm.find("#cityLng").val()
-        ),
-        miles: formDataValidation(
-          "miles",
-          searchElm.find('input[name="miles"]').val()
-        ),
-      });
-    } else {
-      updateFormData({
-        cityLat: formDataValidation("cityLat", ""),
-        cityLng: formDataValidation("cityLng", ""),
-        miles: formDataValidation("miles", ""),
-      });
-    }
+    // Address related data
+    updateFormData({
+      cityLat: address ? searchElm.find("#cityLat").val() : undefined,
+      cityLng: address ? searchElm.find("#cityLng").val() : undefined,
+      miles: address ? searchElm.find('input[name="miles"]').val() : undefined,
+    });
 
-    // Check if zip is available and update zip_cityLat, zip_cityLng, and miles
-    if (formDataValidation("zip", form_data.zip)) {
-      updateFormData({
-        zip_cityLat: formDataValidation(
-          "zip_cityLat",
-          searchElm.find(".zip-cityLat").val()
-        ),
-        zip_cityLng: formDataValidation(
-          "zip_cityLng",
-          searchElm.find(".zip-cityLng").val()
-        ),
-      });
-    } else {
-      updateFormData({
-        zip_cityLat: formDataValidation("zip_cityLat", ""),
-        zip_cityLng: formDataValidation("zip_cityLng", ""),
-      });
-    }
+    // Zip related data
+    updateFormData({
+      zip_cityLat: zip ? searchElm.find(".zip-cityLat").val() : undefined,
+      zip_cityLng: zip ? searchElm.find(".zip-cityLng").val() : undefined,
+    });
 
-    // If page is available, update the paged field
-    if (page) {
-      updateFormData({ paged: page });
-    }
+    // Paging: get current page number, default 1 if not found
+    let page = parseInt(form_data.paged, 10) || 1;
+    updateFormData({
+      paged: page > 1 ? page : undefined,
+    });
+
+    // --- DYNAMIC REQUIRED FIELDS CHECK ---
+    // Select all required inputs and selects inside searchElm
+    const requiredInputs = searchElm.find(
+      "input[required], select[required], textarea[required]"
+    );
+
+    let requiredFieldsAreValid = true;
+
+    requiredInputs.each(function () {
+      const $el = $(this);
+      const tagName = $el.prop("tagName").toLowerCase();
+      const type = $el.attr("type");
+
+      console.log("Checking required field:", {
+        tagName,
+        type,
+        value: $el.val(),
+        isChecked: $el.is(":checked"),
+        isRequired: $el.is("[required]"),
+      });
+
+      if (tagName === "input") {
+        if (type === "checkbox" || type === "radio") {
+          // For checkboxes/radios, at least one with this name must be checked
+          const name = $el.attr("name");
+          const checked =
+            searchElm.find(`input[name="${name}"]:checked`).length > 0;
+          if (!checked) {
+            requiredFieldsAreValid = false;
+            return false; // break .each loop early
+          }
+        } else {
+          // For other input types, value must not be empty
+          if (!$el.val()) {
+            requiredFieldsAreValid = false;
+            return false;
+          }
+        }
+      } else if (tagName === "select" || tagName === "textarea") {
+        // Select or textarea must have a value
+        if (!$el.val()) {
+          requiredFieldsAreValid = false;
+          return false;
+        }
+      }
+    });
+
+    return requiredFieldsAreValid;
   }
 
   // Handle Infinite Scroll
@@ -417,9 +429,11 @@ import debounce from "../../global/components/debounce";
 
       const instantSearchElement = $(".directorist-instant-search");
       const activeForm = getActiveForm(instantSearchElement);
-      const formData = buildFormData(activeForm, instantSearchElement);
 
-      loadMoreListings(formData);
+      // build form_data
+      buildFormData(activeForm);
+
+      loadMoreListings(form_data);
     }
   }
 
@@ -455,13 +469,6 @@ import debounce from "../../global/components/debounce";
       }
     });
   }
-
-  // Form data validate
-  const formDataValidation = (key, value) => {
-    return value !== undefined && value !== null && value !== ""
-      ? value
-      : undefined;
-  };
 
   // Determine the active form
   function getActiveForm(instantSearchElement) {
@@ -583,7 +590,6 @@ import debounce from "../../global/components/debounce";
     "keyup",
     ".directorist-instant-search .listing-with-sidebar form",
     debounce(function (e) {
-      console.log("keyup event triggered");
       if (
         $(e.target).closest(".directorist-custom-range-slider__value").length >
         0
@@ -602,7 +608,6 @@ import debounce from "../../global/components/debounce";
     "change",
     ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name",
     debounce(function (e) {
-      console.log("change event triggered(radio/checkbox/location/range)");
       e.preventDefault();
       var searchElm = $(this).closest(".listing-with-sidebar");
       filterListing(searchElm);
@@ -614,7 +619,6 @@ import debounce from "../../global/components/debounce";
     "change",
     ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search",
     debounce(function (e) {
-      console.log("change event triggered (zipcode/location)");
       e.preventDefault();
 
       const searchElm = $(this).closest(".listing-with-sidebar");
@@ -640,7 +644,6 @@ import debounce from "../../global/components/debounce";
         return; // Skip calling `filterListing` if the value is empty
       }
 
-      console.log("change event triggered (select)", { value: $(this).val() });
       e.preventDefault();
       var searchElm = $(this).val() && $(this).closest(".listing-with-sidebar");
       filterListing(searchElm);
@@ -652,7 +655,6 @@ import debounce from "../../global/components/debounce";
     "click",
     ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon",
     debounce(function (e) {
-      console.log("click event triggered (location icon)");
       e.preventDefault();
       var searchElm = $(this).closest(".listing-with-sidebar");
       filterListing(searchElm);
@@ -668,8 +670,6 @@ import debounce from "../../global/components/debounce";
         .closest(".directorist-search-field")
         .find('input:not([type="checkbox"]):not([type="radio"]), select')
         .val("");
-
-      console.log("clear input value triggered", inputValue);
 
       if (inputValue) {
         let searchElm = $(
@@ -854,13 +854,6 @@ import debounce from "../../global/components/debounce";
         ).serialize();
         let action_value = $(".directorist-advanced-search").attr("action");
         let url = action_value + "?" + basic_data + "&" + advanced_data;
-
-        console.log("submit on sidebar form", {
-          basic_data,
-          advanced_data,
-          action_value,
-          url,
-        });
 
         window.location.href = url;
       }
