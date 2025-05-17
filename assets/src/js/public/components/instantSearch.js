@@ -16,79 +16,73 @@ import debounce from "../../global/components/debounce";
     Main Functions 
   */
 
-  // Filter Listings
-  function filterListing(searchElm) {
-    const requiredFieldsAreValid = buildFormData(searchElm);
-    console.log("filterListing:", { requiredFieldsAreValid, form_data });
-    // Update URL with form data
-    update_instant_search_url(form_data);
-
-    if (!requiredFieldsAreValid) return;
-
+  // Perform Instant Search
+  function performInstantSearch(searchElm) {
     // get parent element
     const instant_search_element = searchElm.closest(
       ".directorist-instant-search"
     );
 
-    // Get dataAtts
-    const dataAtts = JSON.parse(instant_search_element.attr("data-atts"));
+    // Get data-atts
+    const directorist_instant_search_data_atts = JSON.parse(
+      instant_search_element.attr("data-atts")
+    );
 
     // make ajax data
-    const ajaxData = {
+    const directorist_instant_search_data = {
       ...form_data,
       action: "directorist_instant_search",
       _nonce: directorist.ajax_nonce,
       current_page_id: directorist.current_page_id,
-      data_atts: dataAtts,
+      data_atts: directorist_instant_search_data_atts,
     };
 
-    // perform instant search
-    performInstantSearch(ajaxData, instant_search_element);
-  }
+    console.log("Performing instant search with data:", {
+      directorist_instant_search_data,
+      instant_search_element,
+    });
 
-  // Perform Instant Search
-  function performInstantSearch(ajaxData, contextElm) {
-    console.log("Performing instant search with data:", { ajaxData });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
-      data: ajaxData,
+      data: directorist_instant_search_data,
       beforeSend: function () {
-        contextElm
+        instant_search_element
           .find(".directorist-advanced-filter__form .directorist-btn-sm")
           .attr("disabled", true);
-        contextElm
+        instant_search_element
           .find(".directorist-archive-items")
           .addClass("atbdp-form-fade");
-        contextElm
+        instant_search_element
           .find(".directorist-header-bar .directorist-advanced-filter")
           .removeClass("directorist-advanced-filter--show")
           .hide();
 
-        if (contextElm.offset()?.top > 0) {
-          $(document).scrollTop(contextElm.offset().top);
+        if (instant_search_element.offset()?.top > 0) {
+          $(document).scrollTop(instant_search_element.offset().top);
         }
 
         closeAllSearchModal();
       },
       success: function (html) {
+        console.log("Instant search response:", { html });
         if (html.search_result) {
-          contextElm
+          instant_search_element
             .find(".directorist-header-found-title, .dsa-save-search-container")
             .remove();
           if (html.header_title) {
-            contextElm
+            instant_search_element
               .find(".directorist-listings-header__left")
               .append(html.header_title);
-            contextElm
+            instant_search_element
               .find(".directorist-header-found-title span")
               .text(html.count);
           }
-          contextElm
+          instant_search_element
             .find(".directorist-archive-items")
             .replaceWith(html.search_result)
             .removeClass("atbdp-form-fade");
-          contextElm
+          instant_search_element
             .find(".directorist-advanced-filter__form .directorist-btn-sm")
             .attr("disabled", false);
 
@@ -160,13 +154,12 @@ import debounce from "../../global/components/debounce";
   **/
 
   // Update or retain existing keys in form_data
-
-  // Filter on AJAX Search
   const updateFormData = (newData = {}) => {
     Object.entries(newData).forEach(([key, value]) => {
       if (
         value === undefined ||
         value === null ||
+        value === "" ||
         (Array.isArray(value) && value.length === 0) ||
         (typeof value === "object" &&
           !Array.isArray(value) &&
@@ -181,6 +174,7 @@ import debounce from "../../global/components/debounce";
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
+    console.log("Updating URL with form data:", { form_data });
     if (!history.pushState) return;
 
     let newurl =
@@ -249,9 +243,62 @@ import debounce from "../../global/components/debounce";
     window.history.pushState({ path: finalUrl }, "", finalUrl);
   }
 
+  // Check required fields are valid or not
+  function checkRequiredFields(searchElm) {
+    // Select all required inputs and selects inside searchElm
+    const requiredInputs = searchElm.find(
+      "input[required], select[required], textarea[required]"
+    );
+
+    let requiredFieldsAreValid = true;
+
+    requiredInputs.each(function () {
+      const $el = $(this);
+      const tagName = $el.prop("tagName").toLowerCase();
+      const type = $el.attr("type");
+
+      console.log("Checking required field:", {
+        tagName,
+        type,
+        value: $el.val(),
+        isChecked: $el.is(":checked"),
+        isRequired: $el.is("[required]"),
+      });
+
+      if (tagName === "input") {
+        if (type === "checkbox" || type === "radio") {
+          // For checkboxes/radios, at least one with this name must be checked
+          const name = $el.attr("name");
+          const checked =
+            searchElm.find(`input[name="${name}"]:checked`).length > 0;
+          if (!checked) {
+            requiredFieldsAreValid = false;
+            return false; // break .each loop early
+          }
+        } else {
+          // For other input types, value must not be empty
+          if (!$el.val()) {
+            requiredFieldsAreValid = false;
+            return false;
+          }
+        }
+      } else if (tagName === "select" || tagName === "textarea") {
+        // Select or textarea must have a value
+        if (!$el.val()) {
+          requiredFieldsAreValid = false;
+          return false;
+        }
+      }
+    });
+
+    console.log("Required fields status:", { requiredFieldsAreValid });
+
+    return requiredFieldsAreValid;
+  }
+
   //  Build form_data from searchElm inputs.
-  //  Returns true if required fields are valid, false otherwise.
   function buildFormData(searchElm) {
+    console.log("Building form data...", { searchElm, form_data, directorist });
     let tag = [];
     let price = [];
     let custom_field = {};
@@ -319,6 +366,10 @@ import debounce from "../../global/components/debounce";
     const email = searchElm.find('input[name="email"]').val();
     const website = searchElm.find('input[name="website"]').val();
     const phone = searchElm.find('input[name="phone"]').val();
+    const directory_type =
+      form_data.directory_type || directorist.default_directory_type;
+    const view = form_data.view || "grid";
+    const paged = form_data.paged || page;
 
     // Update form_data
     updateFormData({
@@ -336,6 +387,9 @@ import debounce from "../../global/components/debounce";
       website,
       phone,
       custom_field,
+      directory_type,
+      view,
+      paged,
     });
 
     // open_now checkbox
@@ -363,54 +417,57 @@ import debounce from "../../global/components/debounce";
       paged: page > 1 ? page : undefined,
     });
 
-    // --- DYNAMIC REQUIRED FIELDS CHECK ---
-    // Select all required inputs and selects inside searchElm
-    const requiredInputs = searchElm.find(
-      "input[required], select[required], textarea[required]"
-    );
+    // Update URL with form data
+    update_instant_search_url(form_data);
+  }
 
-    let requiredFieldsAreValid = true;
+  // Build form data without required value
+  const buildFormDataWithoutRequired = () => {
+    const notRequiredFields = ["directory_type", "view", "sort", "paged"];
 
-    requiredInputs.each(function () {
-      const $el = $(this);
-      const tagName = $el.prop("tagName").toLowerCase();
-      const type = $el.attr("type");
-
-      console.log("Checking required field:", {
-        tagName,
-        type,
-        value: $el.val(),
-        isChecked: $el.is(":checked"),
-        isRequired: $el.is("[required]"),
-      });
-
-      if (tagName === "input") {
-        if (type === "checkbox" || type === "radio") {
-          // For checkboxes/radios, at least one with this name must be checked
-          const name = $el.attr("name");
-          const checked =
-            searchElm.find(`input[name="${name}"]:checked`).length > 0;
-          if (!checked) {
-            requiredFieldsAreValid = false;
-            return false; // break .each loop early
-          }
-        } else {
-          // For other input types, value must not be empty
-          if (!$el.val()) {
-            requiredFieldsAreValid = false;
-            return false;
-          }
-        }
-      } else if (tagName === "select" || tagName === "textarea") {
-        // Select or textarea must have a value
-        if (!$el.val()) {
-          requiredFieldsAreValid = false;
-          return false;
-        }
+    Object.entries(form_data).forEach(([key, value]) => {
+      if (!notRequiredFields.includes(key)) {
+        delete form_data[key];
       }
     });
 
-    return requiredFieldsAreValid;
+    console.log("Building form data without required value:", {
+      form_data,
+    });
+  };
+
+  // Perform Instant Search with required value
+  function performInstantSearchWithRequiredValue(searchElm) {
+    // Build form data
+    buildFormData(searchElm);
+
+    // Check required fields
+    const requiredFieldsAreValid = checkRequiredFields(searchElm);
+
+    // If required fields are valid, proceed with filtering
+    if (requiredFieldsAreValid) {
+      performInstantSearch(searchElm);
+    }
+  }
+
+  // Perform Instant Search without required value
+  function performInstantSearchWithoutRequiredValue(searchElm) {
+    // Check required fields
+    const requiredFieldsAreValid = checkRequiredFields(searchElm);
+
+    // If required fields are valid, proceed with filtering
+    if (requiredFieldsAreValid) {
+      // Build form data
+      buildFormData(searchElm);
+
+      performInstantSearch(searchElm);
+    } else {
+      // Build form data without required value
+      buildFormDataWithoutRequired();
+
+      // Filter Listing
+      performInstantSearch(searchElm);
+    }
   }
 
   // Handle Infinite Scroll
@@ -526,7 +583,8 @@ import debounce from "../../global/components/debounce";
             if (mutation.attributeName == "value") {
               clearTimeout(timeout);
               timeout = setTimeout(() => {
-                filterListing(searchElm);
+                // Instant search with required value
+                performInstantSearchWithRequiredValue(searchElm);
               }, 250);
             }
           }
@@ -594,12 +652,14 @@ import debounce from "../../global/components/debounce";
         $(e.target).closest(".directorist-custom-range-slider__value").length >
         0
       ) {
-        return; // Skip calling `filterListing` for this element
+        return; // Skip search for this element
       }
 
       e.preventDefault();
       var searchElm = $(this).closest(".listing-with-sidebar");
-      filterListing(searchElm);
+
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
     }, 250)
   );
 
@@ -610,7 +670,9 @@ import debounce from "../../global/components/debounce";
     debounce(function (e) {
       e.preventDefault();
       var searchElm = $(this).closest(".listing-with-sidebar");
-      filterListing(searchElm);
+
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
     }, 250)
   );
 
@@ -620,7 +682,6 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .listing-with-sidebar .directorist-search-location, .directorist-instant-search .listing-with-sidebar .directorist-zipcode-search",
     debounce(function (e) {
       e.preventDefault();
-
       const searchElm = $(this).closest(".listing-with-sidebar");
 
       // If it's a location field, ensure it has a value before triggering the filter
@@ -631,7 +692,8 @@ import debounce from "../../global/components/debounce";
         }
       }
 
-      filterListing(searchElm);
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
     }, 250)
   );
 
@@ -641,12 +703,14 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .listing-with-sidebar select",
     debounce(function (e) {
       if (!$(this).val()) {
-        return; // Skip calling `filterListing` if the value is empty
+        return; // Skip search if the value is empty
       }
 
       e.preventDefault();
       var searchElm = $(this).val() && $(this).closest(".listing-with-sidebar");
-      filterListing(searchElm);
+
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
     }, 250)
   );
 
@@ -657,7 +721,9 @@ import debounce from "../../global/components/debounce";
     debounce(function (e) {
       e.preventDefault();
       var searchElm = $(this).closest(".listing-with-sidebar");
-      filterListing(searchElm);
+
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
     }, 1000)
   );
 
@@ -677,8 +743,10 @@ import debounce from "../../global/components/debounce";
             ".directorist-instant-search .listing-with-sidebar form"
           )
         );
+
+        // Instant search with required value
         if (searchElm) {
-          filterListing(searchElm);
+          performInstantSearchWithRequiredValue(searchElm);
         }
       }
     }
@@ -693,14 +761,17 @@ import debounce from "../../global/components/debounce";
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
-
-      updateFormData({ paged: 1 }); // Reset page to 1
-
+      // Get active form
       const activeForm = getActiveForm(instant_search_element);
+
+      // Reset page to 1
+      page = 1;
+      // Build form data
+      buildFormData(activeForm);
 
       // Filter Listing
       debounce(function (e) {
-        filterListing(activeForm);
+        performInstantSearch(activeForm);
       }, 250);
     }
   );
@@ -708,11 +779,10 @@ import debounce from "../../global/components/debounce";
   /* Directorist instant search submit */
   $("body").on("submit", ".directorist-instant-search form", function (e) {
     e.preventDefault();
-
     let _this = $(this);
 
-    // Filter Listing
-    filterListing(_this);
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(_this);
   });
 
   // Directorist instant search submit - for advanced filter
@@ -724,8 +794,8 @@ import debounce from "../../global/components/debounce";
         e.preventDefault();
         let _this = $(this);
 
-        // Filter Listing
-        filterListing(_this);
+        // Instant search with required value
+        performInstantSearchWithRequiredValue(_this);
       }
     }
   );
@@ -736,27 +806,29 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .directorist-type-nav__link",
     function (e) {
       e.preventDefault();
-
       const $parentLi = $(this).closest("li");
+
+      // toggle active class
       $parentLi
         .addClass("directorist-type-nav__list__current")
         .siblings("li")
         .removeClass("directorist-type-nav__list__current");
 
-      const directory_type = getDirectoryType($(this));
-
-      updateFormData({ directory_type }); // ✅ only update `directory_type`, preserve others
-
-      // update_instant_search_url(form_data);
-
+      // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
 
+      // get directory type
+      const directory_type = getDirectoryType($(this));
+      // ✅ only update `directory_type`, preserve others
+      updateFormData({ directory_type });
+
+      // Get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Filter Listing
-      filterListing(activeForm);
+      // Instant search without required value
+      performInstantSearchWithoutRequiredValue(activeForm);
     }
   );
 
@@ -767,20 +839,21 @@ import debounce from "../../global/components/debounce";
     function (e) {
       e.preventDefault();
 
-      const view = getViewAs($(this));
-
-      updateFormData({ view }); // ✅ only update `view`, preserve others
-
-      // update_instant_search_url(form_data);
-
+      // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
 
+      // get view as value
+      const view = getViewAs($(this));
+      // ✅ only update `view`, preserve others
+      updateFormData({ view });
+
+      // Get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Filter Listing
-      filterListing(activeForm);
+      // Instant search without required value
+      performInstantSearchWithoutRequiredValue(activeForm);
     }
   );
 
@@ -791,25 +864,27 @@ import debounce from "../../global/components/debounce";
     function (e) {
       e.preventDefault();
 
+      // toggle active class
       $(this)
         .addClass("active")
         .siblings(".directorist-dropdown__links__single-js")
         .removeClass("active");
 
-      const sort = getSortValue($(this));
-
-      updateFormData({ sort }); // ✅ only update `sort`, preserve others
-
-      // update_instant_search_url(form_data);
-
+      // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
 
+      // get sort value
+      const sort = getSortValue($(this));
+      // ✅ only update `sort`, preserve others
+      updateFormData({ sort });
+
+      // get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Filter Listing
-      filterListing(activeForm);
+      // Instant search without required value
+      performInstantSearchWithoutRequiredValue(activeForm);
     }
   );
 
@@ -827,15 +902,19 @@ import debounce from "../../global/components/debounce";
       } else if ($(this).hasClass("prev")) {
         page = parseInt(page) - 1;
       }
+      // ✅ only update `sort`, preserve others
+      updateFormData({ paged: page });
 
+      // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
 
+      // get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Filter Listing
-      filterListing(activeForm);
+      // Instant search without required value
+      performInstantSearchWithoutRequiredValue(activeForm);
     }
   );
 

@@ -1408,63 +1408,51 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     Main Functions 
   */
 
-  // Filter Listings
-  function filterListing(searchElm) {
-    var requiredFieldsAreValid = buildFormData(searchElm);
-    console.log("filterListing:", {
-      requiredFieldsAreValid: requiredFieldsAreValid,
-      form_data: form_data
-    });
-    // Update URL with form data
-    update_instant_search_url(form_data);
-    if (!requiredFieldsAreValid) return;
-
+  // Perform Instant Search
+  function performInstantSearch(searchElm) {
     // get parent element
     var instant_search_element = searchElm.closest(".directorist-instant-search");
 
-    // Get dataAtts
-    var dataAtts = JSON.parse(instant_search_element.attr("data-atts"));
+    // Get data-atts
+    var directorist_instant_search_data_atts = JSON.parse(instant_search_element.attr("data-atts"));
 
     // make ajax data
-    var ajaxData = _objectSpread(_objectSpread({}, form_data), {}, {
+    var directorist_instant_search_data = _objectSpread(_objectSpread({}, form_data), {}, {
       action: "directorist_instant_search",
       _nonce: directorist.ajax_nonce,
       current_page_id: directorist.current_page_id,
-      data_atts: dataAtts
+      data_atts: directorist_instant_search_data_atts
     });
-
-    // perform instant search
-    performInstantSearch(ajaxData, instant_search_element);
-  }
-
-  // Perform Instant Search
-  function performInstantSearch(ajaxData, contextElm) {
     console.log("Performing instant search with data:", {
-      ajaxData: ajaxData
+      directorist_instant_search_data: directorist_instant_search_data,
+      instant_search_element: instant_search_element
     });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
-      data: ajaxData,
+      data: directorist_instant_search_data,
       beforeSend: function beforeSend() {
-        var _contextElm$offset;
-        contextElm.find(".directorist-advanced-filter__form .directorist-btn-sm").attr("disabled", true);
-        contextElm.find(".directorist-archive-items").addClass("atbdp-form-fade");
-        contextElm.find(".directorist-header-bar .directorist-advanced-filter").removeClass("directorist-advanced-filter--show").hide();
-        if (((_contextElm$offset = contextElm.offset()) === null || _contextElm$offset === void 0 ? void 0 : _contextElm$offset.top) > 0) {
-          $(document).scrollTop(contextElm.offset().top);
+        var _instant_search_eleme;
+        instant_search_element.find(".directorist-advanced-filter__form .directorist-btn-sm").attr("disabled", true);
+        instant_search_element.find(".directorist-archive-items").addClass("atbdp-form-fade");
+        instant_search_element.find(".directorist-header-bar .directorist-advanced-filter").removeClass("directorist-advanced-filter--show").hide();
+        if (((_instant_search_eleme = instant_search_element.offset()) === null || _instant_search_eleme === void 0 ? void 0 : _instant_search_eleme.top) > 0) {
+          $(document).scrollTop(instant_search_element.offset().top);
         }
         closeAllSearchModal();
       },
       success: function success(html) {
+        console.log("Instant search response:", {
+          html: html
+        });
         if (html.search_result) {
-          contextElm.find(".directorist-header-found-title, .dsa-save-search-container").remove();
+          instant_search_element.find(".directorist-header-found-title, .dsa-save-search-container").remove();
           if (html.header_title) {
-            contextElm.find(".directorist-listings-header__left").append(html.header_title);
-            contextElm.find(".directorist-header-found-title span").text(html.count);
+            instant_search_element.find(".directorist-listings-header__left").append(html.header_title);
+            instant_search_element.find(".directorist-header-found-title span").text(html.count);
           }
-          contextElm.find(".directorist-archive-items").replaceWith(html.search_result).removeClass("atbdp-form-fade");
-          contextElm.find(".directorist-advanced-filter__form .directorist-btn-sm").attr("disabled", false);
+          instant_search_element.find(".directorist-archive-items").replaceWith(html.search_result).removeClass("atbdp-form-fade");
+          instant_search_element.find(".directorist-advanced-filter__form .directorist-btn-sm").attr("disabled", false);
           window.dispatchEvent(new CustomEvent("directorist-instant-search-reloaded"));
           window.dispatchEvent(new CustomEvent("directorist-reload-listings-map-archive"));
 
@@ -1516,15 +1504,13 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   **/
 
   // Update or retain existing keys in form_data
-
-  // Filter on AJAX Search
   var updateFormData = function updateFormData() {
     var newData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     Object.entries(newData).forEach(function (_ref) {
       var _ref2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref, 2),
         key = _ref2[0],
         value = _ref2[1];
-      if (value === undefined || value === null || Array.isArray(value) && value.length === 0 || _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(value) === "object" && !Array.isArray(value) && Object.keys(value).length === 0) {
+      if (value === undefined || value === null || value === "" || Array.isArray(value) && value.length === 0 || _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(value) === "object" && !Array.isArray(value) && Object.keys(value).length === 0) {
         delete form_data[key];
       } else {
         form_data[key] = value;
@@ -1534,6 +1520,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
+    console.log("Updating URL with form data:", {
+      form_data: form_data
+    });
     if (!history.pushState) return;
     var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     var query = "";
@@ -1587,9 +1576,59 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     }, "", finalUrl);
   }
 
+  // Check required fields are valid or not
+  function checkRequiredFields(searchElm) {
+    // Select all required inputs and selects inside searchElm
+    var requiredInputs = searchElm.find("input[required], select[required], textarea[required]");
+    var requiredFieldsAreValid = true;
+    requiredInputs.each(function () {
+      var $el = $(this);
+      var tagName = $el.prop("tagName").toLowerCase();
+      var type = $el.attr("type");
+      console.log("Checking required field:", {
+        tagName: tagName,
+        type: type,
+        value: $el.val(),
+        isChecked: $el.is(":checked"),
+        isRequired: $el.is("[required]")
+      });
+      if (tagName === "input") {
+        if (type === "checkbox" || type === "radio") {
+          // For checkboxes/radios, at least one with this name must be checked
+          var name = $el.attr("name");
+          var checked = searchElm.find("input[name=\"".concat(name, "\"]:checked")).length > 0;
+          if (!checked) {
+            requiredFieldsAreValid = false;
+            return false; // break .each loop early
+          }
+        } else {
+          // For other input types, value must not be empty
+          if (!$el.val()) {
+            requiredFieldsAreValid = false;
+            return false;
+          }
+        }
+      } else if (tagName === "select" || tagName === "textarea") {
+        // Select or textarea must have a value
+        if (!$el.val()) {
+          requiredFieldsAreValid = false;
+          return false;
+        }
+      }
+    });
+    console.log("Required fields status:", {
+      requiredFieldsAreValid: requiredFieldsAreValid
+    });
+    return requiredFieldsAreValid;
+  }
+
   //  Build form_data from searchElm inputs.
-  //  Returns true if required fields are valid, false otherwise.
   function buildFormData(searchElm) {
+    console.log("Building form data...", {
+      searchElm: searchElm,
+      form_data: form_data,
+      directorist: directorist
+    });
     var tag = [];
     var price = [];
     var custom_field = {};
@@ -1649,6 +1688,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var email = searchElm.find('input[name="email"]').val();
     var website = searchElm.find('input[name="website"]').val();
     var phone = searchElm.find('input[name="phone"]').val();
+    var directory_type = form_data.directory_type || directorist.default_directory_type;
+    var view = form_data.view || "grid";
+    var paged = form_data.paged || page;
 
     // Update form_data
     updateFormData({
@@ -1665,7 +1707,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       email: email,
       website: website,
       phone: phone,
-      custom_field: custom_field
+      custom_field: custom_field,
+      directory_type: directory_type,
+      view: view,
+      paged: paged
     });
 
     // open_now checkbox
@@ -1693,46 +1738,57 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       paged: page > 1 ? page : undefined
     });
 
-    // --- DYNAMIC REQUIRED FIELDS CHECK ---
-    // Select all required inputs and selects inside searchElm
-    var requiredInputs = searchElm.find("input[required], select[required], textarea[required]");
-    var requiredFieldsAreValid = true;
-    requiredInputs.each(function () {
-      var $el = $(this);
-      var tagName = $el.prop("tagName").toLowerCase();
-      var type = $el.attr("type");
-      console.log("Checking required field:", {
-        tagName: tagName,
-        type: type,
-        value: $el.val(),
-        isChecked: $el.is(":checked"),
-        isRequired: $el.is("[required]")
-      });
-      if (tagName === "input") {
-        if (type === "checkbox" || type === "radio") {
-          // For checkboxes/radios, at least one with this name must be checked
-          var name = $el.attr("name");
-          var checked = searchElm.find("input[name=\"".concat(name, "\"]:checked")).length > 0;
-          if (!checked) {
-            requiredFieldsAreValid = false;
-            return false; // break .each loop early
-          }
-        } else {
-          // For other input types, value must not be empty
-          if (!$el.val()) {
-            requiredFieldsAreValid = false;
-            return false;
-          }
-        }
-      } else if (tagName === "select" || tagName === "textarea") {
-        // Select or textarea must have a value
-        if (!$el.val()) {
-          requiredFieldsAreValid = false;
-          return false;
-        }
+    // Update URL with form data
+    update_instant_search_url(form_data);
+  }
+
+  // Build form data without required value
+  var buildFormDataWithoutRequired = function buildFormDataWithoutRequired() {
+    var notRequiredFields = ["directory_type", "view", "sort", "paged"];
+    Object.entries(form_data).forEach(function (_ref7) {
+      var _ref8 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref7, 2),
+        key = _ref8[0],
+        value = _ref8[1];
+      if (!notRequiredFields.includes(key)) {
+        delete form_data[key];
       }
     });
-    return requiredFieldsAreValid;
+    console.log("Building form data without required value:", {
+      form_data: form_data
+    });
+  };
+
+  // Perform Instant Search with required value
+  function performInstantSearchWithRequiredValue(searchElm) {
+    // Build form data
+    buildFormData(searchElm);
+
+    // Check required fields
+    var requiredFieldsAreValid = checkRequiredFields(searchElm);
+
+    // If required fields are valid, proceed with filtering
+    if (requiredFieldsAreValid) {
+      performInstantSearch(searchElm);
+    }
+  }
+
+  // Perform Instant Search without required value
+  function performInstantSearchWithoutRequiredValue(searchElm) {
+    // Check required fields
+    var requiredFieldsAreValid = checkRequiredFields(searchElm);
+
+    // If required fields are valid, proceed with filtering
+    if (requiredFieldsAreValid) {
+      // Build form data
+      buildFormData(searchElm);
+      performInstantSearch(searchElm);
+    } else {
+      // Build form data without required value
+      buildFormDataWithoutRequired();
+
+      // Filter Listing
+      performInstantSearch(searchElm);
+    }
   }
 
   // Handle Infinite Scroll
@@ -1826,7 +1882,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
               if (mutation.attributeName == "value") {
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
-                  filterListing(searchElm);
+                  // Instant search with required value
+                  performInstantSearchWithRequiredValue(searchElm);
                 }, 250);
               }
             }
@@ -1878,19 +1935,23 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // sidebar on keyup searching
   $("body").on("keyup", ".directorist-instant-search .listing-with-sidebar form", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     if ($(e.target).closest(".directorist-custom-range-slider__value").length > 0) {
-      return; // Skip calling `filterListing` for this element
+      return; // Skip search for this element
     }
 
     e.preventDefault();
     var searchElm = $(this).closest(".listing-with-sidebar");
-    filterListing(searchElm);
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
   // sidebar on change searching - radio/checkbox/location/range
   $("body").on("change", ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     e.preventDefault();
     var searchElm = $(this).closest(".listing-with-sidebar");
-    filterListing(searchElm);
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
   // sidebar on change searching - zipcode/location
@@ -1905,25 +1966,31 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         return;
       }
     }
-    filterListing(searchElm);
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
   // sidebar on change searching - select
   $("body").on("change", ".directorist-instant-search .listing-with-sidebar select", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     if (!$(this).val()) {
-      return; // Skip calling `filterListing` if the value is empty
+      return; // Skip search if the value is empty
     }
 
     e.preventDefault();
     var searchElm = $(this).val() && $(this).closest(".listing-with-sidebar");
-    filterListing(searchElm);
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
   // sidebar on click searching - location icon
   $("body").on("click", ".directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon", Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     e.preventDefault();
     var searchElm = $(this).closest(".listing-with-sidebar");
-    filterListing(searchElm);
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 1000));
 
   // Clear Input Value
@@ -1931,8 +1998,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var inputValue = $(this).closest(".directorist-search-field").find('input:not([type="checkbox"]):not([type="radio"]), select').val("");
     if (inputValue) {
       var searchElm = $(document.querySelector(".directorist-instant-search .listing-with-sidebar form"));
+
+      // Instant search with required value
       if (searchElm) {
-        filterListing(searchElm);
+        performInstantSearchWithRequiredValue(searchElm);
       }
     }
   });
@@ -1941,15 +2010,17 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   $("body").on("click", ".directorist-instant-search .directorist-btn-reset-js", function (e) {
     e.preventDefault();
     var instant_search_element = $(this).closest(".directorist-instant-search");
-    updateFormData({
-      paged: 1
-    }); // Reset page to 1
-
+    // Get active form
     var activeForm = getActiveForm(instant_search_element);
+
+    // Reset page to 1
+    page = 1;
+    // Build form data
+    buildFormData(activeForm);
 
     // Filter Listing
     Object(_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
-      filterListing(activeForm);
+      performInstantSearch(activeForm);
     }, 250);
   });
 
@@ -1958,8 +2029,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     e.preventDefault();
     var _this = $(this);
 
-    // Filter Listing
-    filterListing(_this);
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(_this);
   });
 
   // Directorist instant search submit - for advanced filter
@@ -1968,8 +2039,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       e.preventDefault();
       var _this = $(this);
 
-      // Filter Listing
-      filterListing(_this);
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(_this);
     }
   });
 
@@ -1977,54 +2048,70 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   $("body").on("click", ".directorist-instant-search .directorist-type-nav__link", function (e) {
     e.preventDefault();
     var $parentLi = $(this).closest("li");
+
+    // toggle active class
     $parentLi.addClass("directorist-type-nav__list__current").siblings("li").removeClass("directorist-type-nav__list__current");
+
+    // get parent element
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+
+    // get directory type
     var directory_type = getDirectoryType($(this));
+    // ✅ only update `directory_type`, preserve others
     updateFormData({
       directory_type: directory_type
-    }); // ✅ only update `directory_type`, preserve others
+    });
 
-    // update_instant_search_url(form_data);
-
-    var instant_search_element = $(this).closest(".directorist-instant-search");
+    // Get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Filter Listing
-    filterListing(activeForm);
+    // Instant search without required value
+    performInstantSearchWithoutRequiredValue(activeForm);
   });
 
   // Directorist view as changes
   $("body").on("click", ".directorist-instant-search .directorist-viewas .directorist-viewas__item", function (e) {
     e.preventDefault();
+
+    // get parent element
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+
+    // get view as value
     var view = getViewAs($(this));
+    // ✅ only update `view`, preserve others
     updateFormData({
       view: view
-    }); // ✅ only update `view`, preserve others
+    });
 
-    // update_instant_search_url(form_data);
-
-    var instant_search_element = $(this).closest(".directorist-instant-search");
+    // Get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Filter Listing
-    filterListing(activeForm);
+    // Instant search without required value
+    performInstantSearchWithoutRequiredValue(activeForm);
   });
 
   // Directorist sort by changes
   $("body").on("click", ".directorist-instant-search .directorist-sortby-dropdown .directorist-dropdown__links__single-js", function (e) {
     e.preventDefault();
+
+    // toggle active class
     $(this).addClass("active").siblings(".directorist-dropdown__links__single-js").removeClass("active");
+
+    // get parent element
+    var instant_search_element = $(this).closest(".directorist-instant-search");
+
+    // get sort value
     var sort = getSortValue($(this));
+    // ✅ only update `sort`, preserve others
     updateFormData({
       sort: sort
-    }); // ✅ only update `sort`, preserve others
+    });
 
-    // update_instant_search_url(form_data);
-
-    var instant_search_element = $(this).closest(".directorist-instant-search");
+    // get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Filter Listing
-    filterListing(activeForm);
+    // Instant search without required value
+    performInstantSearchWithoutRequiredValue(activeForm);
   });
 
   // Directorist pagination changes
@@ -2038,11 +2125,19 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     } else if ($(this).hasClass("prev")) {
       page = parseInt(page) - 1;
     }
+    // ✅ only update `sort`, preserve others
+    updateFormData({
+      paged: page
+    });
+
+    // get parent element
     var instant_search_element = $(this).closest(".directorist-instant-search");
+
+    // get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Filter Listing
-    filterListing(activeForm);
+    // Instant search without required value
+    performInstantSearchWithoutRequiredValue(activeForm);
   });
 
   // Submit on sidebar form
