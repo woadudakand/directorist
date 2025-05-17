@@ -111,6 +111,61 @@ import debounce from "../../global/components/debounce";
     });
   }
 
+  // Perform Instant Search for directory type change
+  function performDirectoryChange(searchElm) {
+    // get parent element
+    const instant_search_element = searchElm.closest(
+      ".directorist-instant-search"
+    );
+
+    // Get data-atts
+    const directorist_instant_search_data_atts = JSON.parse(
+      instant_search_element.attr("data-atts")
+    );
+
+    // make ajax data
+    const directorist_instant_search_data = {
+      ...form_data,
+      action: "directorist_instant_search",
+      _nonce: directorist.ajax_nonce,
+      current_page_id: directorist.current_page_id,
+      data_atts: directorist_instant_search_data_atts,
+    };
+
+    console.log("Performing instant search with data for directory type:", {
+      directorist_instant_search_data,
+      instant_search_element,
+    });
+
+    $.ajax({
+      url: directorist.ajaxurl,
+      type: "POST",
+      data: directorist_instant_search_data,
+      beforeSend: function () {
+        instant_search_element.addClass("atbdp-form-fade");
+      },
+      success: function (html) {
+        console.log("Instant search response for Type Change:", { html });
+        if (html.directory_type) {
+          instant_search_element.replaceWith(html.directory_type);
+          instant_search_element
+            .find(".atbdp-form-fade")
+            .removeClass("atbdp-form-fade");
+
+          window.dispatchEvent(
+            new CustomEvent("directorist-instant-search-reloaded")
+          );
+          window.dispatchEvent(
+            new CustomEvent("directorist-reload-listings-map-archive")
+          );
+
+          // SearchForm Item in Single Category Location Page Init
+          singleCategoryLocationInit();
+        }
+      },
+    });
+  }
+
   // AJAX call to load more listings
   function loadMoreListings(formData) {
     let loadingDiv;
@@ -169,6 +224,13 @@ import debounce from "../../global/components/debounce";
       } else {
         form_data[key] = value;
       }
+    });
+  };
+
+  // Reset form_data
+  const resetFormData = () => {
+    Object.entries(form_data).forEach(([key, value]) => {
+      delete form_data[key];
     });
   };
 
@@ -806,29 +868,28 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .directorist-type-nav__link",
     function (e) {
       e.preventDefault();
-      const $parentLi = $(this).closest("li");
-
-      // toggle active class
-      $parentLi
-        .addClass("directorist-type-nav__list__current")
-        .siblings("li")
-        .removeClass("directorist-type-nav__list__current");
 
       // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
       );
 
-      // get directory type
+      // reset form data
+      resetFormData();
+
+      // get directory_type
       const directory_type = getDirectoryType($(this));
       // ✅ only update `directory_type`, preserve others
       updateFormData({ directory_type });
 
+      // Update URL with form data
+      update_instant_search_url(form_data);
+
       // Get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Instant search without required value
-      performInstantSearchWithoutRequiredValue(activeForm);
+      // Instant search for directory type change
+      performDirectoryChange(activeForm);
     }
   );
 

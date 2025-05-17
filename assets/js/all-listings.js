@@ -1467,6 +1467,49 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     });
   }
 
+  // Perform Instant Search for directory type change
+  function performDirectoryChange(searchElm) {
+    // get parent element
+    var instant_search_element = searchElm.closest(".directorist-instant-search");
+
+    // Get data-atts
+    var directorist_instant_search_data_atts = JSON.parse(instant_search_element.attr("data-atts"));
+
+    // make ajax data
+    var directorist_instant_search_data = _objectSpread(_objectSpread({}, form_data), {}, {
+      action: "directorist_instant_search",
+      _nonce: directorist.ajax_nonce,
+      current_page_id: directorist.current_page_id,
+      data_atts: directorist_instant_search_data_atts
+    });
+    console.log("Performing instant search with data for directory type:", {
+      directorist_instant_search_data: directorist_instant_search_data,
+      instant_search_element: instant_search_element
+    });
+    $.ajax({
+      url: directorist.ajaxurl,
+      type: "POST",
+      data: directorist_instant_search_data,
+      beforeSend: function beforeSend() {
+        instant_search_element.addClass("atbdp-form-fade");
+      },
+      success: function success(html) {
+        console.log("Instant search response for Type Change:", {
+          html: html
+        });
+        if (html.directory_type) {
+          instant_search_element.replaceWith(html.directory_type);
+          instant_search_element.find(".atbdp-form-fade").removeClass("atbdp-form-fade");
+          window.dispatchEvent(new CustomEvent("directorist-instant-search-reloaded"));
+          window.dispatchEvent(new CustomEvent("directorist-reload-listings-map-archive"));
+
+          // SearchForm Item in Single Category Location Page Init
+          singleCategoryLocationInit();
+        }
+      }
+    });
+  }
+
   // AJAX call to load more listings
   function loadMoreListings(formData) {
     var loadingDiv;
@@ -1518,6 +1561,16 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     });
   };
 
+  // Reset form_data
+  var resetFormData = function resetFormData() {
+    Object.entries(form_data).forEach(function (_ref3) {
+      var _ref4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref3, 2),
+        key = _ref4[0],
+        value = _ref4[1];
+      delete form_data[key];
+    });
+  };
+
   // Update search URL with form data
   function update_instant_search_url(form_data) {
     console.log("Updating URL with form data:", {
@@ -1542,10 +1595,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var ignoreKeys = ["data_atts", "custom_field", "current_page_id", "action", "_nonce"];
 
     // Handle all form_data keys dynamically
-    Object.entries(form_data).forEach(function (_ref3) {
-      var _ref4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref3, 2),
-        key = _ref4[0],
-        value = _ref4[1];
+    Object.entries(form_data).forEach(function (_ref5) {
+      var _ref6 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref5, 2),
+        key = _ref6[0],
+        value = _ref6[1];
       if (ignoreKeys.includes(key)) return;
       if (key === "paged" && Number(value) === 1) {
         return; // ❌ Skip default page 1
@@ -1563,10 +1616,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
     // Handle custom_field
     if (form_data.custom_field && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(form_data.custom_field) === "object") {
-      Object.entries(form_data.custom_field).forEach(function (_ref5) {
-        var _ref6 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref5, 2),
-          key = _ref6[0],
-          val = _ref6[1];
+      Object.entries(form_data.custom_field).forEach(function (_ref7) {
+        var _ref8 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref7, 2),
+          key = _ref8[0],
+          val = _ref8[1];
         appendQuery(key, val);
       });
     }
@@ -1745,10 +1798,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Build form data without required value
   var buildFormDataWithoutRequired = function buildFormDataWithoutRequired() {
     var notRequiredFields = ["directory_type", "view", "sort", "paged"];
-    Object.entries(form_data).forEach(function (_ref7) {
-      var _ref8 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref7, 2),
-        key = _ref8[0],
-        value = _ref8[1];
+    Object.entries(form_data).forEach(function (_ref9) {
+      var _ref10 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref9, 2),
+        key = _ref10[0],
+        value = _ref10[1];
       if (!notRequiredFields.includes(key)) {
         delete form_data[key];
       }
@@ -2047,26 +2100,28 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Directorist type changes
   $("body").on("click", ".directorist-instant-search .directorist-type-nav__link", function (e) {
     e.preventDefault();
-    var $parentLi = $(this).closest("li");
-
-    // toggle active class
-    $parentLi.addClass("directorist-type-nav__list__current").siblings("li").removeClass("directorist-type-nav__list__current");
 
     // get parent element
     var instant_search_element = $(this).closest(".directorist-instant-search");
 
-    // get directory type
+    // reset form data
+    resetFormData();
+
+    // get directory_type
     var directory_type = getDirectoryType($(this));
     // ✅ only update `directory_type`, preserve others
     updateFormData({
       directory_type: directory_type
     });
 
+    // Update URL with form data
+    update_instant_search_url(form_data);
+
     // Get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Instant search without required value
-    performInstantSearchWithoutRequiredValue(activeForm);
+    // Instant search for directory type change
+    performDirectoryChange(activeForm);
   });
 
   // Directorist view as changes
