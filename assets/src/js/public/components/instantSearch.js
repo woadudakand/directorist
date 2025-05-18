@@ -7,11 +7,8 @@ import debounce from "../../global/components/debounce";
   // Globally accessible form_data
   let form_data = {};
 
-  // Check validity of required fields
-  let allRequiredFieldsAreValid = true;
-
   // Scrolling Pagination
-  let page = 1;
+  let scrollingPage = 1;
   let infinitePaginationIsLoading = false;
   let infinitePaginationCompleted = false;
 
@@ -104,6 +101,10 @@ import debounce from "../../global/components/debounce";
             ? `${new_meta_title} | ${directorist.site_name}`
             : directorist.site_name;
         }
+
+        // Initialize scrolling status
+        scrollingPage = 1;
+        infinitePaginationCompleted = false;
       },
     });
   }
@@ -153,6 +154,10 @@ import debounce from "../../global/components/debounce";
           // SearchForm Item in Single Category Location Page Init
           singleCategoryLocationInit();
         }
+
+        // Initialize scrolling status
+        scrollingPage = 1;
+        infinitePaginationCompleted = false;
       },
     });
   }
@@ -163,6 +168,7 @@ import debounce from "../../global/components/debounce";
     const container = $(
       ".directorist-infinite-scroll .directorist-container-fluid .directorist-row"
     );
+
     // get parent element
     const instant_search_element = searchElm.closest(
       ".directorist-instant-search"
@@ -176,7 +182,7 @@ import debounce from "../../global/components/debounce";
     // make ajax data
     const directorist_instant_search_data = {
       ...form_data,
-      paged: page,
+      paged: scrollingPage,
       action: "directorist_instant_search",
       _nonce: directorist.ajax_nonce,
       current_page_id: directorist.current_page_id,
@@ -422,7 +428,6 @@ import debounce from "../../global/components/debounce";
     const email = searchElm.find('input[name="email"]').val();
     const website = searchElm.find('input[name="website"]').val();
     const phone = searchElm.find('input[name="phone"]').val();
-    const directory_type = form_data.directory_type;
     const view = form_data.view;
     const paged = form_data.paged;
 
@@ -442,7 +447,6 @@ import debounce from "../../global/components/debounce";
       website,
       phone,
       custom_field,
-      directory_type,
       view,
       paged,
     });
@@ -478,7 +482,7 @@ import debounce from "../../global/components/debounce";
 
   // Build form data without required value
   const buildFormDataWithoutRequired = () => {
-    const notRequiredFields = ["directory_type", "view", "sort", "paged"];
+    const notRequiredFields = ["view", "sort", "paged"];
 
     Object.entries(form_data).forEach(([key, value]) => {
       if (!notRequiredFields.includes(key)) {
@@ -496,7 +500,7 @@ import debounce from "../../global/components/debounce";
     buildFormData(searchElm);
 
     // Check required fields
-    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
+    const allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
     if (allRequiredFieldsAreValid) {
@@ -507,7 +511,7 @@ import debounce from "../../global/components/debounce";
   // Perform Instant Search without required value
   function performInstantSearchWithoutRequiredValue(searchElm) {
     // Check required fields
-    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
+    const allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
     if (allRequiredFieldsAreValid) {
@@ -538,7 +542,7 @@ import debounce from "../../global/components/debounce";
 
     if (scrollBottom >= containerBottom) {
       infinitePaginationIsLoading = true;
-      page++;
+      scrollingPage++;
 
       // get parent element
       const instantSearchElement = $(".directorist-instant-search");
@@ -823,8 +827,9 @@ import debounce from "../../global/components/debounce";
       // Get active form
       const activeForm = getActiveForm(instant_search_element);
 
-      // Reset page to 1
-      page = 1;
+      // ✅ only update `page`, preserve others
+      updateFormData({ paged: 1 });
+
       // Build form data
       buildFormData(activeForm);
 
@@ -952,6 +957,7 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .directorist-pagination .page-numbers",
     function (e) {
       e.preventDefault();
+      let page = form_data.paged || 1;
       const currentPage = $(this).text();
       if (currentPage) {
         page = parseInt(currentPage);
@@ -1010,7 +1016,7 @@ import debounce from "../../global/components/debounce";
   // Initialize Infinite Scroll
   window.addEventListener("scroll", function () {
     if (infinitePaginationCompleted) {
-      page = 1;
+      scrollingPage = 1;
       return;
     }
 

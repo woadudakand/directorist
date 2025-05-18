@@ -1399,11 +1399,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Globally accessible form_data
   var form_data = {};
 
-  // Check validity of required fields
-  var allRequiredFieldsAreValid = true;
-
   // Scrolling Pagination
-  var page = 1;
+  var scrollingPage = 1;
   var infinitePaginationIsLoading = false;
   var infinitePaginationCompleted = false;
 
@@ -1459,6 +1456,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
           if (form_data.address) new_meta_title += (form_data.in_cat || form_data.in_loc ? " near " : "") + form_data.address;
           document.title = new_meta_title ? "".concat(new_meta_title, " | ").concat(directorist.site_name) : directorist.site_name;
         }
+
+        // Initialize scrolling status
+        scrollingPage = 1;
+        infinitePaginationCompleted = false;
       }
     });
   }
@@ -1495,6 +1496,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
           // SearchForm Item in Single Category Location Page Init
           singleCategoryLocationInit();
         }
+
+        // Initialize scrolling status
+        scrollingPage = 1;
+        infinitePaginationCompleted = false;
       }
     });
   }
@@ -1503,6 +1508,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   function loadMoreListings(searchElm) {
     var loadingDiv;
     var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
+
     // get parent element
     var instant_search_element = searchElm.closest(".directorist-instant-search");
 
@@ -1511,7 +1517,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
     // make ajax data
     var directorist_instant_search_data = _objectSpread(_objectSpread({}, form_data), {}, {
-      paged: page,
+      paged: scrollingPage,
       action: "directorist_instant_search",
       _nonce: directorist.ajax_nonce,
       current_page_id: directorist.current_page_id,
@@ -1722,7 +1728,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var email = searchElm.find('input[name="email"]').val();
     var website = searchElm.find('input[name="website"]').val();
     var phone = searchElm.find('input[name="phone"]').val();
-    var directory_type = form_data.directory_type;
     var view = form_data.view;
     var paged = form_data.paged;
 
@@ -1742,7 +1747,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       website: website,
       phone: phone,
       custom_field: custom_field,
-      directory_type: directory_type,
       view: view,
       paged: paged
     });
@@ -1778,7 +1782,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Build form data without required value
   var buildFormDataWithoutRequired = function buildFormDataWithoutRequired() {
-    var notRequiredFields = ["directory_type", "view", "sort", "paged"];
+    var notRequiredFields = ["view", "sort", "paged"];
     Object.entries(form_data).forEach(function (_ref9) {
       var _ref10 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref9, 2),
         key = _ref10[0],
@@ -1798,7 +1802,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     buildFormData(searchElm);
 
     // Check required fields
-    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
+    var allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
     if (allRequiredFieldsAreValid) {
@@ -1809,7 +1813,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Perform Instant Search without required value
   function performInstantSearchWithoutRequiredValue(searchElm) {
     // Check required fields
-    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
+    var allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
     if (allRequiredFieldsAreValid) {
@@ -1835,7 +1839,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var scrollBottom = window.scrollY + window.innerHeight;
     if (scrollBottom >= containerBottom) {
       infinitePaginationIsLoading = true;
-      page++;
+      scrollingPage++;
 
       // get parent element
       var instantSearchElement = $(".directorist-instant-search");
@@ -2054,8 +2058,11 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     // Get active form
     var activeForm = getActiveForm(instant_search_element);
 
-    // Reset page to 1
-    page = 1;
+    // ✅ only update `page`, preserve others
+    updateFormData({
+      paged: 1
+    });
+
     // Build form data
     buildFormData(activeForm);
 
@@ -2160,6 +2167,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Directorist pagination changes
   $("body").on("click", ".directorist-instant-search .directorist-pagination .page-numbers", function (e) {
     e.preventDefault();
+    var page = form_data.paged || 1;
     var currentPage = $(this).text();
     if (currentPage) {
       page = parseInt(currentPage);
@@ -2206,7 +2214,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Initialize Infinite Scroll
   window.addEventListener("scroll", function () {
     if (infinitePaginationCompleted) {
-      page = 1;
+      scrollingPage = 1;
       return;
     }
     handleScroll();
