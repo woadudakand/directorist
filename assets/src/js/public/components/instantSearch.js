@@ -7,6 +7,9 @@ import debounce from "../../global/components/debounce";
   // Globally accessible form_data
   let form_data = {};
 
+  // Check validity of required fields
+  let allRequiredFieldsAreValid = true;
+
   // Scrolling Pagination
   let page = 1;
   let infinitePaginationIsLoading = false;
@@ -37,11 +40,6 @@ import debounce from "../../global/components/debounce";
       data_atts: directorist_instant_search_data_atts,
     };
 
-    console.log("Performing instant search with data:", {
-      directorist_instant_search_data,
-      instant_search_element,
-    });
-
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
@@ -65,7 +63,6 @@ import debounce from "../../global/components/debounce";
         closeAllSearchModal();
       },
       success: function (html) {
-        console.log("Instant search response:", { html });
         if (html.search_result) {
           instant_search_element
             .find(".directorist-header-found-title, .dsa-save-search-container")
@@ -132,11 +129,6 @@ import debounce from "../../global/components/debounce";
       data_atts: directorist_instant_search_data_atts,
     };
 
-    console.log("Performing instant search with data for directory type:", {
-      directorist_instant_search_data,
-      instant_search_element,
-    });
-
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
@@ -145,7 +137,6 @@ import debounce from "../../global/components/debounce";
         instant_search_element.addClass("atbdp-form-fade");
       },
       success: function (html) {
-        console.log("Instant search response for Type Change:", { html });
         if (html.directory_type) {
           instant_search_element.replaceWith(html.directory_type);
           instant_search_element
@@ -167,16 +158,35 @@ import debounce from "../../global/components/debounce";
   }
 
   // AJAX call to load more listings
-  function loadMoreListings(formData) {
+  function loadMoreListings(searchElm) {
     let loadingDiv;
     const container = $(
       ".directorist-infinite-scroll .directorist-container-fluid .directorist-row"
     );
+    // get parent element
+    const instant_search_element = searchElm.closest(
+      ".directorist-instant-search"
+    );
+
+    // Get data-atts
+    const directorist_instant_search_data_atts = JSON.parse(
+      instant_search_element.attr("data-atts")
+    );
+
+    // make ajax data
+    const directorist_instant_search_data = {
+      ...form_data,
+      paged: page,
+      action: "directorist_instant_search",
+      _nonce: directorist.ajax_nonce,
+      current_page_id: directorist.current_page_id,
+      data_atts: directorist_instant_search_data_atts,
+    };
 
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
-      data: formData,
+      data: directorist_instant_search_data,
       beforeSend: function () {
         loadingDiv = $("<div>", {
           class: "directorist-on-scroll-loading",
@@ -236,7 +246,6 @@ import debounce from "../../global/components/debounce";
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
-    console.log("Updating URL with form data:", { form_data });
     if (!history.pushState) return;
 
     let newurl =
@@ -319,14 +328,6 @@ import debounce from "../../global/components/debounce";
       const tagName = $el.prop("tagName").toLowerCase();
       const type = $el.attr("type");
 
-      console.log("Checking required field:", {
-        tagName,
-        type,
-        value: $el.val(),
-        isChecked: $el.is(":checked"),
-        isRequired: $el.is("[required]"),
-      });
-
       if (tagName === "input") {
         if (type === "checkbox" || type === "radio") {
           // For checkboxes/radios, at least one with this name must be checked
@@ -353,14 +354,11 @@ import debounce from "../../global/components/debounce";
       }
     });
 
-    console.log("Required fields status:", { requiredFieldsAreValid });
-
     return requiredFieldsAreValid;
   }
 
   //  Build form_data from searchElm inputs.
   function buildFormData(searchElm) {
-    console.log("Building form data...", { searchElm, form_data, directorist });
     let tag = [];
     let price = [];
     let custom_field = {};
@@ -381,37 +379,33 @@ import debounce from "../../global/components/debounce";
       price.push($(el).val());
     });
 
-    // Collect custom fields
-    const seenCustomFields = new Set();
-    searchElm.find('[name^="custom_field"]').each((_, el) => {
+    // Collect custom field values
+    searchElm.find('[name^="custom_field"]').each(function (_, el) {
       const $el = $(el);
       const name = $el.attr("name");
-      if (!name) return;
-      const match = name.match(/^custom_field\[(.+?)\]/);
-      if (!match) return;
-      const post_id = match[1];
-
-      if (seenCustomFields.has(post_id)) return;
-      seenCustomFields.add(post_id);
-
       const type = $el.attr("type");
+      const match = name.match(/^custom_field\[(.+?)\]/);
+      const post_id = match ? match[1] : "";
+
+      if (!post_id) return;
+
       if (type === "radio") {
         const checked = searchElm
           .find(`input[name="custom_field[${post_id}]"]:checked`)
           .val();
         if (checked) custom_field[post_id] = checked;
       } else if (type === "checkbox") {
-        let values = [];
+        const values = [];
         searchElm
           .find(`input[name="custom_field[${post_id}][]"]:checked`)
-          .each((_, c) => {
-            const val = $(c).val();
+          .each(function () {
+            const val = $(this).val();
             if (val) values.push(val);
           });
         if (values.length) custom_field[post_id] = values;
       } else {
-        const val = $el.val();
-        if (val) custom_field[post_id] = val;
+        const value = $el.val();
+        if (value) custom_field[post_id] = value;
       }
     });
 
@@ -428,10 +422,9 @@ import debounce from "../../global/components/debounce";
     const email = searchElm.find('input[name="email"]').val();
     const website = searchElm.find('input[name="website"]').val();
     const phone = searchElm.find('input[name="phone"]').val();
-    const directory_type =
-      form_data.directory_type || directorist.default_directory_type;
-    const view = form_data.view || "grid";
-    const paged = form_data.paged || page;
+    const directory_type = form_data.directory_type;
+    const view = form_data.view;
+    const paged = form_data.paged;
 
     // Update form_data
     updateFormData({
@@ -493,9 +486,8 @@ import debounce from "../../global/components/debounce";
       }
     });
 
-    console.log("Building form data without required value:", {
-      form_data,
-    });
+    // Update URL with form data
+    update_instant_search_url(form_data);
   };
 
   // Perform Instant Search with required value
@@ -504,10 +496,10 @@ import debounce from "../../global/components/debounce";
     buildFormData(searchElm);
 
     // Check required fields
-    const requiredFieldsAreValid = checkRequiredFields(searchElm);
+    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
-    if (requiredFieldsAreValid) {
+    if (allRequiredFieldsAreValid) {
       performInstantSearch(searchElm);
     }
   }
@@ -515,10 +507,10 @@ import debounce from "../../global/components/debounce";
   // Perform Instant Search without required value
   function performInstantSearchWithoutRequiredValue(searchElm) {
     // Check required fields
-    const requiredFieldsAreValid = checkRequiredFields(searchElm);
+    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
-    if (requiredFieldsAreValid) {
+    if (allRequiredFieldsAreValid) {
       // Build form data
       buildFormData(searchElm);
 
@@ -537,7 +529,9 @@ import debounce from "../../global/components/debounce";
     const container = $(
       ".directorist-infinite-scroll .directorist-container-fluid .directorist-row"
     );
-    if (!container.length || infinitePaginationIsLoading) return;
+    if (!container.length || infinitePaginationIsLoading) {
+      return;
+    }
 
     const containerBottom = container.offset().top + container.outerHeight();
     const scrollBottom = window.scrollY + window.innerHeight;
@@ -546,13 +540,16 @@ import debounce from "../../global/components/debounce";
       infinitePaginationIsLoading = true;
       page++;
 
+      // get parent element
       const instantSearchElement = $(".directorist-instant-search");
+      // get active form
       const activeForm = getActiveForm(instantSearchElement);
 
       // build form_data
       buildFormData(activeForm);
 
-      loadMoreListings(form_data);
+      // Load more listings
+      loadMoreListings(activeForm);
     }
   }
 
@@ -1012,7 +1009,11 @@ import debounce from "../../global/components/debounce";
 
   // Initialize Infinite Scroll
   window.addEventListener("scroll", function () {
-    if (infinitePaginationCompleted) return;
+    if (infinitePaginationCompleted) {
+      page = 1;
+      return;
+    }
+
     handleScroll();
   });
 

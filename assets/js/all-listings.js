@@ -1399,6 +1399,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Globally accessible form_data
   var form_data = {};
 
+  // Check validity of required fields
+  var allRequiredFieldsAreValid = true;
+
   // Scrolling Pagination
   var page = 1;
   var infinitePaginationIsLoading = false;
@@ -1423,10 +1426,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       current_page_id: directorist.current_page_id,
       data_atts: directorist_instant_search_data_atts
     });
-    console.log("Performing instant search with data:", {
-      directorist_instant_search_data: directorist_instant_search_data,
-      instant_search_element: instant_search_element
-    });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
@@ -1442,9 +1441,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         closeAllSearchModal();
       },
       success: function success(html) {
-        console.log("Instant search response:", {
-          html: html
-        });
         if (html.search_result) {
           instant_search_element.find(".directorist-header-found-title, .dsa-save-search-container").remove();
           if (html.header_title) {
@@ -1482,10 +1478,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       current_page_id: directorist.current_page_id,
       data_atts: directorist_instant_search_data_atts
     });
-    console.log("Performing instant search with data for directory type:", {
-      directorist_instant_search_data: directorist_instant_search_data,
-      instant_search_element: instant_search_element
-    });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
@@ -1494,9 +1486,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         instant_search_element.addClass("atbdp-form-fade");
       },
       success: function success(html) {
-        console.log("Instant search response for Type Change:", {
-          html: html
-        });
         if (html.directory_type) {
           instant_search_element.replaceWith(html.directory_type);
           instant_search_element.find(".atbdp-form-fade").removeClass("atbdp-form-fade");
@@ -1511,13 +1500,27 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }
 
   // AJAX call to load more listings
-  function loadMoreListings(formData) {
+  function loadMoreListings(searchElm) {
     var loadingDiv;
     var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
+    // get parent element
+    var instant_search_element = searchElm.closest(".directorist-instant-search");
+
+    // Get data-atts
+    var directorist_instant_search_data_atts = JSON.parse(instant_search_element.attr("data-atts"));
+
+    // make ajax data
+    var directorist_instant_search_data = _objectSpread(_objectSpread({}, form_data), {}, {
+      paged: page,
+      action: "directorist_instant_search",
+      _nonce: directorist.ajax_nonce,
+      current_page_id: directorist.current_page_id,
+      data_atts: directorist_instant_search_data_atts
+    });
     $.ajax({
       url: directorist.ajaxurl,
       type: "POST",
-      data: formData,
+      data: directorist_instant_search_data,
       beforeSend: function beforeSend() {
         loadingDiv = $("<div>", {
           class: "directorist-on-scroll-loading"
@@ -1573,9 +1576,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
-    console.log("Updating URL with form data:", {
-      form_data: form_data
-    });
     if (!history.pushState) return;
     var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     var query = "";
@@ -1638,13 +1638,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       var $el = $(this);
       var tagName = $el.prop("tagName").toLowerCase();
       var type = $el.attr("type");
-      console.log("Checking required field:", {
-        tagName: tagName,
-        type: type,
-        value: $el.val(),
-        isChecked: $el.is(":checked"),
-        isRequired: $el.is("[required]")
-      });
       if (tagName === "input") {
         if (type === "checkbox" || type === "radio") {
           // For checkboxes/radios, at least one with this name must be checked
@@ -1669,19 +1662,11 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         }
       }
     });
-    console.log("Required fields status:", {
-      requiredFieldsAreValid: requiredFieldsAreValid
-    });
     return requiredFieldsAreValid;
   }
 
   //  Build form_data from searchElm inputs.
   function buildFormData(searchElm) {
-    console.log("Building form data...", {
-      searchElm: searchElm,
-      form_data: form_data,
-      directorist: directorist
-    });
     var tag = [];
     var price = [];
     var custom_field = {};
@@ -1702,31 +1687,27 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       price.push($(el).val());
     });
 
-    // Collect custom fields
-    var seenCustomFields = new Set();
+    // Collect custom field values
     searchElm.find('[name^="custom_field"]').each(function (_, el) {
       var $el = $(el);
       var name = $el.attr("name");
-      if (!name) return;
-      var match = name.match(/^custom_field\[(.+?)\]/);
-      if (!match) return;
-      var post_id = match[1];
-      if (seenCustomFields.has(post_id)) return;
-      seenCustomFields.add(post_id);
       var type = $el.attr("type");
+      var match = name.match(/^custom_field\[(.+?)\]/);
+      var post_id = match ? match[1] : "";
+      if (!post_id) return;
       if (type === "radio") {
         var checked = searchElm.find("input[name=\"custom_field[".concat(post_id, "]\"]:checked")).val();
         if (checked) custom_field[post_id] = checked;
       } else if (type === "checkbox") {
         var values = [];
-        searchElm.find("input[name=\"custom_field[".concat(post_id, "][]\"]:checked")).each(function (_, c) {
-          var val = $(c).val();
+        searchElm.find("input[name=\"custom_field[".concat(post_id, "][]\"]:checked")).each(function () {
+          var val = $(this).val();
           if (val) values.push(val);
         });
         if (values.length) custom_field[post_id] = values;
       } else {
-        var val = $el.val();
-        if (val) custom_field[post_id] = val;
+        var value = $el.val();
+        if (value) custom_field[post_id] = value;
       }
     });
 
@@ -1741,9 +1722,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var email = searchElm.find('input[name="email"]').val();
     var website = searchElm.find('input[name="website"]').val();
     var phone = searchElm.find('input[name="phone"]').val();
-    var directory_type = form_data.directory_type || directorist.default_directory_type;
-    var view = form_data.view || "grid";
-    var paged = form_data.paged || page;
+    var directory_type = form_data.directory_type;
+    var view = form_data.view;
+    var paged = form_data.paged;
 
     // Update form_data
     updateFormData({
@@ -1806,9 +1787,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         delete form_data[key];
       }
     });
-    console.log("Building form data without required value:", {
-      form_data: form_data
-    });
+
+    // Update URL with form data
+    update_instant_search_url(form_data);
   };
 
   // Perform Instant Search with required value
@@ -1817,10 +1798,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     buildFormData(searchElm);
 
     // Check required fields
-    var requiredFieldsAreValid = checkRequiredFields(searchElm);
+    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
-    if (requiredFieldsAreValid) {
+    if (allRequiredFieldsAreValid) {
       performInstantSearch(searchElm);
     }
   }
@@ -1828,10 +1809,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Perform Instant Search without required value
   function performInstantSearchWithoutRequiredValue(searchElm) {
     // Check required fields
-    var requiredFieldsAreValid = checkRequiredFields(searchElm);
+    allRequiredFieldsAreValid = checkRequiredFields(searchElm);
 
     // If required fields are valid, proceed with filtering
-    if (requiredFieldsAreValid) {
+    if (allRequiredFieldsAreValid) {
       // Build form data
       buildFormData(searchElm);
       performInstantSearch(searchElm);
@@ -1847,18 +1828,25 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Handle Infinite Scroll
   function handleScroll() {
     var container = $(".directorist-infinite-scroll .directorist-container-fluid .directorist-row");
-    if (!container.length || infinitePaginationIsLoading) return;
+    if (!container.length || infinitePaginationIsLoading) {
+      return;
+    }
     var containerBottom = container.offset().top + container.outerHeight();
     var scrollBottom = window.scrollY + window.innerHeight;
     if (scrollBottom >= containerBottom) {
       infinitePaginationIsLoading = true;
       page++;
+
+      // get parent element
       var instantSearchElement = $(".directorist-instant-search");
+      // get active form
       var activeForm = getActiveForm(instantSearchElement);
 
       // build form_data
       buildFormData(activeForm);
-      loadMoreListings(form_data);
+
+      // Load more listings
+      loadMoreListings(activeForm);
     }
   }
 
@@ -2217,7 +2205,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Initialize Infinite Scroll
   window.addEventListener("scroll", function () {
-    if (infinitePaginationCompleted) return;
+    if (infinitePaginationCompleted) {
+      page = 1;
+      return;
+    }
     handleScroll();
   });
 
