@@ -935,29 +935,28 @@ import "./components/directoristSelect";
       $(".directorist-range-slider-wrap")
         .closest(".directorist-search-field")
         .addClass("directorist-search-field-radius_search");
-      $(".directorist-location-js").each((index, locationDOM) => {
-        if ($(locationDOM).val() === "") {
-          $(locationDOM)
+
+      // Check both input and select for location
+      $(".directorist-location-js, .directorist-location-select").each(
+        (index, el) => {
+          const $el = $(el);
+          const val = $el.val();
+          const isEmpty = !val || val === "";
+
+          $el
             .closest(".directorist-contents-wrap")
             .find(
               ".directorist-search-field-radius_search, .directorist-radius-search"
             )
-            .css({ display: "none" });
-        } else {
-          $(locationDOM)
-            .closest(".directorist-contents-wrap")
-            .find(
-              ".directorist-search-field-radius_search, .directorist-radius-search"
-            )
-            .css({ display: "block" });
+            .css({ display: isEmpty ? "none" : "block" });
         }
-      });
+      );
     }
 
     // handleRadiusVisibility Trigger
     $("body").on(
       "keyup keydown input change focus",
-      ".directorist-location-js, .zip-radius-search",
+      ".directorist-location-js, .directorist-location-select, .zip-radius-search",
       function (e) {
         handleRadiusVisibility();
       }
