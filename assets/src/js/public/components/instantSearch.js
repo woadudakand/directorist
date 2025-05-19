@@ -871,6 +871,15 @@ import debounce from "../../global/components/debounce";
     function (e) {
       e.preventDefault();
 
+      // Check if the clicked item is already active
+      if (
+        $(this)
+          .closest(".directorist-type-nav__list li")
+          .hasClass("directorist-type-nav__list__current")
+      ) {
+        return; // Skip if already active
+      }
+
       // get parent element
       let instant_search_element = $(this).closest(
         ".directorist-instant-search"
@@ -901,6 +910,11 @@ import debounce from "../../global/components/debounce";
     ".directorist-instant-search .directorist-viewas .directorist-viewas__item",
     function (e) {
       e.preventDefault();
+
+      // Check if the clicked item is already active
+      if ($(this).hasClass("active")) {
+        return; // Skip if already active
+      }
 
       // get parent element
       let instant_search_element = $(this).closest(

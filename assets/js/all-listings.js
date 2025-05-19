@@ -2096,6 +2096,11 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   $("body").on("click", ".directorist-instant-search .directorist-type-nav__link", function (e) {
     e.preventDefault();
 
+    // Check if the clicked item is already active
+    if ($(this).closest(".directorist-type-nav__list li").hasClass("directorist-type-nav__list__current")) {
+      return; // Skip if already active
+    }
+
     // get parent element
     var instant_search_element = $(this).closest(".directorist-instant-search");
 
@@ -2122,6 +2127,11 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   // Directorist view as changes
   $("body").on("click", ".directorist-instant-search .directorist-viewas .directorist-viewas__item", function (e) {
     e.preventDefault();
+
+    // Check if the clicked item is already active
+    if ($(this).hasClass("active")) {
+      return; // Skip if already active
+    }
 
     // get parent element
     var instant_search_element = $(this).closest(".directorist-instant-search");
