@@ -225,7 +225,7 @@ import debounce from "../../global/components/debounce";
   **/
 
   // Update or retain existing keys in form_data
-  const updateFormData = (newData = {}) => {
+  function updateFormData(newData) {
     Object.entries(newData).forEach(([key, value]) => {
       if (
         value === undefined ||
@@ -244,7 +244,7 @@ import debounce from "../../global/components/debounce";
   };
 
   // Reset form_data
-  const resetFormData = () => {
+  function resetFormData () {
     Object.entries(form_data).forEach(([key, value]) => {
       delete form_data[key];
     });
@@ -481,7 +481,7 @@ import debounce from "../../global/components/debounce";
   }
 
   // Build form data without required value
-  const buildFormDataWithoutRequired = () => {
+  function buildFormDataWithoutRequired () {
     const notRequiredFields = ["view", "sort", "paged"];
 
     Object.entries(form_data).forEach(([key, value]) => {

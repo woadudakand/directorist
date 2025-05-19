@@ -1556,8 +1556,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   **/
 
   // Update or retain existing keys in form_data
-  var updateFormData = function updateFormData() {
-    var newData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function updateFormData(newData) {
     Object.entries(newData).forEach(function (_ref) {
       var _ref2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref, 2),
         key = _ref2[0],
@@ -1568,17 +1567,19 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         form_data[key] = value;
       }
     });
-  };
+  }
+  ;
 
   // Reset form_data
-  var resetFormData = function resetFormData() {
+  function resetFormData() {
     Object.entries(form_data).forEach(function (_ref3) {
       var _ref4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref3, 2),
         key = _ref4[0],
         value = _ref4[1];
       delete form_data[key];
     });
-  };
+  }
+  ;
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
@@ -1781,7 +1782,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }
 
   // Build form data without required value
-  var buildFormDataWithoutRequired = function buildFormDataWithoutRequired() {
+  function buildFormDataWithoutRequired() {
     var notRequiredFields = ["view", "sort", "paged"];
     Object.entries(form_data).forEach(function (_ref9) {
       var _ref10 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref9, 2),
@@ -1794,7 +1795,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
     // Update URL with form data
     update_instant_search_url(form_data);
-  };
+  }
+  ;
 
   // Perform Instant Search with required value
   function performInstantSearchWithRequiredValue(searchElm) {
