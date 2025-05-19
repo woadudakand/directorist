@@ -21,7 +21,7 @@
     "axios": "^0.21.1",
     "dom-scroll-into-view": "^2.0.1",
     "lodash": "^4.17.20",
-    "node-sass": "^7.0.1",
+    "sass": "^1.69.0",
     "vue": "^2.6.11",
     "vue-dndrop": "^1.3.0",
     "vue-multiselect": "^2.1.6",
