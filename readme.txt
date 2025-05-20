@@ -297,7 +297,7 @@ Directorist is a complete directory solution and in combination with its advance
 
 == Changelog ==
 
-8.4.1 - May 18, 2025
+8.4.1 - May 20, 2025
 
 **Changed**
  - Hook to customize the email “From Name” and prevent forced values. (#2344)
