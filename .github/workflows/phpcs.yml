@@ -3,7 +3,7 @@ name: PHPCS Check
 on:
   pull_request_target:
     branches:
-      - trunk
+      - development
     paths:
       - '**/*.php'  # Run only when PHP files change
 
