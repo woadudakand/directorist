@@ -241,14 +241,14 @@ import debounce from "../../global/components/debounce";
         form_data[key] = value;
       }
     });
-  };
+  }
 
   // Reset form_data
-  function resetFormData () {
+  function resetFormData() {
     Object.entries(form_data).forEach(([key, value]) => {
       delete form_data[key];
     });
-  };
+  }
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
@@ -457,18 +457,32 @@ import debounce from "../../global/components/debounce";
       : undefined;
     updateFormData({ open_now: open_now_val });
 
-    // Address related data
-    updateFormData({
-      cityLat: address ? searchElm.find("#cityLat").val() : undefined,
-      cityLng: address ? searchElm.find("#cityLng").val() : undefined,
-      miles: address ? searchElm.find('input[name="miles"]').val() : undefined,
-    });
+    const radius_search_based_on = searchElm
+      .find(".directorist-radius_search_based_on")
+      .val();
 
-    // Zip related data
-    updateFormData({
-      zip_cityLat: zip ? searchElm.find(".zip-cityLat").val() : undefined,
-      zip_cityLng: zip ? searchElm.find(".zip-cityLng").val() : undefined,
-    });
+    // Check if the address or zip code is present to update miles, lat, and lng
+    if (radius_search_based_on === "address" && address) {
+      updateFormData({
+        cityLat: searchElm.find("#cityLat").val(),
+        cityLng: searchElm.find("#cityLng").val(),
+        miles: searchElm.find('input[name="miles"]').val(),
+      });
+    } else if (radius_search_based_on === "zip" && zip) {
+      updateFormData({
+        zip_cityLat: searchElm.find(".zip-cityLat").val(),
+        zip_cityLng: searchElm.find(".zip-cityLng").val(),
+        miles: searchElm.find('input[name="miles"]').val(),
+      });
+    } else {
+      updateFormData({
+        cityLat: undefined,
+        cityLng: undefined,
+        zip_cityLat: undefined,
+        zip_cityLng: undefined,
+        miles: undefined,
+      });
+    }
 
     // Paging: get current page number, default 1 if not found
     let page = parseInt(form_data.paged, 10) || 1;
@@ -481,7 +495,7 @@ import debounce from "../../global/components/debounce";
   }
 
   // Build form data without required value
-  function buildFormDataWithoutRequired () {
+  function buildFormDataWithoutRequired() {
     const notRequiredFields = ["view", "sort", "paged"];
 
     Object.entries(form_data).forEach(([key, value]) => {
@@ -492,7 +506,7 @@ import debounce from "../../global/components/debounce";
 
     // Update URL with form data
     update_instant_search_url(form_data);
-  };
+  }
 
   // Perform Instant Search with required value
   function performInstantSearchWithRequiredValue(searchElm) {

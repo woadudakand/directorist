@@ -1568,7 +1568,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       }
     });
   }
-  ;
 
   // Reset form_data
   function resetFormData() {
@@ -1579,7 +1578,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       delete form_data[key];
     });
   }
-  ;
 
   // Update search URL with form data
   function update_instant_search_url(form_data) {
@@ -1757,19 +1755,30 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     updateFormData({
       open_now: open_now_val
     });
+    var radius_search_based_on = searchElm.find(".directorist-radius_search_based_on").val();
 
-    // Address related data
-    updateFormData({
-      cityLat: address ? searchElm.find("#cityLat").val() : undefined,
-      cityLng: address ? searchElm.find("#cityLng").val() : undefined,
-      miles: address ? searchElm.find('input[name="miles"]').val() : undefined
-    });
-
-    // Zip related data
-    updateFormData({
-      zip_cityLat: zip ? searchElm.find(".zip-cityLat").val() : undefined,
-      zip_cityLng: zip ? searchElm.find(".zip-cityLng").val() : undefined
-    });
+    // Check if the address or zip code is present to update miles, lat, and lng
+    if (radius_search_based_on === "address" && address) {
+      updateFormData({
+        cityLat: searchElm.find("#cityLat").val(),
+        cityLng: searchElm.find("#cityLng").val(),
+        miles: searchElm.find('input[name="miles"]').val()
+      });
+    } else if (radius_search_based_on === "zip" && zip) {
+      updateFormData({
+        zip_cityLat: searchElm.find(".zip-cityLat").val(),
+        zip_cityLng: searchElm.find(".zip-cityLng").val(),
+        miles: searchElm.find('input[name="miles"]').val()
+      });
+    } else {
+      updateFormData({
+        cityLat: undefined,
+        cityLng: undefined,
+        zip_cityLat: undefined,
+        zip_cityLng: undefined,
+        miles: undefined
+      });
+    }
 
     // Paging: get current page number, default 1 if not found
     var page = parseInt(form_data.paged, 10) || 1;
@@ -1796,7 +1805,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     // Update URL with form data
     update_instant_search_url(form_data);
   }
-  ;
 
   // Perform Instant Search with required value
   function performInstantSearchWithRequiredValue(searchElm) {
