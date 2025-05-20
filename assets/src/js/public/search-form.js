@@ -932,12 +932,16 @@ import "./components/directoristSelect";
 
     // Radius Search Field Hide on Empty Location Field
     function handleRadiusVisibility() {
-      const $radiusFields = $(".directorist-range-slider-wrap")
-        .closest(".directorist-search-field")
-        .addClass("directorist-search-field-radius_search");
+      const allRadiusFields = $(
+        ".directorist-search-field-radius_search, .directorist-radius-search"
+      );
+
+      // Hide all radius fields by default
+      allRadiusFields.css("display", "none");
 
       const radiusBasedOn = $(".directorist-radius_search_based_on").val();
 
+      // Helper function to toggle radius visibility based on selector
       const toggleRadiusVisibility = (selector) => {
         $(selector).each((_, el) => {
           const $el = $(el);
@@ -953,12 +957,13 @@ import "./components/directoristSelect";
         });
       };
 
+      // Call after function definition
       if (radiusBasedOn === "address") {
         toggleRadiusVisibility(
           ".directorist-location-js, .directorist-location-select"
         );
       } else if (radiusBasedOn === "zip") {
-        toggleRadiusVisibility(".zip-radius-search ");
+        toggleRadiusVisibility(".zip-radius-search");
       }
     }
 

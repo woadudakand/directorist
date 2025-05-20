@@ -1614,8 +1614,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     // Radius Search Field Hide on Empty Location Field
     function handleRadiusVisibility() {
-      var $radiusFields = $(".directorist-range-slider-wrap").closest(".directorist-search-field").addClass("directorist-search-field-radius_search");
+      var allRadiusFields = $(".directorist-search-field-radius_search, .directorist-radius-search");
+
+      // Hide all radius fields by default
+      allRadiusFields.css("display", "none");
       var radiusBasedOn = $(".directorist-radius_search_based_on").val();
+
+      // Helper function to toggle radius visibility based on selector
       var toggleRadiusVisibility = function toggleRadiusVisibility(selector) {
         $(selector).each(function (_, el) {
           var $el = $(el);
@@ -1624,10 +1629,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           $el.closest(".directorist-contents-wrap").find(".directorist-search-field-radius_search, .directorist-radius-search").css("display", shouldShow ? "block" : "none");
         });
       };
+
+      // Call after function definition
       if (radiusBasedOn === "address") {
         toggleRadiusVisibility(".directorist-location-js, .directorist-location-select");
       } else if (radiusBasedOn === "zip") {
-        toggleRadiusVisibility(".zip-radius-search ");
+        toggleRadiusVisibility(".zip-radius-search");
       }
     }
 
