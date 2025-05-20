@@ -932,25 +932,34 @@ import "./components/directoristSelect";
 
     // Radius Search Field Hide on Empty Location Field
     function handleRadiusVisibility() {
-      $(".directorist-range-slider-wrap")
+      const $radiusFields = $(".directorist-range-slider-wrap")
         .closest(".directorist-search-field")
         .addClass("directorist-search-field-radius_search");
 
-      // Check both input and select for location
-      $(".directorist-location-js, .directorist-location-select").each(
-        (index, el) => {
+      const radiusBasedOn = $(".directorist-radius_search_based_on").val();
+
+      const toggleRadiusVisibility = (selector) => {
+        $(selector).each((_, el) => {
           const $el = $(el);
           const val = $el.val();
-          const isEmpty = !val || val === "";
+          const shouldShow = val && val.trim() !== "";
 
           $el
             .closest(".directorist-contents-wrap")
             .find(
               ".directorist-search-field-radius_search, .directorist-radius-search"
             )
-            .css({ display: isEmpty ? "none" : "block" });
-        }
-      );
+            .css("display", shouldShow ? "block" : "none");
+        });
+      };
+
+      if (radiusBasedOn === "address") {
+        toggleRadiusVisibility(
+          ".directorist-location-js, .directorist-location-select"
+        );
+      } else if (radiusBasedOn === "zip") {
+        toggleRadiusVisibility(".zip-radius-search ");
+      }
     }
 
     // handleRadiusVisibility Trigger

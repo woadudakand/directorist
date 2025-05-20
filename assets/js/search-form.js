@@ -1614,17 +1614,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     // Radius Search Field Hide on Empty Location Field
     function handleRadiusVisibility() {
-      $(".directorist-range-slider-wrap").closest(".directorist-search-field").addClass("directorist-search-field-radius_search");
-
-      // Check both input and select for location
-      $(".directorist-location-js, .directorist-location-select").each(function (index, el) {
-        var $el = $(el);
-        var val = $el.val();
-        var isEmpty = !val || val === "";
-        $el.closest(".directorist-contents-wrap").find(".directorist-search-field-radius_search, .directorist-radius-search").css({
-          display: isEmpty ? "none" : "block"
+      var $radiusFields = $(".directorist-range-slider-wrap").closest(".directorist-search-field").addClass("directorist-search-field-radius_search");
+      var radiusBasedOn = $(".directorist-radius_search_based_on").val();
+      var toggleRadiusVisibility = function toggleRadiusVisibility(selector) {
+        $(selector).each(function (_, el) {
+          var $el = $(el);
+          var val = $el.val();
+          var shouldShow = val && val.trim() !== "";
+          $el.closest(".directorist-contents-wrap").find(".directorist-search-field-radius_search, .directorist-radius-search").css("display", shouldShow ? "block" : "none");
         });
-      });
+      };
+      if (radiusBasedOn === "address") {
+        toggleRadiusVisibility(".directorist-location-js, .directorist-location-select");
+      } else if (radiusBasedOn === "zip") {
+        toggleRadiusVisibility(".zip-radius-search ");
+      }
     }
 
     // handleRadiusVisibility Trigger
