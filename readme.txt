@@ -13,7 +13,7 @@ An Excellent WP Directory Plugin to Create Business Directories, Job Listings, C
 
 == Description ==
 
-[Try Admin Demo](https://userdemo.wpwax.com/directorist/) | [Demos](https://directorist.com/demos/) | [Docs](https://directorist.com/documentation/directorist/) | [Themes](https://directorist.com/themes/) | [Extensions](https://directorist.com/extensions/) | [Roadmap](https://directorist.com/roadmap/)
+[Try Demo](https://directorist.com/demos/) | [Docs](https://directorist.com/documentation/directorist/) | [Theme](https://directorist.com/themes/) | [Extensions](https://directorist.com/extensions/) | [Roadmap](https://directorist.com/roadmap/)
 
 Struggling to create a niche directory or classified ad website that stands out?
 
@@ -315,6 +315,7 @@ Directorist is a complete directory solution and in combination with its advance
  - Listing description visibility issue below the map fixed. (#2334)
  - Builders and listings not imported from setup widget. (#2333)
  - Swiper Slider loop issue fixed. (#2327)
+ - Schema php error when schema type empty. (#2352)
 
 8.4 - Apr 29, 2025
 
