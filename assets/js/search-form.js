@@ -1134,8 +1134,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         if (searchField.classList.contains("directorist-select")) {
           inputFieldValue = searchField.querySelector("select").dataset.selectedId;
         }
-        if (inputFieldValue !== "") {
-          searchField.parentElement.classList.add("input-has-value");
+        if (inputFieldValue !== "" && inputFieldValue !== undefined) {
+          setTimeout(function () {
+            searchField.parentElement.classList.add("input-has-value");
+          }, 0);
           if (!searchField.parentElement.classList.contains("input-is-focused")) {
             searchField.parentElement.classList.add("input-is-focused");
           }

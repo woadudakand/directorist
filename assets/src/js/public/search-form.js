@@ -188,8 +188,10 @@ import "./components/directoristSelect";
             .selectedId;
         }
 
-        if (inputFieldValue !== "") {
-          searchField.parentElement.classList.add("input-has-value");
+        if (inputFieldValue !== "" && inputFieldValue !== undefined) {
+          setTimeout(() => {
+            searchField.parentElement.classList.add("input-has-value");
+          }, 0);
 
           if (
             !searchField.parentElement.classList.contains("input-is-focused")
