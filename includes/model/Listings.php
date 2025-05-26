@@ -1709,6 +1709,8 @@ class Directorist_Listings {
 		}
 
 		function loop_get_the_thumbnail( $class = '' ) {
+			$this->cache_thumbnails();
+
 			$default_image_src = Helper::default_preview_image_src( $this->current_listing_type );
 
 			$id = get_the_ID();
