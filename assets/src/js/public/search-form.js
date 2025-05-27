@@ -184,8 +184,8 @@ import "./components/directoristSelect";
         let inputFieldValue = searchField.value;
 
         if (searchField.classList.contains("directorist-select")) {
-          inputFieldValue = searchField.querySelector("select").dataset
-            .selectedId;
+          inputFieldValue =
+            searchField.querySelector("select").dataset.selectedId;
         }
 
         if (inputFieldValue !== "" && inputFieldValue !== undefined) {
@@ -1073,14 +1073,12 @@ import "./components/directoristSelect";
                   let place = autocomplete.getPlace();
                   elm
                     .closest(".directorist-search-field")
-                    .querySelector(
-                      `#${field.lat_id}`
-                    ).value = place.geometry.location.lat();
+                    .querySelector(`#${field.lat_id}`).value =
+                    place.geometry.location.lat();
                   elm
                     .closest(".directorist-search-field")
-                    .querySelector(
-                      `#${field.lng_id}`
-                    ).value = place.geometry.location.lng();
+                    .querySelector(`#${field.lng_id}`).value =
+                    place.geometry.location.lng();
                 }
               );
             });
@@ -1135,37 +1133,9 @@ import "./components/directoristSelect";
               event.preventDefault();
 
               let blockedKeyCodes = [
-                16,
-                17,
-                18,
-                19,
-                20,
-                27,
-                33,
-                34,
-                35,
-                36,
-                37,
-                38,
-                39,
-                40,
-                45,
-                91,
-                93,
-                112,
-                113,
-                114,
-                115,
-                116,
-                117,
-                118,
-                119,
-                120,
-                121,
-                122,
-                123,
-                144,
-                145,
+                16, 17, 18, 19, 20, 27, 33, 34, 35, 36, 37, 38, 39, 40, 45, 91,
+                93, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+                144, 145,
               ];
 
               // Return early when blocked key is pressed.
@@ -1679,7 +1649,7 @@ import "./components/directoristSelect";
         const minVal = customSliderMin.value
           ? customSliderMin.value.trim()
           : "";
-        const maxVal = value ? value.trim() : "";
+        const maxVal = typeof value === "string" ? value.trim() : value;
 
         customSliderRange.value = minVal && maxVal ? `${minVal}-${maxVal}` : "";
 

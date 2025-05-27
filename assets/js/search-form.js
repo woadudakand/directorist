@@ -2154,7 +2154,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         var customSliderMin = targetNode.closest(".directorist-custom-range-slider").querySelector(".directorist-custom-range-slider__value__min");
         var customSliderRange = targetNode.closest(".directorist-custom-range-slider").querySelector(".directorist-custom-range-slider__range");
         var minVal = customSliderMin.value ? customSliderMin.value.trim() : "";
-        var maxVal = value ? value.trim() : "";
+        var maxVal = typeof value === "string" ? value.trim() : value;
         customSliderRange.value = minVal && maxVal ? "".concat(minVal, "-").concat(maxVal) : "";
         enableResetButton(searchForm);
       } else {

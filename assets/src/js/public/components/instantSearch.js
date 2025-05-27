@@ -312,6 +312,11 @@ import debounce from "../../global/components/debounce";
     // Handle custom_field
     if (form_data.custom_field && typeof form_data.custom_field === "object") {
       Object.entries(form_data.custom_field).forEach(([key, val]) => {
+        // Skip if key starts with "custom-number" and value is "0-0"
+        if (key.startsWith("custom-number") && val === "0-0") {
+          return;
+        }
+
         appendQuery(key, val);
       });
     }
@@ -686,9 +691,8 @@ import debounce from "../../global/components/debounce";
       return;
     }
 
-    const directoristDataAttributes = directoristArchiveContents.getAttribute(
-      "data-atts"
-    );
+    const directoristDataAttributes =
+      directoristArchiveContents.getAttribute("data-atts");
     const { shortcode, location, category } = JSON.parse(
       directoristDataAttributes
     );

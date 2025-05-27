@@ -1517,6 +1517,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         var _ref8 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref7, 2),
           key = _ref8[0],
           val = _ref8[1];
+        // Skip if key starts with "custom-number" and value is "0-0"
+        if (key.startsWith("custom-number") && val === "0-0") {
+          return;
+        }
         appendQuery(key, val);
       });
     }
