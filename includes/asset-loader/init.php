@@ -172,6 +172,7 @@ class Asset_Loader {
 				break;
 
 			case 'search-form/fields/radius_search':
+			case 'listing-form/custom-fields/number/range':
 				wp_enqueue_script( 'directorist-range-slider' );
 				break;
 
