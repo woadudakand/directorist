@@ -58,7 +58,7 @@ $quick_info_field = ob_get_clean();
                     <?php 
                         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                         echo $quick_actions_field;
-                     ?>
+                    ?>
                 </div>
             </div>
         <?php endif; ?>
