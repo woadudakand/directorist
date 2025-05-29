@@ -1,10 +1,10 @@
-import debounce from "../global/components/debounce";
-import "./../global/components/select2-custom-control";
-import "./../global/components/setup-select2";
-import initSearchCategoryCustomFields from "./components/category-custom-fields";
-import "./components/colorPicker";
-import "./components/directoristDropdown";
-import "./components/directoristSelect";
+import debounce from '../global/components/debounce';
+import './../global/components/select2-custom-control';
+import './../global/components/setup-select2';
+import initSearchCategoryCustomFields from './components/category-custom-fields';
+import './components/colorPicker';
+import './components/directoristDropdown';
+import './components/directoristSelect';
 
 (function ($) {
 	window.addEventListener('load', () => {
