@@ -24,21 +24,21 @@ if ( ! empty( $_REQUEST['miles'] ) ) {
 ?>
 
 <div class="directorist-search-field directorist-search-field-radius_search <?php echo esc_attr( $empty_label ); ?>">
-	<?php if (!empty($data['label'])) : ?>
-		<label class="directorist-search-field__label"><?php echo esc_html($data['label']); ?></label>
-	<?php endif; ?>
-	<div class="directorist-custom-range-slider">
-		<div class="directorist-custom-range-slider__range__wrap">
-			<span class="directorist-custom-range-slider__range__show"></span>
-			<span><?php echo esc_attr($searchform->range_slider_unit($data)); ?></span>
-		</div>
-		<div class="directorist-custom-range-slider__slide" default-value="<?php echo esc_attr($default_distance); ?>" max-value="<?php echo esc_attr($default_max_distance); ?>" min-value="<?php echo esc_attr($default_min_distance); ?>"></div>
-		<div class="directorist-custom-range-slider__wrap">
-			<input type='hidden' value="<?php echo esc_attr( $radius_search_based_on ); ?>" class='directorist-radius_search_based_on'>
-			<input type="hidden" placeholder="Min" value="<?php echo esc_attr($min_distance); ?>" class="directorist-custom-range-slider__radius directorist-custom-range-slider__value__min">
-			<input type="hidden" placeholder="Max" value="<?php echo esc_attr($max_distance); ?>" class="directorist-custom-range-slider__radius directorist-custom-range-slider__value__max">
-			<input type="hidden" name="miles" class="directorist-custom-range-slider__range" value="<?php echo esc_attr( $value ); ?>">
-		</div>
-	</div>
+    <?php if ( ! empty( $data['label'] ) ) : ?>
+        <label class="directorist-search-field__label"><?php echo esc_html( $data['label'] ); ?></label>
+    <?php endif; ?>
+    <div class="directorist-custom-range-slider">
+        <div class="directorist-custom-range-slider__range__wrap">
+            <span class="directorist-custom-range-slider__range__show"></span>
+            <span><?php echo esc_attr( $searchform->range_slider_unit( $data ) ); ?></span>
+        </div>
+        <div class="directorist-custom-range-slider__slide" default-value="<?php echo esc_attr( $default_distance ); ?>" max-value="<?php echo esc_attr( $default_max_distance ); ?>" min-value="<?php echo esc_attr( $default_min_distance ); ?>"></div>
+        <div class="directorist-custom-range-slider__wrap">
+            <input type='hidden' value="<?php echo esc_attr( $radius_search_based_on ); ?>" class='directorist-radius_search_based_on'>
+            <input type="hidden" placeholder="Min" value="<?php echo esc_attr( $min_distance ); ?>" class="directorist-custom-range-slider__radius directorist-custom-range-slider__value__min">
+            <input type="hidden" placeholder="Max" value="<?php echo esc_attr( $max_distance ); ?>" class="directorist-custom-range-slider__radius directorist-custom-range-slider__value__max">
+            <input type="hidden" name="miles" class="directorist-custom-range-slider__range" value="<?php echo esc_attr( $value ); ?>">
+        </div>
+    </div>
 
 </div>

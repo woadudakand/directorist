@@ -7,8 +7,8 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$min_value = !empty($data['options']['min_value']) ? $data['options']['min_value'] : 0;
-$max_value = !empty($data['options']['max_value']) ? $data['options']['max_value'] : 0;
+$min_value = ! empty( $data['options']['min_value'] ) ? $data['options']['min_value'] : 0;
+$max_value = ! empty( $data['options']['max_value'] ) ? $data['options']['max_value'] : 0;
 
 $default_min_value = $min_value;
 $default_max_value = $max_value;
@@ -18,7 +18,7 @@ if ( ! empty( $value ) && strpos( $value, '-' ) !== false ) {
     list($min_value, $max_value) = explode( '-', $value );
 } 
 
-$range_value = ( is_numeric($min_value) && is_numeric($max_value) ) ? "{$min_value}-{$max_value}" : '';
+$range_value = ( is_numeric( $min_value ) && is_numeric( $max_value ) ) ? "{$min_value}-{$max_value}" : '';
 
 ?>
 

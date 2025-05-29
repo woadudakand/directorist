@@ -169,10 +169,10 @@ class Asset_Loader {
                 self::enqueue_map_scripts();
                 break;
 
-			case 'search-form/fields/radius_search':
-			case 'search-form/custom-fields/number/range':
-				wp_enqueue_script( 'directorist-range-slider' );
-				break;
+            case 'search-form/fields/radius_search':
+            case 'search-form/custom-fields/number/range':
+                wp_enqueue_script( 'directorist-range-slider' );
+                break;
 
             case 'search-form/fields/location':
                 wp_enqueue_script( 'directorist-geolocation' );
