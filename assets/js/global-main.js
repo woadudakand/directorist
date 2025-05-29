@@ -12,9 +12,9 @@ $(document).ready(function () {
   modalToggle();
 });
 function modalToggle() {
-  $(".atbdp_recovery_pass").on("click", function (e) {
+  $('.atbdp_recovery_pass').on('click', function (e) {
     e.preventDefault();
-    $("#recover-pass-modal").slideToggle().show();
+    $('#recover-pass-modal').slideToggle().show();
   });
 
   // Contact form [on modal closed]
@@ -28,7 +28,7 @@ function modalToggle() {
   var directoristModal = document.querySelector('.directorist-modal-js');
   $('body').on('click', '.directorist-btn-modal-js', function (e) {
     e.preventDefault();
-    var data_target = $(this).attr("data-directorist_target");
+    var data_target = $(this).attr('data-directorist_target');
     document.querySelector(".".concat(data_target)).classList.add('directorist-show');
   });
   $('body').on('click', '.directorist-modal-close-js', function (e) {
@@ -72,7 +72,7 @@ function init() {
 
   // Add custom close button if field contains value on change
   $('.select2-hidden-accessible').on('change', function (e) {
-    var value = $(this).children("option:selected").val();
+    var value = $(this).children('option:selected').val();
     if (!value) {
       return;
     }
@@ -101,7 +101,7 @@ function init() {
 function selec2_add_custom_dropdown_toggle_button() {
   // Remove Default
   $('.select2-selection__arrow').css({
-    'display': 'none'
+    display: 'none'
   });
   var addon_container = selec2_get_addon_container('.select2-hidden-accessible');
   if (!addon_container) {
@@ -139,7 +139,7 @@ function selec2_add_custom_dropdown_toggle_button() {
   // Toggle Dropdown
   selec2_custom_dropdown.on('click', function (e) {
     var isOpen = $(this).hasClass('--is-open');
-    var field = $(this).closest(".select2-container").siblings('select:enabled');
+    var field = $(this).closest('.select2-container').siblings('select:enabled');
     if (isOpen) {
       field.select2('close');
     } else {
@@ -175,7 +175,7 @@ function selec2_add_custom_close_button_if_needed() {
 function selec2_add_custom_close_button(field) {
   // Remove Default
   $('.select2-selection__clear').css({
-    'display': 'none'
+    display: 'none'
   });
   var addon_container = selec2_get_addon_container(field);
   if (!(addon_container && addon_container.length)) {
@@ -268,9 +268,9 @@ window.addEventListener("directorist-instant-search-reloaded", initSelect2);
 
 // Init Static Select 2 Fields
 function initSelect2() {
-  var selectors = [".directorist-select select", "#directorist-select-js",
+  var selectors = ['.directorist-select select', '#directorist-select-js',
   // Not found in any template
-  "#directorist-search-category-js",
+  '#directorist-search-category-js',
   // Not found in any template
   // '#directorist-select-st-s-js',
   // '#directorist-select-sn-s-js',
@@ -281,11 +281,11 @@ function initSelect2() {
   // '#directorist-select-th-e-js',
   // '#directorist-select-fr-s-js',
   // '#directorist-select-fr-e-js',
-  ".select-basic",
+  '.select-basic',
   // Not found in any template
-  "#loc-type", "#cat-type", "#at_biz_dir-category", ".bdas-location-search",
+  '#loc-type', '#cat-type', '#at_biz_dir-category', '.bdas-location-search',
   // Not found in any template
-  ".bdas-category-search" // Not found in any template
+  '.bdas-category-search' // Not found in any template
   ];
   selectors.forEach(function (selector) {
     return (0,_lib_helper__WEBPACK_IMPORTED_MODULE_1__.convertToSelect2)(selector);
@@ -297,73 +297,73 @@ function initSelect2() {
 function initMaybeLazyLoadedTaxonomySelect2() {
   var restBase = "".concat(directorist.rest_url, "directorist/v1");
   maybeLazyLoadCategories({
-    selector: ".directorist-search-category select",
+    selector: '.directorist-search-category select',
     url: "".concat(restBase, "/listings/categories")
   });
   maybeLazyLoadCategories({
-    selector: ".directorist-form-categories-field select",
+    selector: '.directorist-form-categories-field select',
     url: "".concat(restBase, "/listings/categories")
   });
   maybeLazyLoadLocations({
-    selector: ".directorist-search-location select",
+    selector: '.directorist-search-location select',
     url: "".concat(restBase, "/listings/locations")
   });
   maybeLazyLoadLocations({
-    selector: ".directorist-form-location-field select",
+    selector: '.directorist-form-location-field select',
     url: "".concat(restBase, "/listings/locations")
   });
   maybeLazyLoadTags({
-    selector: ".directorist-form-tag-field select",
+    selector: '.directorist-form-tag-field select',
     url: "".concat(restBase, "/listings/tags")
   });
 }
 function maybeLazyLoadCategories(args) {
   maybeLazyLoadTaxonomyTermsSelect2(_objectSpread(_objectSpread({}, {
-    taxonomy: "categories"
+    taxonomy: 'categories'
   }), args));
 }
 function maybeLazyLoadLocations(args) {
   maybeLazyLoadTaxonomyTermsSelect2(_objectSpread(_objectSpread({}, {
-    taxonomy: "locations"
+    taxonomy: 'locations'
   }), args));
 }
 function maybeLazyLoadTags(args) {
   maybeLazyLoadTaxonomyTermsSelect2(_objectSpread(_objectSpread({}, {
-    taxonomy: "tags"
+    taxonomy: 'tags'
   }), args));
 }
 
 // maybeLazyLoadTaxonomyTermsSelect2
 function maybeLazyLoadTaxonomyTermsSelect2(args) {
   var defaults = {
-    selector: "",
-    url: "",
-    taxonomy: "tags"
+    selector: '',
+    url: '',
+    taxonomy: 'tags'
   };
   args = _objectSpread(_objectSpread({}, defaults), args);
   if (!args.selector) {
     return;
   }
   var $el = $(args.selector);
-  var $addListing = $el.closest(".directorist-add-listing-form");
-  var canCreate = $el.data("allow_new");
-  var maxLength = $el.data("max");
+  var $addListing = $el.closest('.directorist-add-listing-form');
+  var canCreate = $el.data('allow_new');
+  var maxLength = $el.data('max');
   var directoryId = 0;
-  if (args.taxonomy !== "tags") {
-    var $searchForm = $el.closest(".directorist-search-form");
-    var $archivePage = $el.closest(".directorist-archive-contents");
+  if (args.taxonomy !== 'tags') {
+    var $searchForm = $el.closest('.directorist-search-form');
+    var $archivePage = $el.closest('.directorist-archive-contents');
     var $directory = $addListing.find('input[name="directory_type"]');
     var $navListItem = null;
 
     // If search page
     if ($searchForm.length) {
-      $navListItem = $searchForm.find(".directorist-listing-type-selection__link--current");
+      $navListItem = $searchForm.find('.directorist-listing-type-selection__link--current');
     }
     if ($archivePage.length) {
-      $navListItem = $archivePage.find(".directorist-type-nav__list li.directorist-type-nav__list__current .directorist-type-nav__link");
+      $navListItem = $archivePage.find('.directorist-type-nav__list li.directorist-type-nav__list__current .directorist-type-nav__link');
     }
     if ($navListItem && $navListItem.length) {
-      directoryId = Number($navListItem.data("listing_type_id"));
+      directoryId = Number($navListItem.data('listing_type_id'));
     }
     if ($directory.length) {
       directoryId = $directory.val();
@@ -377,7 +377,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
     allowClear: true,
     tags: canCreate,
     maximumSelectionLength: maxLength,
-    width: "100%",
+    width: '100%',
     escapeMarkup: function escapeMarkup(text) {
       return text;
     },
@@ -387,7 +387,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       }
 
       // Fetch the data-icon attribute
-      var iconURI = $(data.element).attr("data-icon");
+      var iconURI = $(data.element).attr('data-icon');
 
       // Get the original text
       var originalText = data.text;
@@ -400,7 +400,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       originalText = originalText.trim();
 
       // Construct the icon element
-      var iconElm = iconURI ? "<i class=\"directorist-icon-mask\" aria-hidden=\"true\" style=\"--directorist-icon: url('".concat(iconURI, "')\"></i>") : "";
+      var iconElm = iconURI ? "<i class=\"directorist-icon-mask\" aria-hidden=\"true\" style=\"--directorist-icon: url('".concat(iconURI, "')\"></i>") : '';
 
       // Prepare the combined text (icon + text)
       var combinedText = iconElm + originalText;
@@ -411,7 +411,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       // Determine the level based on space count
       var level = Math.floor(spaceCount / 8) + 1; // 8 spaces = level 2, 16 spaces = level 3, etc.
       if (level > 1) {
-        $state.addClass("item-level-" + level); // Add class for the level (e.g., level-1, level-2, etc.)
+        $state.addClass('item-level-' + level); // Add class for the level (e.g., level-1, level-2, etc.)
       }
       $state.html(combinedText); // Set the combined content (icon + text)
 
@@ -421,7 +421,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
   if (directorist.lazy_load_taxonomy_fields) {
     select2Options.ajax = {
       url: args.url,
-      dataType: "json",
+      dataType: 'json',
       cache: true,
       delay: 250,
       data: function data(params) {
@@ -456,7 +456,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       transport: function transport(params, success, failure) {
         var $request = $.ajax(params);
         $request.then(function (data, textStatus, jqXHR) {
-          var totalPage = Number(jqXHR.getResponseHeader("x-wp-totalpages"));
+          var totalPage = Number(jqXHR.getResponseHeader('x-wp-totalpages'));
           var paginationMore = currentPage < totalPage;
           var items = data.map(function (item) {
             var text = item.name;
@@ -484,14 +484,14 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
       if (!$el.length || !selectedId) {
         return;
       }
-      var selectedIds = "".concat(selectedId).split(",");
-      var selectedLabels = selectedLabel ? "".concat(selectedLabel).split(",") : [];
+      var selectedIds = "".concat(selectedId).split(',');
+      var selectedLabels = selectedLabel ? "".concat(selectedLabel).split(',') : [];
       selectedIds.forEach(function (id, index) {
-        var label = selectedLabels.length >= index + 1 ? selectedLabels[index] : "";
+        var label = selectedLabels.length >= index + 1 ? selectedLabels[index] : '';
         var option = new Option(label, id, true, true);
         $el.append(option);
         $el.trigger({
-          type: "select2:select",
+          type: 'select2:select',
           params: {
             data: {
               id: id,
@@ -501,7 +501,7 @@ function maybeLazyLoadTaxonomyTermsSelect2(args) {
         });
       });
     }
-    setupSelectedItems($el, $el.data("selected-id"), $el.data("selected-label"));
+    setupSelectedItems($el, $el.data('selected-id'), $el.data('selected-label'));
   }
 }
 
@@ -672,7 +672,7 @@ function convertToSelect2(selector) {
       var iconURI = $(data.element).data('icon');
       var iconElm = "<i class=\"directorist-icon-mask\" aria-hidden=\"true\" style=\"--directorist-icon: url(".concat(iconURI, ")\"></i>");
       var originalText = data.text;
-      var modifiedText = originalText.replace(/^(\s*)/, "$1" + iconElm);
+      var modifiedText = originalText.replace(/^(\s*)/, '$1' + iconElm);
       var $state = $("<div class=\"directorist-select2-contents\">".concat(typeof iconURI !== 'undefined' && iconURI !== '' ? modifiedText : originalText, "</div>"));
       return $state;
     }

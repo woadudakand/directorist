@@ -5,7 +5,7 @@
  * @version 8.5
  */
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 $min_distance           = 0;
 $default_min_distance   = 0;
@@ -16,9 +16,10 @@ $radius_search_based_on = $data['radius_search_based_on'] ?? 'address';
 $value                  = ! empty( $_REQUEST['miles'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['miles'] ) ) : $min_distance . '-' . $max_distance;
 
 if ( ! empty( $_REQUEST['miles'] ) ) {
-	$distance =	directorist_get_distance_range( $_REQUEST['miles'] );
-	$min_distance = $distance['min'];
-	$max_distance = $distance['max'];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $distance = directorist_get_distance_range( wp_unslash( $_REQUEST['miles'] ) );
+    $min_distance = $distance['min'];
+    $max_distance = $distance['max'];
 }
 ?>
 
