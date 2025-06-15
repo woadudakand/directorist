@@ -447,7 +447,7 @@ class Builder_Data {
                                     ]
                                 ],
                                 'review_consent' => [
-                                    'label'    => __( 'Concent', 'directorist' ),
+                                    'label'    => __( 'Consent', 'directorist' ),
                                     'canTrash' => false,
                                     'canMove'  => false,
                                     'options'  => [
