@@ -457,8 +457,7 @@ class Builder_Data {
                                             'value'   => false,
                                         ],
                                         'enable_gdpr_consent' => [
-                                            'label'   => __( 'Enable GDPR Consent
-', 'directorist' ),
+                                            'label'   => __( 'Enable GDPR Consent', 'directorist' ),
                                             'type'    => 'toggle',
                                             'value'   => false,
                                         ],
