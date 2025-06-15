@@ -465,7 +465,7 @@ class Builder_Data {
                                             'label'       => __( 'Consent Label', 'directorist' ),
                                             'type'        => 'textarea',
                                             'editor'      => 'wp_editor',
-                                            'editorID'    => 'wp_editor_terms_privacy',
+                                            'editorID'    => 'wp_editor_terms_privacy_consent_label',
                                             'value'       => sprintf(
                                                 __( 'I have read and agree to the <a href="%s" target="_blank">Privacy Policy</a> and <a href="%s" target="_blank">Terms of Service</a>', 'directorist' ),
                                                 ATBDP_Permalink::get_privacy_policy_page_url(),
