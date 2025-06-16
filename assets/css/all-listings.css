@@ -7153,6 +7153,7 @@ button[type="submit"].directorist-btn {
 	-webkit-align-items: center;
 	-ms-flex-align: center;
 	align-items: center;
+	padding: 0 !important;
 	-ms-overflow-style: none; /* Internet Explorer 10+ */
 	scrollbar-width: none; /* Firefox */
 }
@@ -13104,6 +13105,26 @@ input.directorist-toggle-input:checked
 	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
 	gap: 10px;
+}
+@media screen and (max-width: 425px) {
+	.directorist-content-active .directorist-listings-header__right {
+		-webkit-box-flex: 0;
+		-webkit-flex: 0 0 100%;
+		-ms-flex: 0 0 100%;
+		flex: 0 0 100%;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-webkit-flex-direction: column;
+		-ms-flex-direction: column;
+		flex-direction: column;
+	}
+	.directorist-content-active
+		.directorist-listings-header__right
+		.directorist-dropdown__links {
+		right: unset;
+		left: 0;
+		max-width: 250px;
+	}
 }
 .directorist-content-active
 	.directorist-listings-header__right
