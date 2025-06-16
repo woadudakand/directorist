@@ -7074,6 +7074,7 @@ button[type="submit"].directorist-btn {
 .directorist-content-active
 	.select2.select2-container.select2-container--default
 	.select2-selection {
+	height: 40px;
 	min-height: 40px;
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -14260,6 +14261,31 @@ input.directorist-toggle-input:checked
 	padding-right: 20px;
 }
 .directorist-advanced-filter__advanced__element
+	.directorist-search-field.input-has-noLabel
+	.directorist-search-field__input::-webkit-input-placeholder {
+	opacity: 1;
+}
+.directorist-advanced-filter__advanced__element
+	.directorist-search-field.input-has-noLabel
+	.directorist-search-field__input::-moz-placeholder {
+	opacity: 1;
+}
+.directorist-advanced-filter__advanced__element
+	.directorist-search-field.input-has-noLabel
+	.directorist-search-field__input:-ms-input-placeholder {
+	opacity: 1;
+}
+.directorist-advanced-filter__advanced__element
+	.directorist-search-field.input-has-noLabel
+	.directorist-search-field__input::-ms-input-placeholder {
+	opacity: 1;
+}
+.directorist-advanced-filter__advanced__element
+	.directorist-search-field.input-has-noLabel
+	.directorist-search-field__input::placeholder {
+	opacity: 1;
+}
+.directorist-advanced-filter__advanced__element
 	.directorist-search-field.directorist-search-field-radius_search
 	> label,
 .directorist-advanced-filter__advanced__element
@@ -15187,6 +15213,16 @@ input.directorist-toggle-input:checked
 .directorist-search-field.input-is-focused .directorist-search-field__input {
 	position: relative;
 	bottom: -5px;
+}
+.directorist-search-field.input-has-value.input-has-noLabel .directorist-select,
+.directorist-search-field.input-has-value.input-has-noLabel
+	.directorist-search-field__input,
+.directorist-search-field.input-is-focused.input-has-noLabel
+	.directorist-select,
+.directorist-search-field.input-is-focused.input-has-noLabel
+	.directorist-search-field__input {
+	bottom: 0;
+	margin-top: 0 !important;
 }
 .directorist-search-field.input-has-value.directorist-date
 	.directorist-search-field__label,

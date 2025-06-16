@@ -127,6 +127,13 @@
 			position: relative;
 			bottom: -5px;
 		}
+		&.input-has-noLabel {
+			.directorist-select,
+			.directorist-search-field__input {
+				bottom: 0;
+				margin-top: 0 !important;
+			}
+		}
 		&.directorist-date,
 		&.directorist-time,
 		.directorist-select {

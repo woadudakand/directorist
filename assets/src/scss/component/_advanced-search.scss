@@ -144,6 +144,14 @@
 					}
 				}
 
+				&.input-has-noLabel {
+					.directorist-search-field__input {
+						&::placeholder {
+							opacity: 1;
+						}
+					}
+				}
+
 				&.directorist-search-field-radius_search,
 				&.directorist-search-field-price_range,
 				&.directorist-search-field-text_range,
