@@ -1070,6 +1070,16 @@ import './components/directoristSelect';
 			}
 		);
 
+		// directorist-instant-search-reloaded event
+		window.addEventListener(
+			'directorist-instant-search-reloaded',
+			function () {
+				handleRadiusVisibility();
+				directorist_custom_range_slider();
+				defaultTags();
+			}
+		);
+
 		// active class add on view as button
 		$('body').on(
 			'click',
