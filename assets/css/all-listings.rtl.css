@@ -14707,7 +14707,7 @@ input.directorist-toggle-input:checked
 }
 .directorist-search-field .directorist-price-ranges__currency {
 	line-height: 1;
-	margin-left: 6px;
+	margin-left: 4px;
 }
 .directorist-search-field .directorist-price-ranges__price-frequency {
 	display: -webkit-box;

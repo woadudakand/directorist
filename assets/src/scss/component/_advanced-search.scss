@@ -441,7 +441,7 @@
 	}
 	@include e(currency) {
 		line-height: 1;
-		margin-right: 6px;
+		margin-right: 4px;
 	}
 	@include e("price-frequency") {
 		display: flex;

@@ -308,10 +308,12 @@ import debounce from '../../global/components/debounce';
 		Object.entries(form_data).forEach(([key, value]) => {
 			if (ignoreKeys.includes(key)) return;
 
+			// Handle default page
 			if (key === 'paged' && Number(value) === 1) {
 				return; // ❌ Skip default page 1
 			}
 
+			// Handle price & address fields specifically
 			if (key === 'price' && Array.isArray(value)) {
 				appendQuery('price[0]', value[0] > 0 ? value[0] : '');
 				appendQuery('price[1]', value[1] > 0 ? value[1] : '');
@@ -412,6 +414,13 @@ import debounce from '../../global/components/debounce';
 			price.push($(el).val());
 		});
 
+		// Check if **any** price is greater than 0
+		const hasValidPrice = price.some((val) => val > 0);
+
+		if (!hasValidPrice) {
+			price = []; // Reset price if no valid price found
+		}
+
 		// Collect custom field values
 		searchElm.find('[name^="custom_field"]').each(function (_, el) {
 			const $el = $(el);
@@ -438,7 +447,7 @@ import debounce from '../../global/components/debounce';
 				if (values.length) custom_field[post_id] = values;
 			} else {
 				const value = $el.val();
-				if (value) custom_field[post_id] = value;
+				if (value && value !== '0-0') custom_field[post_id] = value;
 			}
 		});
 

@@ -2545,9 +2545,13 @@
 								key = _ref6[0],
 								value = _ref6[1];
 							if (ignoreKeys.includes(key)) return;
+
+							// Handle default page
 							if (key === 'paged' && Number(value) === 1) {
 								return; // ❌ Skip default page 1
 							}
+
+							// Handle price & address fields specifically
 							if (key === 'price' && Array.isArray(value)) {
 								appendQuery(
 									'price[0]',
@@ -2679,6 +2683,14 @@
 								price.push($(el).val());
 							});
 
+						// Check if **any** price is greater than 0
+						var hasValidPrice = price.some(function (val) {
+							return val > 0;
+						});
+						if (!hasValidPrice) {
+							price = []; // Reset price if no valid price found
+						}
+
 						// Collect custom field values
 						searchElm
 							.find('[name^="custom_field"]')
@@ -2719,7 +2731,8 @@
 										custom_field[post_id] = values;
 								} else {
 									var value = $el.val();
-									if (value) custom_field[post_id] = value;
+									if (value && value !== '0-0')
+										custom_field[post_id] = value;
 								}
 							});
 
