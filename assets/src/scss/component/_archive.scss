@@ -635,6 +635,9 @@
 							opacity: 1;
 						}
 					}
+					&.input-has-noLabel {
+						margin-top: 0;
+					}
 				}
 			}
 			&.directorist-icon-right .directorist-input-icon {

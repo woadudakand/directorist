@@ -13828,6 +13828,10 @@ input.directorist-toggle-input:checked
 	opacity: 1;
 }
 .listing-with-sidebar__sidebar
+	.directorist-form-group.directorist-search-field.input-is-focused.input-has-noLabel {
+	margin-top: 0;
+}
+.listing-with-sidebar__sidebar
 	.directorist-form-group.directorist-icon-right
 	.directorist-input-icon {
 	left: 0;
