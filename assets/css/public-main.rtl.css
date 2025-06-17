@@ -10262,6 +10262,11 @@ body.modal-overlay-enabled:before {
 	}
 	.directorist-search-modal--basic
 		.directorist-search-modal__input
+		.directorist-search-field.directorist-search-field-text_range {
+		padding: 5px 0;
+	}
+	.directorist-search-modal--basic
+		.directorist-search-modal__input
 		.directorist-search-field.directorist-search-field-radius_search {
 		width: auto;
 		padding-left: 0;
@@ -10505,6 +10510,7 @@ body.modal-overlay-enabled:before {
 }
 .directorist-search-modal--basic .directorist-search-field-pricing > label,
 .directorist-search-modal--basic .directorist-search-field__number > label,
+.directorist-search-modal--basic .directorist-search-field-text_range > label,
 .directorist-search-modal--basic .directorist-search-field-price_range > label,
 .directorist-search-modal--basic
 	.directorist-search-field-radius_search
@@ -10514,11 +10520,7 @@ body.modal-overlay-enabled:before {
 	transform: unset;
 	display: block;
 	font-size: 14px;
-	font-weight: 500;
 	margin-bottom: 15px;
-}
-.directorist-search-modal--basic .directorist-search-field-text_range > label {
-	display: none;
 }
 .directorist-search-modal--advanced
 	.directorist-search-modal__contents__body
@@ -13348,7 +13350,6 @@ input.directorist-toggle-input:checked
 	transform: unset;
 	display: block;
 	font-size: 14px;
-	font-weight: 500;
 	margin-bottom: 15px;
 }
 .listing-with-sidebar__header {
@@ -13467,6 +13468,13 @@ input.directorist-toggle-input:checked
 		background-color: var(--directorist-color-light);
 	}
 }
+@media only screen and (max-width: 575px) {
+	.listing-with-sidebar__sidebar
+		.directorist-search-field
+		.directorist-price-ranges {
+		margin-top: 15px;
+	}
+}
 .listing-with-sidebar__sidebar--open {
 	right: 0;
 	visibility: visible;
@@ -13562,6 +13570,7 @@ input.directorist-toggle-input:checked
 	> label {
 	position: unset;
 	margin-bottom: 15px;
+	color: var(--directorist-color-body);
 }
 .listing-with-sidebar__sidebar
 	.directorist-advanced-filter__advanced__element
@@ -13586,6 +13595,26 @@ input.directorist-toggle-input:checked
 	.directorist-search-field
 	.directorist-checkbox-wrapper {
 	margin-top: 13px;
+}
+@media only screen and (max-width: 575px) {
+	.listing-with-sidebar__sidebar
+		.directorist-advanced-filter__advanced__element
+		.directorist-search-field
+		.directorist-search-tags,
+	.listing-with-sidebar__sidebar
+		.directorist-advanced-filter__advanced__element
+		.directorist-search-field
+		.directorist-search-review,
+	.listing-with-sidebar__sidebar
+		.directorist-advanced-filter__advanced__element
+		.directorist-search-field
+		.directorist-radio-wrapper,
+	.listing-with-sidebar__sidebar
+		.directorist-advanced-filter__advanced__element
+		.directorist-search-field
+		.directorist-checkbox-wrapper {
+		margin-top: 5px;
+	}
 }
 .listing-with-sidebar__sidebar
 	.directorist-form-group:last-child
