@@ -2210,20 +2210,9 @@
 							'.directorist-instant-search'
 						);
 
-						// Get data-atts
-						var instant_search_atts = searchElm.data('atts');
-
-						// make ajax data
-						var instant_search_data = _objectSpread(
-							_objectSpread({}, form_data),
-							{},
-							{
-								action: 'directorist_instant_search',
-								_nonce: directorist.ajax_nonce,
-								current_page_id: directorist.current_page_id,
-								data_atts: instant_search_atts,
-							}
-						);
+						// Instant Search Data
+						var instant_search_data =
+							prepareInstantSearchData(searchElement);
 						$.ajax({
 							url: directorist.ajaxurl,
 							type: 'POST',
@@ -2333,20 +2322,9 @@
 							'.directorist-instant-search'
 						);
 
-						// Get data-atts
-						var instant_search_atts = searchElm.data('atts');
-
-						// make ajax data
-						var instant_search_data = _objectSpread(
-							_objectSpread({}, form_data),
-							{},
-							{
-								action: 'directorist_instant_search',
-								_nonce: directorist.ajax_nonce,
-								current_page_id: directorist.current_page_id,
-								data_atts: instant_search_atts,
-							}
-						);
+						// Instant Search Data
+						var instant_search_data =
+							prepareInstantSearchData(searchElement);
 						$.ajax({
 							url: directorist.ajaxurl,
 							type: 'POST',
@@ -2389,24 +2367,16 @@
 							'.directorist-infinite-scroll .directorist-container-fluid .directorist-row'
 						);
 
-						// get parent element
-						var searchElm = searchElement.closest(
-							'.directorist-instant-search'
-						);
-
-						// Get data-atts
-						var instant_search_atts = searchElm.data('atts');
+						// Instant Search Data
+						var preparedData =
+							prepareInstantSearchData(searchElement);
 
 						// make ajax data
 						var instant_search_data = _objectSpread(
-							_objectSpread({}, form_data),
+							_objectSpread({}, preparedData),
 							{},
 							{
 								paged: scrollingPage,
-								action: 'directorist_instant_search',
-								_nonce: directorist.ajax_nonce,
-								current_page_id: directorist.current_page_id,
-								data_atts: instant_search_atts,
 							}
 						);
 						$.ajax({
@@ -2444,6 +2414,24 @@
      Helper Functions  
    **/
 
+					// Prepare Instant Search Data
+					function prepareInstantSearchData(searchElm) {
+						// Get data-atts
+						var instant_search_atts = searchElm.data('atts');
+
+						// make ajax data
+						var instant_search_data = _objectSpread(
+							_objectSpread({}, form_data),
+							{},
+							{
+								action: 'directorist_instant_search',
+								_nonce: directorist.ajax_nonce,
+								current_page_id: directorist.current_page_id,
+								data_atts: instant_search_atts,
+							}
+						);
+						return instant_search_data;
+					}
 					// Update or retain existing keys in form_data
 					function updateFormData(newData) {
 						Object.entries(newData).forEach(function (_ref) {

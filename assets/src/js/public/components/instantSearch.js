@@ -21,17 +21,8 @@ import debounce from '../../global/components/debounce';
 		// get parent element
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
-		// Get data-atts
-		const instant_search_atts = searchElm.data('atts');
-
-		// make ajax data
-		const instant_search_data = {
-			...form_data,
-			action: 'directorist_instant_search',
-			_nonce: directorist.ajax_nonce,
-			current_page_id: directorist.current_page_id,
-			data_atts: instant_search_atts,
-		};
+		// Instant Search Data
+		const instant_search_data = prepareInstantSearchData(searchElement);
 
 		$.ajax({
 			url: directorist.ajaxurl,
@@ -123,17 +114,8 @@ import debounce from '../../global/components/debounce';
 		// get parent element
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
-		// Get data-atts
-		const instant_search_atts = searchElm.data('atts');
-
-		// make ajax data
-		const instant_search_data = {
-			...form_data,
-			action: 'directorist_instant_search',
-			_nonce: directorist.ajax_nonce,
-			current_page_id: directorist.current_page_id,
-			data_atts: instant_search_atts,
-		};
+		// Instant Search Data
+		const instant_search_data = prepareInstantSearchData(searchElement);
 
 		$.ajax({
 			url: directorist.ajaxurl,
@@ -176,20 +158,13 @@ import debounce from '../../global/components/debounce';
 			'.directorist-infinite-scroll .directorist-container-fluid .directorist-row'
 		);
 
-		// get parent element
-		const searchElm = searchElement.closest('.directorist-instant-search');
-
-		// Get data-atts
-		const instant_search_atts = searchElm.data('atts');
+		// Instant Search Data
+		const preparedData = prepareInstantSearchData(searchElement);
 
 		// make ajax data
 		const instant_search_data = {
-			...form_data,
+			...preparedData,
 			paged: scrollingPage,
-			action: 'directorist_instant_search',
-			_nonce: directorist.ajax_nonce,
-			current_page_id: directorist.current_page_id,
-			data_atts: instant_search_atts,
 		};
 
 		$.ajax({
@@ -227,6 +202,22 @@ import debounce from '../../global/components/debounce';
     Helper Functions  
   **/
 
+	// Prepare Instant Search Data
+	function prepareInstantSearchData(searchElm) {
+		// Get data-atts
+		const instant_search_atts = searchElm.data('atts');
+
+		// make ajax data
+		const instant_search_data = {
+			...form_data,
+			action: 'directorist_instant_search',
+			_nonce: directorist.ajax_nonce,
+			current_page_id: directorist.current_page_id,
+			data_atts: instant_search_atts,
+		};
+
+		return instant_search_data;
+	}
 	// Update or retain existing keys in form_data
 	function updateFormData(newData) {
 		Object.entries(newData).forEach(([key, value]) => {
