@@ -2204,15 +2204,15 @@
    */
 
 					// Perform Instant Search
-					function performInstantSearch(searchElm) {
+					function performInstantSearch(searchElement) {
 						// get parent element
-						var instant_search_element = searchElm.closest(
+						var searchElm = searchElement.closest(
 							'.directorist-instant-search'
 						);
 
 						// Get data-atts
 						var directorist_instant_search_data_atts = JSON.parse(
-							instant_search_element.attr('data-atts')
+							searchElm.attr('data-atts')
 						);
 
 						// make ajax data
@@ -2231,16 +2231,16 @@
 							type: 'POST',
 							data: directorist_instant_search_data,
 							beforeSend: function beforeSend() {
-								var _instant_search_eleme;
-								instant_search_element
+								var _searchElm$offset;
+								searchElm
 									.find(
 										'.directorist-advanced-filter__form .directorist-btn-sm'
 									)
 									.attr('disabled', true);
-								instant_search_element
+								searchElm
 									.find('.directorist-archive-items')
 									.addClass('atbdp-form-fade');
-								instant_search_element
+								searchElm
 									.find(
 										'.directorist-header-bar .directorist-advanced-filter'
 									)
@@ -2249,42 +2249,42 @@
 									)
 									.hide();
 								if (
-									((_instant_search_eleme =
-										instant_search_element.offset()) ===
-										null || _instant_search_eleme === void 0
+									((_searchElm$offset =
+										searchElm.offset()) === null ||
+									_searchElm$offset === void 0
 										? void 0
-										: _instant_search_eleme.top) > 0
+										: _searchElm$offset.top) > 0
 								) {
 									$(document).scrollTop(
-										instant_search_element.offset().top
+										searchElm.offset().top
 									);
 								}
 								closeAllSearchModal();
 							},
 							success: function success(html) {
 								if (html.search_result) {
-									instant_search_element
+									searchElm
 										.find(
 											'.directorist-header-found-title, .dsa-save-search-container'
 										)
 										.remove();
 									if (html.header_title) {
-										instant_search_element
+										searchElm
 											.find(
 												'.directorist-listings-header__left'
 											)
 											.append(html.header_title);
-										instant_search_element
+										searchElm
 											.find(
 												'.directorist-header-found-title span'
 											)
 											.text(html.count);
 									}
-									instant_search_element
+									searchElm
 										.find('.directorist-archive-items')
 										.replaceWith(html.search_result)
 										.removeClass('atbdp-form-fade');
-									instant_search_element
+									searchElm
 										.find(
 											'.directorist-advanced-filter__form .directorist-btn-sm'
 										)
@@ -2329,15 +2329,15 @@
 					}
 
 					// Perform Instant Search for directory type change
-					function performDirectoryChange(searchElm) {
+					function performDirectoryChange(searchElement) {
 						// get parent element
-						var instant_search_element = searchElm.closest(
+						var searchElm = searchElement.closest(
 							'.directorist-instant-search'
 						);
 
 						// Get data-atts
 						var directorist_instant_search_data_atts = JSON.parse(
-							instant_search_element.attr('data-atts')
+							searchElm.attr('data-atts')
 						);
 
 						// make ajax data
@@ -2356,16 +2356,12 @@
 							type: 'POST',
 							data: directorist_instant_search_data,
 							beforeSend: function beforeSend() {
-								instant_search_element.addClass(
-									'atbdp-form-fade'
-								);
+								searchElm.addClass('atbdp-form-fade');
 							},
 							success: function success(html) {
 								if (html.directory_type) {
-									instant_search_element.replaceWith(
-										html.directory_type
-									);
-									instant_search_element
+									searchElm.replaceWith(html.directory_type);
+									searchElm
 										.find('.atbdp-form-fade')
 										.removeClass('atbdp-form-fade');
 									window.dispatchEvent(
@@ -2391,20 +2387,20 @@
 					}
 
 					// AJAX call to load more listings
-					function loadMoreListings(searchElm) {
+					function loadMoreListings(searchElement) {
 						var loadingDiv;
 						var container = $(
 							'.directorist-infinite-scroll .directorist-container-fluid .directorist-row'
 						);
 
 						// get parent element
-						var instant_search_element = searchElm.closest(
+						var searchElm = searchElement.closest(
 							'.directorist-instant-search'
 						);
 
 						// Get data-atts
 						var directorist_instant_search_data_atts = JSON.parse(
-							instant_search_element.attr('data-atts')
+							searchElm.attr('data-atts')
 						);
 
 						// make ajax data
@@ -3276,13 +3272,11 @@
 						'.directorist-instant-search .directorist-btn-reset-js',
 						function (e) {
 							e.preventDefault();
-							var instant_search_element = $(this).closest(
+							var searchElm = $(this).closest(
 								'.directorist-instant-search'
 							);
 							// Get active form
-							var activeForm = getActiveForm(
-								instant_search_element
-							);
+							var activeForm = getActiveForm(searchElm);
 
 							// ✅ only update `page`, preserve others
 							updateFormData({
@@ -3349,7 +3343,7 @@
 							}
 
 							// get parent element
-							var instant_search_element = $(this).closest(
+							var searchElm = $(this).closest(
 								'.directorist-instant-search'
 							);
 
@@ -3367,9 +3361,7 @@
 							update_instant_search_url(form_data);
 
 							// Get active form
-							var activeForm = getActiveForm(
-								instant_search_element
-							);
+							var activeForm = getActiveForm(searchElm);
 
 							// Instant search for directory type change
 							performDirectoryChange(activeForm);
@@ -3389,7 +3381,7 @@
 							}
 
 							// get parent element
-							var instant_search_element = $(this).closest(
+							var searchElm = $(this).closest(
 								'.directorist-instant-search'
 							);
 
@@ -3401,9 +3393,7 @@
 							});
 
 							// Get active form
-							var activeForm = getActiveForm(
-								instant_search_element
-							);
+							var activeForm = getActiveForm(searchElm);
 
 							// Instant search without required value
 							performInstantSearchWithoutRequiredValue(
@@ -3428,7 +3418,7 @@
 								.removeClass('active');
 
 							// get parent element
-							var instant_search_element = $(this).closest(
+							var searchElm = $(this).closest(
 								'.directorist-instant-search'
 							);
 
@@ -3440,9 +3430,7 @@
 							});
 
 							// get active form
-							var activeForm = getActiveForm(
-								instant_search_element
-							);
+							var activeForm = getActiveForm(searchElm);
 
 							// Instant search without required value
 							performInstantSearchWithoutRequiredValue(
@@ -3472,14 +3460,12 @@
 							});
 
 							// get parent element
-							var instant_search_element = $(this).closest(
+							var searchElm = $(this).closest(
 								'.directorist-instant-search'
 							);
 
 							// get active form
-							var activeForm = getActiveForm(
-								instant_search_element
-							);
+							var activeForm = getActiveForm(searchElm);
 
 							// Instant search without required value
 							performInstantSearchWithoutRequiredValue(

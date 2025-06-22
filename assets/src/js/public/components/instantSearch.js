@@ -17,15 +17,13 @@ import debounce from '../../global/components/debounce';
   */
 
 	// Perform Instant Search
-	function performInstantSearch(searchElm) {
+	function performInstantSearch(searchElement) {
 		// get parent element
-		const instant_search_element = searchElm.closest(
-			'.directorist-instant-search'
-		);
+		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
 		const directorist_instant_search_data_atts = JSON.parse(
-			instant_search_element.attr('data-atts')
+			searchElm.attr('data-atts')
 		);
 
 		// make ajax data
@@ -42,47 +40,47 @@ import debounce from '../../global/components/debounce';
 			type: 'POST',
 			data: directorist_instant_search_data,
 			beforeSend: function () {
-				instant_search_element
+				searchElm
 					.find(
 						'.directorist-advanced-filter__form .directorist-btn-sm'
 					)
 					.attr('disabled', true);
-				instant_search_element
+				searchElm
 					.find('.directorist-archive-items')
 					.addClass('atbdp-form-fade');
-				instant_search_element
+				searchElm
 					.find(
 						'.directorist-header-bar .directorist-advanced-filter'
 					)
 					.removeClass('directorist-advanced-filter--show')
 					.hide();
 
-				if (instant_search_element.offset()?.top > 0) {
-					$(document).scrollTop(instant_search_element.offset().top);
+				if (searchElm.offset()?.top > 0) {
+					$(document).scrollTop(searchElm.offset().top);
 				}
 
 				closeAllSearchModal();
 			},
 			success: function (html) {
 				if (html.search_result) {
-					instant_search_element
+					searchElm
 						.find(
 							'.directorist-header-found-title, .dsa-save-search-container'
 						)
 						.remove();
 					if (html.header_title) {
-						instant_search_element
+						searchElm
 							.find('.directorist-listings-header__left')
 							.append(html.header_title);
-						instant_search_element
+						searchElm
 							.find('.directorist-header-found-title span')
 							.text(html.count);
 					}
-					instant_search_element
+					searchElm
 						.find('.directorist-archive-items')
 						.replaceWith(html.search_result)
 						.removeClass('atbdp-form-fade');
-					instant_search_element
+					searchElm
 						.find(
 							'.directorist-advanced-filter__form .directorist-btn-sm'
 						)
@@ -123,15 +121,13 @@ import debounce from '../../global/components/debounce';
 	}
 
 	// Perform Instant Search for directory type change
-	function performDirectoryChange(searchElm) {
+	function performDirectoryChange(searchElement) {
 		// get parent element
-		const instant_search_element = searchElm.closest(
-			'.directorist-instant-search'
-		);
+		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
 		const directorist_instant_search_data_atts = JSON.parse(
-			instant_search_element.attr('data-atts')
+			searchElm.attr('data-atts')
 		);
 
 		// make ajax data
@@ -148,12 +144,12 @@ import debounce from '../../global/components/debounce';
 			type: 'POST',
 			data: directorist_instant_search_data,
 			beforeSend: function () {
-				instant_search_element.addClass('atbdp-form-fade');
+				searchElm.addClass('atbdp-form-fade');
 			},
 			success: function (html) {
 				if (html.directory_type) {
-					instant_search_element.replaceWith(html.directory_type);
-					instant_search_element
+					searchElm.replaceWith(html.directory_type);
+					searchElm
 						.find('.atbdp-form-fade')
 						.removeClass('atbdp-form-fade');
 
@@ -178,20 +174,18 @@ import debounce from '../../global/components/debounce';
 	}
 
 	// AJAX call to load more listings
-	function loadMoreListings(searchElm) {
+	function loadMoreListings(searchElement) {
 		let loadingDiv;
 		const container = $(
 			'.directorist-infinite-scroll .directorist-container-fluid .directorist-row'
 		);
 
 		// get parent element
-		const instant_search_element = searchElm.closest(
-			'.directorist-instant-search'
-		);
+		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
 		const directorist_instant_search_data_atts = JSON.parse(
-			instant_search_element.attr('data-atts')
+			searchElm.attr('data-atts')
 		);
 
 		// make ajax data
@@ -884,11 +878,9 @@ import debounce from '../../global/components/debounce';
 		'.directorist-instant-search .directorist-btn-reset-js',
 		function (e) {
 			e.preventDefault();
-			let instant_search_element = $(this).closest(
-				'.directorist-instant-search'
-			);
+			let searchElm = $(this).closest('.directorist-instant-search');
 			// Get active form
-			const activeForm = getActiveForm(instant_search_element);
+			const activeForm = getActiveForm(searchElm);
 
 			// ✅ only update `page`, preserve others
 			updateFormData({ paged: 1 });
@@ -944,9 +936,7 @@ import debounce from '../../global/components/debounce';
 			}
 
 			// get parent element
-			let instant_search_element = $(this).closest(
-				'.directorist-instant-search'
-			);
+			let searchElm = $(this).closest('.directorist-instant-search');
 
 			// reset form data
 			resetFormData();
@@ -960,7 +950,7 @@ import debounce from '../../global/components/debounce';
 			update_instant_search_url(form_data);
 
 			// Get active form
-			const activeForm = getActiveForm(instant_search_element);
+			const activeForm = getActiveForm(searchElm);
 
 			// Instant search for directory type change
 			performDirectoryChange(activeForm);
@@ -980,9 +970,7 @@ import debounce from '../../global/components/debounce';
 			}
 
 			// get parent element
-			let instant_search_element = $(this).closest(
-				'.directorist-instant-search'
-			);
+			let searchElm = $(this).closest('.directorist-instant-search');
 
 			// get view as value
 			const view = getViewAs($(this));
@@ -990,7 +978,7 @@ import debounce from '../../global/components/debounce';
 			updateFormData({ view });
 
 			// Get active form
-			const activeForm = getActiveForm(instant_search_element);
+			const activeForm = getActiveForm(searchElm);
 
 			// Instant search without required value
 			performInstantSearchWithoutRequiredValue(activeForm);
@@ -1011,9 +999,7 @@ import debounce from '../../global/components/debounce';
 				.removeClass('active');
 
 			// get parent element
-			let instant_search_element = $(this).closest(
-				'.directorist-instant-search'
-			);
+			let searchElm = $(this).closest('.directorist-instant-search');
 
 			// get sort value
 			const sort = getSortValue($(this));
@@ -1021,7 +1007,7 @@ import debounce from '../../global/components/debounce';
 			updateFormData({ sort });
 
 			// get active form
-			const activeForm = getActiveForm(instant_search_element);
+			const activeForm = getActiveForm(searchElm);
 
 			// Instant search without required value
 			performInstantSearchWithoutRequiredValue(activeForm);
@@ -1047,12 +1033,10 @@ import debounce from '../../global/components/debounce';
 			updateFormData({ paged: page });
 
 			// get parent element
-			let instant_search_element = $(this).closest(
-				'.directorist-instant-search'
-			);
+			let searchElm = $(this).closest('.directorist-instant-search');
 
 			// get active form
-			const activeForm = getActiveForm(instant_search_element);
+			const activeForm = getActiveForm(searchElm);
 
 			// Instant search without required value
 			performInstantSearchWithoutRequiredValue(activeForm);
