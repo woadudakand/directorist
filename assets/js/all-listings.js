@@ -2327,7 +2327,7 @@
 					}
 
 					// Perform Instant Search for directory type change
-					function performDirectoryChange(searchElement) {
+					function onDirectoryChange(searchElement) {
 						// get parent element
 						var searchElm = searchElement.closest(
 							'.directorist-instant-search'
@@ -3358,7 +3358,7 @@
 							var activeForm = getActiveForm(searchElm);
 
 							// Instant search for directory type change
-							performDirectoryChange(activeForm);
+							onDirectoryChange(activeForm);
 						}
 					);
 

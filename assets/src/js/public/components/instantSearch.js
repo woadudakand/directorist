@@ -119,7 +119,7 @@ import debounce from '../../global/components/debounce';
 	}
 
 	// Perform Instant Search for directory type change
-	function performDirectoryChange(searchElement) {
+	function onDirectoryChange(searchElement) {
 		// get parent element
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
@@ -947,7 +947,7 @@ import debounce from '../../global/components/debounce';
 			const activeForm = getActiveForm(searchElm);
 
 			// Instant search for directory type change
-			performDirectoryChange(activeForm);
+			onDirectoryChange(activeForm);
 		}
 	);
 
