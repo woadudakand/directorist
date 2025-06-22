@@ -2211,25 +2211,23 @@
 						);
 
 						// Get data-atts
-						var directorist_instant_search_data_atts = JSON.parse(
-							searchElm.attr('data-atts')
-						);
+						var instant_search_atts = searchElm.data('atts');
 
 						// make ajax data
-						var directorist_instant_search_data = _objectSpread(
+						var instant_search_data = _objectSpread(
 							_objectSpread({}, form_data),
 							{},
 							{
 								action: 'directorist_instant_search',
 								_nonce: directorist.ajax_nonce,
 								current_page_id: directorist.current_page_id,
-								data_atts: directorist_instant_search_data_atts,
+								data_atts: instant_search_atts,
 							}
 						);
 						$.ajax({
 							url: directorist.ajaxurl,
 							type: 'POST',
-							data: directorist_instant_search_data,
+							data: instant_search_data,
 							beforeSend: function beforeSend() {
 								var _searchElm$offset;
 								searchElm
@@ -2336,25 +2334,23 @@
 						);
 
 						// Get data-atts
-						var directorist_instant_search_data_atts = JSON.parse(
-							searchElm.attr('data-atts')
-						);
+						var instant_search_atts = searchElm.data('atts');
 
 						// make ajax data
-						var directorist_instant_search_data = _objectSpread(
+						var instant_search_data = _objectSpread(
 							_objectSpread({}, form_data),
 							{},
 							{
 								action: 'directorist_instant_search',
 								_nonce: directorist.ajax_nonce,
 								current_page_id: directorist.current_page_id,
-								data_atts: directorist_instant_search_data_atts,
+								data_atts: instant_search_atts,
 							}
 						);
 						$.ajax({
 							url: directorist.ajaxurl,
 							type: 'POST',
-							data: directorist_instant_search_data,
+							data: instant_search_data,
 							beforeSend: function beforeSend() {
 								searchElm.addClass('atbdp-form-fade');
 							},
@@ -2399,12 +2395,10 @@
 						);
 
 						// Get data-atts
-						var directorist_instant_search_data_atts = JSON.parse(
-							searchElm.attr('data-atts')
-						);
+						var instant_search_atts = searchElm.data('atts');
 
 						// make ajax data
-						var directorist_instant_search_data = _objectSpread(
+						var instant_search_data = _objectSpread(
 							_objectSpread({}, form_data),
 							{},
 							{
@@ -2412,13 +2406,13 @@
 								action: 'directorist_instant_search',
 								_nonce: directorist.ajax_nonce,
 								current_page_id: directorist.current_page_id,
-								data_atts: directorist_instant_search_data_atts,
+								data_atts: instant_search_atts,
 							}
 						);
 						$.ajax({
 							url: directorist.ajaxurl,
 							type: 'POST',
-							data: directorist_instant_search_data,
+							data: instant_search_data,
 							beforeSend: function beforeSend() {
 								loadingDiv = $('<div>', {
 									class: 'directorist-on-scroll-loading',

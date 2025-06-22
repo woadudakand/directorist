@@ -22,23 +22,21 @@ import debounce from '../../global/components/debounce';
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
-		const directorist_instant_search_data_atts = JSON.parse(
-			searchElm.attr('data-atts')
-		);
+		const instant_search_atts = searchElm.data('atts');
 
 		// make ajax data
-		const directorist_instant_search_data = {
+		const instant_search_data = {
 			...form_data,
 			action: 'directorist_instant_search',
 			_nonce: directorist.ajax_nonce,
 			current_page_id: directorist.current_page_id,
-			data_atts: directorist_instant_search_data_atts,
+			data_atts: instant_search_atts,
 		};
 
 		$.ajax({
 			url: directorist.ajaxurl,
 			type: 'POST',
-			data: directorist_instant_search_data,
+			data: instant_search_data,
 			beforeSend: function () {
 				searchElm
 					.find(
@@ -126,23 +124,21 @@ import debounce from '../../global/components/debounce';
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
-		const directorist_instant_search_data_atts = JSON.parse(
-			searchElm.attr('data-atts')
-		);
+		const instant_search_atts = searchElm.data('atts');
 
 		// make ajax data
-		const directorist_instant_search_data = {
+		const instant_search_data = {
 			...form_data,
 			action: 'directorist_instant_search',
 			_nonce: directorist.ajax_nonce,
 			current_page_id: directorist.current_page_id,
-			data_atts: directorist_instant_search_data_atts,
+			data_atts: instant_search_atts,
 		};
 
 		$.ajax({
 			url: directorist.ajaxurl,
 			type: 'POST',
-			data: directorist_instant_search_data,
+			data: instant_search_data,
 			beforeSend: function () {
 				searchElm.addClass('atbdp-form-fade');
 			},
@@ -184,24 +180,22 @@ import debounce from '../../global/components/debounce';
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Get data-atts
-		const directorist_instant_search_data_atts = JSON.parse(
-			searchElm.attr('data-atts')
-		);
+		const instant_search_atts = searchElm.data('atts');
 
 		// make ajax data
-		const directorist_instant_search_data = {
+		const instant_search_data = {
 			...form_data,
 			paged: scrollingPage,
 			action: 'directorist_instant_search',
 			_nonce: directorist.ajax_nonce,
 			current_page_id: directorist.current_page_id,
-			data_atts: directorist_instant_search_data_atts,
+			data_atts: instant_search_atts,
 		};
 
 		$.ajax({
 			url: directorist.ajaxurl,
 			type: 'POST',
-			data: directorist_instant_search_data,
+			data: instant_search_data,
 			beforeSend: function () {
 				loadingDiv = $('<div>', {
 					class: 'directorist-on-scroll-loading',
