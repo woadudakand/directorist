@@ -297,7 +297,7 @@ Directorist is a complete directory solution and in combination with its advance
 
 == Changelog ==
 
-8.4.4 - Jun 25, 2025
+8.4.4 - Jun 26, 2025
 
 **New**
  - 🎉 **Formgent Integration** — You can now add a Formgent form to the Single Listing page via the Directorist builder. This allows visitors to submit forms (such as inquiries or feedback) directly from the listing page.
