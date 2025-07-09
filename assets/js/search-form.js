@@ -700,20 +700,38 @@ function initSearchCategoryCustomFields($) {
   } else {
     return;
   }
-  $(document).ready(function () {
+  window.addEventListener('load', function () {
     /* Initialize wp color picker */
     function colorPickerInit() {
-      var wpColorPicker = document.querySelectorAll('.directorist-color-picker-wrap');
-      wpColorPicker.forEach(function (elm) {
-        if (elm !== null) {
-          var dColorPicker = $('.directorist-color-picker');
-          dColorPicker.value !== '' ? dColorPicker.wpColorPicker() : dColorPicker.wpColorPicker().empty();
+      var wpColorPickers = document.querySelectorAll('.directorist-color-picker-wrap');
+      wpColorPickers.forEach(function (wrap) {
+        var $pickerInput = $(wrap).find('.directorist-color-picker');
+        if ($pickerInput) {
+          if ($.fn.wpColorPicker) {
+            $pickerInput.wpColorPicker({
+              change: function change(event, ui) {
+                var color = ui.color.toString();
+
+                // Dispatch custom event
+                var customEvent = new CustomEvent('directorist-color-changed', {
+                  detail: {
+                    color: color,
+                    input: event.target,
+                    form: event.target.closest('form')
+                  }
+                });
+                window.dispatchEvent(customEvent);
+              }
+            });
+          } else {
+            console.warn('wpColorPicker is NOT available!');
+          }
         }
       });
     }
     colorPickerInit();
     /* Initialize on Directory type change */
-    document.body.addEventListener('directorist-search-form-nav-tab-reloaded', colorPickerInit);
+    window.addEventListener('directorist-instant-search-reloaded', colorPickerInit);
   });
 })(jQuery);
 
@@ -1228,7 +1246,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       var value = false;
 
       // Check all input fields which are not checkbox, radio & hidden
-      searchForm.querySelectorAll("input:not([type='checkbox']):not([type='radio']):not([type='hidden'])").forEach(function (el) {
+      searchForm.querySelectorAll("input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear)").forEach(function (el) {
         if (el.value !== '') {
           value = true;
         }
@@ -1311,6 +1329,48 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       } else {
         setTimeout(function () {
           initForm(searchForm);
+        }, 100);
+      }
+    });
+
+    // 💡 Trigger event on clear button click
+    $('.directorist-contents-wrap form .wp-picker-clear').on('click', function (e) {
+      e.preventDefault();
+      var $target = $(e.target);
+      console.log('clicked', $target.attr('class'));
+      var input = $(this).closest('.wp-picker-input-wrap').find('.wp-color-picker')[0];
+      if (!input) return;
+      var form = input.closest('form');
+      var customEvent = new CustomEvent('directorist-color-changed', {
+        detail: {
+          color: '',
+          // Color is cleared
+          input: input,
+          form: form
+        }
+      });
+      window.dispatchEvent(customEvent);
+    });
+    window.addEventListener('directorist-color-changed', function (e) {
+      var _e$detail = e.detail,
+        color = _e$detail.color,
+        input = _e$detail.input,
+        form = _e$detail.form;
+      if (color && color !== '') {
+        enableResetButton(form);
+      } else {
+        setTimeout(function () {
+          initForm(form);
+          var colorWrapper = input.closest('.directorist-color-picker-wrap');
+          var $wrapper = $(colorWrapper);
+          $wrapper.find('.wp-picker-input-wrap').addClass('hidden');
+          $wrapper.find('.wp-color-result').removeClass('wp-picker-open');
+          $wrapper.find('.wp-color-result').attr('aria-expanded', 'false');
+          $wrapper.find('.wp-picker-container').removeClass('wp-picker-active');
+          var $irisPicker = $wrapper.find('.wp-picker-holder .iris-picker');
+          if ($irisPicker.length) {
+            $irisPicker.css('display', 'none');
+          }
         }, 100);
       }
     });

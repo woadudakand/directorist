@@ -630,20 +630,38 @@ function convertToSelect2(selector) {
   } else {
     return;
   }
-  $(document).ready(function () {
+  window.addEventListener('load', function () {
     /* Initialize wp color picker */
     function colorPickerInit() {
-      var wpColorPicker = document.querySelectorAll('.directorist-color-picker-wrap');
-      wpColorPicker.forEach(function (elm) {
-        if (elm !== null) {
-          var dColorPicker = $('.directorist-color-picker');
-          dColorPicker.value !== '' ? dColorPicker.wpColorPicker() : dColorPicker.wpColorPicker().empty();
+      var wpColorPickers = document.querySelectorAll('.directorist-color-picker-wrap');
+      wpColorPickers.forEach(function (wrap) {
+        var $pickerInput = $(wrap).find('.directorist-color-picker');
+        if ($pickerInput) {
+          if ($.fn.wpColorPicker) {
+            $pickerInput.wpColorPicker({
+              change: function change(event, ui) {
+                var color = ui.color.toString();
+
+                // Dispatch custom event
+                var customEvent = new CustomEvent('directorist-color-changed', {
+                  detail: {
+                    color: color,
+                    input: event.target,
+                    form: event.target.closest('form')
+                  }
+                });
+                window.dispatchEvent(customEvent);
+              }
+            });
+          } else {
+            console.warn('wpColorPicker is NOT available!');
+          }
         }
       });
     }
     colorPickerInit();
     /* Initialize on Directory type change */
-    document.body.addEventListener('directorist-search-form-nav-tab-reloaded', colorPickerInit);
+    window.addEventListener('directorist-instant-search-reloaded', colorPickerInit);
   });
 })(jQuery);
 

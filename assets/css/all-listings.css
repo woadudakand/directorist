@@ -9772,6 +9772,9 @@ input:-webkit-autofill:active {
 .directorist-color-picker-wrap .wp-picker-input-wrap label input {
   width: auto !important;
 }
+.directorist-color-picker-wrap .wp-picker-input-wrap label input.directorist-color-picker {
+  width: 100% !important;
+}
 .directorist-color-picker-wrap .wp-picker-clear {
   padding: 0 15px;
   margin-top: 3px;
