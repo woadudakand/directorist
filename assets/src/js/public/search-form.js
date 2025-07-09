@@ -1,10 +1,10 @@
-import debounce from '../global/components/debounce';
-import './../global/components/select2-custom-control';
-import './../global/components/setup-select2';
-import initSearchCategoryCustomFields from './components/category-custom-fields';
-import './components/colorPicker';
-import './components/directoristDropdown';
-import './components/directoristSelect';
+import debounce from "../global/components/debounce";
+import "./../global/components/select2-custom-control";
+import "./../global/components/setup-select2";
+import initSearchCategoryCustomFields from "./components/category-custom-fields";
+import "./components/colorPicker";
+import "./components/directoristDropdown";
+import "./components/directoristSelect";
 
 (function ($) {
 	window.addEventListener('load', () => {
@@ -226,6 +226,7 @@ import './components/directoristSelect';
 		function initForm(searchForm) {
 			let value = false;
 
+			// Check all input fields which are not checkbox, radio & hidden
 			searchForm
 				.querySelectorAll(
 					"input:not([type='checkbox']):not([type='radio']):not([type='hidden'])"
@@ -236,6 +237,7 @@ import './components/directoristSelect';
 					}
 				});
 
+			// Check all checkbox, radio field
 			searchForm
 				.querySelectorAll("input[type='checkbox'], input[type='radio']")
 				.forEach(function (el) {
@@ -244,12 +246,21 @@ import './components/directoristSelect';
 					}
 				});
 
+			// Check all select field
 			searchForm.querySelectorAll('select').forEach(function (el) {
 				if (el.value || el.selectedIndex !== 0) {
 					value = true;
 				}
 			});
+			
+			// Check all custom number range field
+			searchForm.querySelectorAll('.directorist-search-field-text_range .directorist-custom-range-slider__range').forEach(function (el) {
+				if (el.value === "0-0") {
+					value = false;
+				} 
+			});
 
+			// Check all range slider field
 			searchForm
 				.querySelectorAll(
 					'.directorist-custom-range-slider__value input'
@@ -260,6 +271,7 @@ import './components/directoristSelect';
 					}
 				});
 
+			// Disable Reset Button based on value
 			if (!value) {
 				let resetButtonWrapper = searchForm.querySelector(
 					'.directorist-advanced-filter__action'

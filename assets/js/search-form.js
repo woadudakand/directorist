@@ -1226,26 +1226,43 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     // Search Form Reset Button Initialize
     function initForm(searchForm) {
       var value = false;
+
+      // Check all input fields which are not checkbox, radio & hidden
       searchForm.querySelectorAll("input:not([type='checkbox']):not([type='radio']):not([type='hidden'])").forEach(function (el) {
         if (el.value !== '') {
           value = true;
         }
       });
+
+      // Check all checkbox, radio field
       searchForm.querySelectorAll("input[type='checkbox'], input[type='radio']").forEach(function (el) {
         if (el.checked) {
           value = true;
         }
       });
+
+      // Check all select field
       searchForm.querySelectorAll('select').forEach(function (el) {
         if (el.value || el.selectedIndex !== 0) {
           value = true;
         }
       });
+
+      // Check all custom number range field
+      searchForm.querySelectorAll('.directorist-search-field-text_range .directorist-custom-range-slider__range').forEach(function (el) {
+        if (el.value === "0-0") {
+          value = false;
+        }
+      });
+
+      // Check all range slider field
       searchForm.querySelectorAll('.directorist-custom-range-slider__value input').forEach(function (el) {
         if (el.value > 0) {
           value = true;
         }
       });
+
+      // Disable Reset Button based on value
       if (!value) {
         var resetButtonWrapper = searchForm.querySelector('.directorist-advanced-filter__action');
         resetButtonWrapper && resetButtonWrapper.classList.add('reset-btn-disabled');
