@@ -860,7 +860,7 @@ import debounce from '../../global/components/debounce';
 	/* Directorist instant search reset */
 	$('body').on(
 		'click',
-		'.directorist-instant-search .directorist-btn-reset-js',
+		'.directorist-instant-search .listing-with-sidebar  .directorist-btn-reset-js',
 		function (e) {
 			e.preventDefault();
 			let searchElm = $(this).closest('.directorist-instant-search');

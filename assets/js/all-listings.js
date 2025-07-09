@@ -1948,7 +1948,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   });
 
   /* Directorist instant search reset */
-  $('body').on('click', '.directorist-instant-search .directorist-btn-reset-js', function (e) {
+  $('body').on('click', '.directorist-instant-search .listing-with-sidebar  .directorist-btn-reset-js', function (e) {
     e.preventDefault();
     var searchElm = $(this).closest('.directorist-instant-search');
     // Get active form
