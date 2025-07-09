@@ -1888,7 +1888,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }, 250));
 
   // sidebar on change searching - radio/checkbox/location/range
-  $('body').on('change', ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name", (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+  $('body').on('change', ".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-instant-search .listing-with-sidebar .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-instant-search .listing-with-sidebar .directorist-search-location .location-name", (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     e.preventDefault();
     var searchElm = $(this).closest('.listing-with-sidebar');
 
@@ -1935,7 +1935,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }, 1000));
 
   // Clear Input Value
-  $('body').on('click', '.directorist-instant-search .directorist-search-field__btn--clear', function (e) {
+  $('body').on('click', '.directorist-instant-search .listing-with-sidebar .directorist-search-field__btn--clear', function (e) {
     var inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]), select').val('');
     if (inputValue) {
       var searchElm = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));

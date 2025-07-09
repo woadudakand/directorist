@@ -768,11 +768,11 @@ import debounce from '../../global/components/debounce';
 	// sidebar on change searching - radio/checkbox/location/range
 	$('body').on(
 		'change',
-		".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-search-location .location-name",
+		".directorist-instant-search .listing-with-sidebar input[type='checkbox'],.directorist-instant-search .listing-with-sidebar input[type='radio'], .directorist-instant-search .listing-with-sidebar input[type='time'], .directorist-instant-search .listing-with-sidebar input[type='date'], .directorist-instant-search .listing-with-sidebar .directorist-custom-range-slider__wrap .directorist-custom-range-slider__range, .directorist-instant-search .listing-with-sidebar .directorist-search-location .location-name",
 		debounce(function (e) {
 			e.preventDefault();
 			var searchElm = $(this).closest('.listing-with-sidebar');
-
+			
 			// Instant search with required value
 			performInstantSearchWithRequiredValue(searchElm);
 		}, 250)
@@ -833,7 +833,7 @@ import debounce from '../../global/components/debounce';
 	// Clear Input Value
 	$('body').on(
 		'click',
-		'.directorist-instant-search .directorist-search-field__btn--clear',
+		'.directorist-instant-search .listing-with-sidebar .directorist-search-field__btn--clear',
 		function (e) {
 			let inputValue = $(this)
 				.closest('.directorist-search-field')
