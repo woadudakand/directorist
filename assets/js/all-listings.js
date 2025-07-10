@@ -1948,9 +1948,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var _e$detail = e.detail,
       color = _e$detail.color,
       input = _e$detail.input;
+    var searchElm = $(input).closest('.listing-with-sidebar');
+    if (!searchElm.length) return;
     if (color && color !== '') {
-      var searchElm = $(input).closest('.listing-with-sidebar');
-
       // Instant search with required value
       performInstantSearchWithRequiredValue(searchElm);
     }

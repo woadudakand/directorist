@@ -821,10 +821,11 @@ import debounce from '../../global/components/debounce';
 	window.addEventListener('directorist-color-changed',
 		debounce(function (e) {
 			const { color, input } = e.detail;
+			const searchElm = $(input).closest('.listing-with-sidebar');
+
+			if (!searchElm.length) return;
 
 			if (color && color !== '') {
-				const searchElm = $(input).closest('.listing-with-sidebar');
-
 				// Instant search with required value
 				performInstantSearchWithRequiredValue(searchElm);
 			} 

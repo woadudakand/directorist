@@ -8961,6 +8961,29 @@ body.modal-overlay-enabled:before {
 .directorist-search-modal__contents__body .directorist-search-form-dropdown {
   border-bottom: 1px solid var(--directorist-color-border);
 }
+.directorist-search-modal__contents__body .wp-picker-container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.directorist-search-modal__contents__body .wp-picker-container .wp-picker-input-wrap {
+  margin: 0 !important;
+}
+.directorist-search-modal__contents__body .wp-picker-container .wp-picker-input-wrap label {
+  width: 70px;
+}
+.directorist-search-modal__contents__body .wp-picker-container .wp-picker-input-wrap label input {
+  padding-left: 10px !important;
+  bottom: 0;
+}
+.directorist-search-modal__contents__body .wp-picker-container .wp-picker-input-wrap .wp-picker-clear {
+  margin: 0;
+  width: 100px;
+}
+.directorist-search-modal__contents__body .wp-picker-container .wp-picker-holder {
+  top: 45px;
+}
 .directorist-search-modal__contents__footer {
   position: fixed;
   bottom: 0;

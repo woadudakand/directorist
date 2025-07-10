@@ -354,6 +354,27 @@
 			.directorist-search-form-dropdown {
 				border-bottom: 1px solid var(--directorist-color-border);
 			}
+
+			.wp-picker-container {
+				display: flex;
+				.wp-picker-input-wrap {
+					margin: 0 !important;
+					label {
+						width: 70px;
+						input {
+							padding-right: 10px !important;
+							bottom: 0;
+						}
+					}
+					.wp-picker-clear {
+						margin: 0;
+						width: 100px;
+					}
+				}
+				.wp-picker-holder {
+					top: 45px;
+				}
+			}
 		}
 		@include e(footer) {
 			position: fixed;
