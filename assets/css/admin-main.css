@@ -12361,6 +12361,14 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .directorist-search-modal__contents__body .directorist-search-field.input-is-focused .directorist-filter-location-icon {
   margin-top: 0;
 }
+.directorist-search-modal__contents__body .directorist-search-field.directorist-search-field-text_range {
+  position: relative;
+}
+.directorist-search-modal__contents__body .directorist-search-field.directorist-search-field-text_range .directorist-search-field__label {
+  font-size: 16px;
+  font-weight: 500;
+  position: unset;
+}
 .directorist-search-modal__contents__body .directorist-search-field .directorist-select .directorist-search-field__label {
   opacity: 0;
 }
