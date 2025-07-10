@@ -12029,6 +12029,16 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .listing-with-sidebar__sidebar .directorist-form-group.directorist-icon-left .directorist-input-icon {
   right: 0;
 }
+.listing-with-sidebar__sidebar .directorist-color-picker-wrap .wp-picker-container .wp-picker-input-wrap {
+  margin-bottom: 0;
+}
+.listing-with-sidebar__sidebar .directorist-color-picker-wrap .wp-picker-container .wp-picker-input-wrap .wp-picker-clear {
+  margin: 0;
+  width: 100px;
+}
+.listing-with-sidebar__sidebar .directorist-color-picker-wrap .wp-picker-container .wp-picker-holder {
+  margin-top: 10px;
+}
 .listing-with-sidebar__listing {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -13084,8 +13094,8 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
   bottom: 0;
   margin-top: 0 !important;
 }
-.directorist-search-field.input-has-value.directorist-date .directorist-search-field__label, .directorist-search-field.input-has-value.directorist-time .directorist-search-field__label,
-.directorist-search-field.input-has-value .directorist-select .directorist-search-field__label, .directorist-search-field.input-is-focused.directorist-date .directorist-search-field__label, .directorist-search-field.input-is-focused.directorist-time .directorist-search-field__label,
+.directorist-search-field.input-has-value.directorist-date .directorist-search-field__label, .directorist-search-field.input-has-value.directorist-time .directorist-search-field__label, .directorist-search-field.input-has-value.directorist-color .directorist-search-field__label,
+.directorist-search-field.input-has-value .directorist-select .directorist-search-field__label, .directorist-search-field.input-is-focused.directorist-date .directorist-search-field__label, .directorist-search-field.input-is-focused.directorist-time .directorist-search-field__label, .directorist-search-field.input-is-focused.directorist-color .directorist-search-field__label,
 .directorist-search-field.input-is-focused .directorist-select .directorist-search-field__label {
   opacity: 1;
 }
@@ -13400,6 +13410,12 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
     left: 25px !important;
   }
 }
+.directorist-search-form__top .directorist-search-field.input-has-value .directorist-color-picker-wrap, .directorist-search-form__top .directorist-search-field.input-is-focused .directorist-color-picker-wrap {
+  top: 12px;
+}
+.directorist-search-form__top .directorist-search-field.input-has-value .directorist-color-picker-wrap ~ .directorist-search-field__btn--clear, .directorist-search-form__top .directorist-search-field.input-is-focused .directorist-color-picker-wrap ~ .directorist-search-field__btn--clear {
+  bottom: 0;
+}
 .directorist-search-form__top .directorist-search-field.input-has-value.atbdp-form-fade:after, .directorist-search-form__top .directorist-search-field.input-is-focused.atbdp-form-fade:after {
   margin-top: 3px;
 }
@@ -13441,8 +13457,28 @@ input.directorist-toggle-input:checked + .directorist-toggle-input-label span.di
 .directorist-search-form__top .directorist-search-field .directorist-select .directorist-select__label {
   border: 0 none;
 }
+.directorist-search-form__top .directorist-search-field .wp-picker-container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.directorist-search-form__top .directorist-search-field .wp-picker-container .wp-picker-input-wrap {
+  margin: 0;
+}
 .directorist-search-form__top .directorist-search-field .wp-picker-container .wp-picker-input-wrap label {
-  display: none;
+  width: 70px;
+}
+.directorist-search-form__top .directorist-search-field .wp-picker-container .wp-picker-input-wrap label input {
+  padding-left: 10px;
+  bottom: 0;
+}
+.directorist-search-form__top .directorist-search-field .wp-picker-container .wp-picker-input-wrap .wp-picker-clear {
+  margin: 0;
+  width: 100px;
+}
+.directorist-search-form__top .directorist-search-field .wp-picker-container .wp-picker-holder {
+  top: 45px;
 }
 .directorist-search-form__top .directorist-search-field .directorist-checkbox-wrapper,
 .directorist-search-form__top .directorist-search-field .directorist-radio-wrapper,

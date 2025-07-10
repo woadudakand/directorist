@@ -713,14 +713,14 @@ function initSearchCategoryCustomFields($) {
                 var color = ui.color.toString();
 
                 // Dispatch custom event
-                var customEvent = new CustomEvent('directorist-color-changed', {
+                var colorChangeEvent = new CustomEvent('directorist-color-changed', {
                   detail: {
                     color: color,
                     input: event.target,
                     form: event.target.closest('form')
                   }
                 });
-                window.dispatchEvent(customEvent);
+                window.dispatchEvent(colorChangeEvent);
               }
             });
           } else {
@@ -1333,24 +1333,27 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       }
     });
 
-    // 💡 Trigger event on clear button click
+    // Color Field Open Button Click
+    $('.directorist-contents-wrap form .wp-color-result').on('click', function (e) {
+      e.preventDefault();
+      var $parentElement = $(this).closest('.directorist-search-field');
+      if ($parentElement.hasClass('input-has-value') || $parentElement.hasClass('input-is-focused')) {
+        $parentElement.removeClass('input-has-value input-is-focused');
+      } else {
+        $parentElement.addClass('input-has-value input-is-focused');
+      }
+    });
+
+    // Color Field Clear Button Click
     $('.directorist-contents-wrap form .wp-picker-clear').on('click', function (e) {
       e.preventDefault();
-      var $target = $(e.target);
-      console.log('clicked', $target.attr('class'));
-      var input = $(this).closest('.wp-picker-input-wrap').find('.wp-color-picker')[0];
-      if (!input) return;
-      var form = input.closest('form');
-      var customEvent = new CustomEvent('directorist-color-changed', {
-        detail: {
-          color: '',
-          // Color is cleared
-          input: input,
-          form: form
-        }
-      });
-      window.dispatchEvent(customEvent);
+      var $parentElement = $(this).closest('.directorist-search-field');
+      if ($parentElement.hasClass('input-has-value') || $parentElement.hasClass('input-is-focused')) {
+        $parentElement.removeClass('input-has-value input-is-focused');
+      }
     });
+
+    // Color Change Event
     window.addEventListener('directorist-color-changed', function (e) {
       var _e$detail = e.detail,
         color = _e$detail.color,
@@ -1358,18 +1361,16 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         form = _e$detail.form;
       if (color && color !== '') {
         enableResetButton(form);
+        var $parentElement = $(input).closest('.directorist-search-field');
+        if (!$parentElement.hasClass('input-has-value') && !$parentElement.hasClass('input-is-focused')) {
+          $parentElement.addClass('input-has-value input-is-focused');
+        }
       } else {
         setTimeout(function () {
           initForm(form);
-          var colorWrapper = input.closest('.directorist-color-picker-wrap');
-          var $wrapper = $(colorWrapper);
-          $wrapper.find('.wp-picker-input-wrap').addClass('hidden');
-          $wrapper.find('.wp-color-result').removeClass('wp-picker-open');
-          $wrapper.find('.wp-color-result').attr('aria-expanded', 'false');
-          $wrapper.find('.wp-picker-container').removeClass('wp-picker-active');
-          var $irisPicker = $wrapper.find('.wp-picker-holder .iris-picker');
-          if ($irisPicker.length) {
-            $irisPicker.css('display', 'none');
+          var irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
+          if (irisPicker !== null) {
+            irisPicker.click();
           }
         }, 100);
       }
@@ -1377,7 +1378,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
     // Searchform Reset
     function adsFormReset(searchForm) {
-      searchForm.querySelectorAll("input[type='text']").forEach(function (el) {
+      searchForm.querySelectorAll("input[type='text']:not(.wp-picker-clear)").forEach(function (el) {
         el.value = '';
         if (el.parentElement.classList.contains('input-has-value') || el.parentElement.classList.contains('input-is-focused')) {
           el.parentElement.classList.remove('input-has-value', 'input-is-focused');

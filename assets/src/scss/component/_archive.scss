@@ -647,6 +647,21 @@
 				left: 0;
 			}
 		}
+
+		.directorist-color-picker-wrap{
+			.wp-picker-container {
+				.wp-picker-input-wrap {
+					margin-bottom: 0;
+					.wp-picker-clear {
+						margin: 0;
+						width: 100px;
+					}
+				}
+				.wp-picker-holder {
+					margin-top: 10px;
+				}
+			}
+		}
 	}
 	@include e(listing) {
 		display: inline-flex;

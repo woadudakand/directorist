@@ -726,14 +726,14 @@ window.addEventListener('load', function () {
                 var color = ui.color.toString();
 
                 // Dispatch custom event
-                var customEvent = new CustomEvent('directorist-color-changed', {
+                var colorChangeEvent = new CustomEvent('directorist-color-changed', {
                   detail: {
                     color: color,
                     input: event.target,
                     form: event.target.closest('form')
                   }
                 });
-                window.dispatchEvent(customEvent);
+                window.dispatchEvent(colorChangeEvent);
               }
             });
           } else {
@@ -1943,6 +1943,19 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
+  // sidebar on change searching - color
+  window.addEventListener('directorist-color-changed', (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    var _e$detail = e.detail,
+      color = _e$detail.color,
+      input = _e$detail.input;
+    if (color && color !== '') {
+      var searchElm = $(input).closest('.listing-with-sidebar');
+
+      // Instant search with required value
+      performInstantSearchWithRequiredValue(searchElm);
+    }
+  }, 250));
+
   // sidebar on click searching - location icon
   $('body').on('click', '.directorist-instant-search .listing-with-sidebar .directorist-filter-location-icon', (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
     e.preventDefault();
@@ -1954,7 +1967,12 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // Clear Input Value
   $('body').on('click', '.directorist-instant-search .listing-with-sidebar .directorist-search-field__btn--clear', function (e) {
-    var inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]), select').val('');
+    // Clear Color Field Value
+    var irisPicker = $(this).closest('.directorist-search-field.directorist-color').find('input.wp-picker-clear');
+    if (irisPicker !== null) {
+      irisPicker.click();
+    }
+    var inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select').val('');
     if (inputValue) {
       var searchElm = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));
 

@@ -816,6 +816,20 @@ import debounce from '../../global/components/debounce';
 			performInstantSearchWithRequiredValue(searchElm);
 		}, 250)
 	);
+	
+	// sidebar on change searching - color
+	window.addEventListener('directorist-color-changed',
+		debounce(function (e) {
+			const { color, input } = e.detail;
+
+			if (color && color !== '') {
+				const searchElm = $(input).closest('.listing-with-sidebar');
+
+				// Instant search with required value
+				performInstantSearchWithRequiredValue(searchElm);
+			} 
+		}, 250)
+	);
 
 	// sidebar on click searching - location icon
 	$('body').on(
@@ -835,10 +849,19 @@ import debounce from '../../global/components/debounce';
 		'click',
 		'.directorist-instant-search .listing-with-sidebar .directorist-search-field__btn--clear',
 		function (e) {
+			// Clear Color Field Value
+			let irisPicker = $(this)
+				.closest('.directorist-search-field.directorist-color')
+				.find('input.wp-picker-clear');
+
+			if (irisPicker !== null) {
+				irisPicker.click();
+			}
+
 			let inputValue = $(this)
 				.closest('.directorist-search-field')
 				.find(
-					'input:not([type="checkbox"]):not([type="radio"]), select'
+					'input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select'
 				)
 				.val('');
 

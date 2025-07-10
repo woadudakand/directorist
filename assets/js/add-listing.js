@@ -643,14 +643,14 @@ function convertToSelect2(selector) {
                 var color = ui.color.toString();
 
                 // Dispatch custom event
-                var customEvent = new CustomEvent('directorist-color-changed', {
+                var colorChangeEvent = new CustomEvent('directorist-color-changed', {
                   detail: {
                     color: color,
                     input: event.target,
                     form: event.target.closest('form')
                   }
                 });
-                window.dispatchEvent(customEvent);
+                window.dispatchEvent(colorChangeEvent);
               }
             });
           } else {

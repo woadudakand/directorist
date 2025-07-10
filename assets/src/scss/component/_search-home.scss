@@ -136,6 +136,7 @@
 		}
 		&.directorist-date,
 		&.directorist-time,
+		&.directorist-color,
 		.directorist-select {
 			.directorist-search-field__label {
 				opacity: 1;
@@ -427,6 +428,12 @@
 						}
 					}
 				}
+				.directorist-color-picker-wrap {
+					top: 12px;
+					~.directorist-search-field__btn--clear {
+						bottom: 0;
+					}
+				}
 				&.atbdp-form-fade:after {
 					margin-top: 3px;
 				}
@@ -479,8 +486,25 @@
 				border: 0 none;
 			}
 
-			.wp-picker-container .wp-picker-input-wrap label {
-				display: none;
+			.wp-picker-container {
+				display: flex;
+				.wp-picker-input-wrap {
+					margin: 0;
+					label {
+						width: 70px;
+						input {
+							padding-right: 10px;
+							bottom: 0;
+						}
+					}
+					.wp-picker-clear {
+						margin: 0;
+						width: 100px;
+					}
+				}
+				.wp-picker-holder {
+					top: 45px;
+				}
 			}
 
 			.directorist-checkbox-wrapper,

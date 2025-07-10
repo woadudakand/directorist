@@ -21,7 +21,7 @@
 								const color = ui.color.toString();
 
 								// Dispatch custom event
-								const customEvent = new CustomEvent('directorist-color-changed', {
+								const colorChangeEvent = new CustomEvent('directorist-color-changed', {
 									detail: {
 										color,
 										input: event.target,
@@ -29,7 +29,7 @@
 									},
 								});
 
-								window.dispatchEvent(customEvent);
+								window.dispatchEvent(colorChangeEvent);
 							},
 						});
 					} else {

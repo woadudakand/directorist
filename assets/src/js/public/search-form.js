@@ -353,49 +353,58 @@ import "./components/directoristSelect";
 			}
 		);
 
-		// 💡 Trigger event on clear button click
-		$('.directorist-contents-wrap form .wp-picker-clear').on('click', function (e) {
+		// Color Field Open Button Click
+		$('.directorist-contents-wrap form .wp-color-result').on('click', function (e) {
 			e.preventDefault();
-			const $target = $(e.target);
-			console.log('clicked', $target.attr('class'));
+			const $parentElement = $(this).closest('.directorist-search-field');
 
-			const input = $(this).closest('.wp-picker-input-wrap').find('.wp-color-picker')[0];
+			if (
+				$parentElement.hasClass('input-has-value') ||
+				$parentElement.hasClass('input-is-focused')
+			) {
+				$parentElement.removeClass('input-has-value input-is-focused');
+			} else {
+				$parentElement.addClass('input-has-value input-is-focused');
+			}
 
-			if (!input) return;
-
-			const form = input.closest('form');
-
-			const customEvent = new CustomEvent('directorist-color-changed', {
-				detail: {
-					color: '', // Color is cleared
-					input: input,
-					form: form,
-				},
-			});
-
-			window.dispatchEvent(customEvent);
 		});
 
+		// Color Field Clear Button Click
+		$('.directorist-contents-wrap form .wp-picker-clear').on('click', function (e) {
+			e.preventDefault();
+			const $parentElement = $(this).closest('.directorist-search-field');
+
+			if (
+				$parentElement.hasClass('input-has-value') ||
+				$parentElement.hasClass('input-is-focused')
+			) {
+				$parentElement.removeClass('input-has-value input-is-focused');
+			}
+
+		});
+
+		// Color Change Event
 		window.addEventListener('directorist-color-changed', function (e) {
 			const { color, input, form } = e.detail;
 
 			if (color && color !== '') {
 				enableResetButton(form);
+				const $parentElement = $(input).closest('.directorist-search-field');
+
+				if (
+					!$parentElement.hasClass('input-has-value') &&
+					!$parentElement.hasClass('input-is-focused')
+				) {
+					$parentElement.addClass('input-has-value input-is-focused');
+				}
+
 			} else {
 				setTimeout(() => {
 					initForm(form);
 
-					const colorWrapper = input.closest('.directorist-color-picker-wrap');
-					const $wrapper = $(colorWrapper);
-
-					$wrapper.find('.wp-picker-input-wrap').addClass('hidden');
-					$wrapper.find('.wp-color-result').removeClass('wp-picker-open');
-					$wrapper.find('.wp-color-result').attr('aria-expanded', 'false');
-					$wrapper.find('.wp-picker-container').removeClass('wp-picker-active');
-					
-					const $irisPicker = $wrapper.find('.wp-picker-holder .iris-picker');
-					if ($irisPicker.length) {
-						$irisPicker.css('display', 'none');
+					let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
+					if (irisPicker !== null) {
+						irisPicker.click();
 					}
 				}, 100);
 			}
@@ -404,7 +413,7 @@ import "./components/directoristSelect";
 		// Searchform Reset
 		function adsFormReset(searchForm) {
 			searchForm
-				.querySelectorAll("input[type='text']")
+				.querySelectorAll("input[type='text']:not(.wp-picker-clear)")
 				.forEach(function (el) {
 					el.value = '';
 
