@@ -1026,7 +1026,7 @@ class Directorist_Listings {
                         // If $values is in the format "40-50", create a range query
                         list( $min_value, $max_value ) = array_map( 'intval', explode( '-', $values ) );
                         
-                        if( 0 < $max_value ) {
+                        if( ! empty( $max_value ) && 0 < $max_value ) {
                             $meta_query = [
                                 'key'     => '_' . $key,
                                 'value'   => [ $min_value, $max_value ],
