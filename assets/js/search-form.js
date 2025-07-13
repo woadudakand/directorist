@@ -2314,11 +2314,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     }
     rangeSliderObserver();
   });
-  window.addEventListener('directorist-instant-search-reloaded', function () {
-    (0,_components_category_custom_fields__WEBPACK_IMPORTED_MODULE_3__["default"])($);
-  }, {
-    once: true
-  });
 })(jQuery);
 }();
 /******/ })()

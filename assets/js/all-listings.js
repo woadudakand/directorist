@@ -600,6 +600,139 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
+/***/ "./assets/src/js/public/components/category-custom-fields.js":
+/*!*******************************************************************!*\
+  !*** ./assets/src/js/public/components/category-custom-fields.js ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ initSearchCategoryCustomFields; }
+/* harmony export */ });
+// Search Category Change
+function hideAllCustomFieldsExceptSelected(relations, category, $container) {
+  var fields = Object.keys(relations);
+  var wrappers = ['.directorist-advanced-filter__advanced__element', '.directorist-search-modal__input', '.directorist-search-field'];
+  if (!fields.length) {
+    return;
+  }
+  fields.forEach(function (field) {
+    var fieldCategory = relations[field];
+    var $field = $container.find("[name=\"custom_field[".concat(field, "]\"]"));
+    if (!$field.length) {
+      $field = $container.find("[name=\"custom_field[".concat(field, "][]\"]"));
+    }
+    if (category === fieldCategory) {
+      $field.prop('disabled', false);
+      wrappers.forEach(function (wrapper) {
+        var $wrapper = $field.closest(wrapper);
+        if ($wrapper.length) {
+          $wrapper.show();
+        }
+      });
+    } else {
+      $field.prop('disabled', true);
+      wrappers.forEach(function (wrapper) {
+        var $wrapper = $field.closest(wrapper);
+        if ($wrapper.length) {
+          $wrapper.hide();
+        }
+      });
+    }
+  });
+}
+function initSearchCategoryCustomFields($) {
+  var _$pageContainer;
+  var $searchPageContainer = $('.directorist-search-contents');
+  var $archivePageContainer = $('.directorist-archive-contents');
+  var $pageContainer;
+  if ($searchPageContainer.length) {
+    $pageContainer = $searchPageContainer;
+  } else if ($archivePageContainer.length) {
+    $pageContainer = $archivePageContainer;
+  }
+  if ((_$pageContainer = $pageContainer) !== null && _$pageContainer !== void 0 && _$pageContainer.length) {
+    // let $fieldsContainer = null;
+
+    $pageContainer.on('change', '.directorist-category-select, .directorist-search-category select', function (event) {
+      var $this = $(this);
+      var $form = $this.parents('form');
+      // const $advancedForm = $('.directorist-search-form');
+      var category = Number($this.val());
+      // const directory      = $pageContainer.find('[name="directory_type"]').val(); // Sidebar has multiple forms that's why it's safe to use page container
+      // const formData       = new FormData();
+      var attributes = $form.data('atts');
+      // const hasCustomField = $this.find('option[value="'+category+'"]').data('custom-field');
+
+      // if (!hasCustomField) {
+      //     return;
+      // }
+
+      // formData.append('action', 'directorist_category_custom_field_search');
+      // formData.append('nonce', directorist.directorist_nonce);
+      // formData.append('directory', directory);
+      // formData.append('cat_id', category);
+
+      if (!attributes) {
+        attributes = $pageContainer.data('atts');
+      }
+      if (!attributes.category_custom_fields_relations) {
+        return;
+      }
+      hideAllCustomFieldsExceptSelected(attributes.category_custom_fields_relations, category, $(document.body));
+
+      // console.log(, category);
+
+      // formData.append('atts', JSON.stringify(atts));
+      // $form.addClass('atbdp-form-fade');
+      // $advancedForm.addClass('atbdp-form-fade');
+
+      // $.ajax({
+      //     method     : 'POST',
+      //     processData: false,
+      //     contentType: false,
+      //     url        : directorist.ajax_url,
+      //     data       : formData,
+      //     success: function success(response) {
+      //         if (response) {
+      //             $fieldsContainer = $pageContainer.find(response['container']);
+
+      //             $fieldsContainer.html(response['search_form']);
+
+      //             // $form.find('.directorist-category-select option').data('custom-field', 1);
+      //             // $this.find('option').data('custom-field', 1);
+      //             $this.val(category);
+
+      //             [
+      //                 'directorist-search-form-nav-tab-reloaded',
+      //                 'directorist-reload-select2-fields',
+      //                 'directorist-reload-map-api-field',
+      //                 'triggerSlice'
+      //             ].forEach(function(event) {
+      //                 event = new CustomEvent(event);
+      //                 document.body.dispatchEvent(event);
+      //                 window.dispatchEvent(event);
+      //             });
+      //         }
+
+      //         onSuccessCallback();
+
+      //         $form.removeClass('atbdp-form-fade');
+      //         $advancedForm.removeClass('atbdp-form-fade');
+      //     },
+      //     error: function error(_error) {
+      //         //console.log(_error);
+      //     }
+      // });
+    });
+    $pageContainer.find('.directorist-category-select, .directorist-search-category select').trigger('change');
+  }
+}
+
+/***/ }),
+
 /***/ "./assets/src/js/public/components/categoryLocation.js":
 /*!*************************************************************!*\
   !*** ./assets/src/js/public/components/categoryLocation.js ***!
@@ -1282,6 +1415,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/esm/slicedToArray.js");
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var _global_components_debounce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../global/components/debounce */ "./assets/src/js/global/components/debounce.js");
+/* harmony import */ var _category_custom_fields__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./category-custom-fields */ "./assets/src/js/public/components/category-custom-fields.js");
 
 
 
@@ -1290,6 +1424,7 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+
 
 (function ($) {
   /** 
@@ -1379,6 +1514,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
           // SearchForm Item in Single Category Location Page Init
           singleCategoryLocationInit();
+          (0,_category_custom_fields__WEBPACK_IMPORTED_MODULE_4__["default"])($);
         }
 
         // Initialize scrolling status
@@ -1933,6 +2069,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // sidebar on change searching - select
   $('body').on('change', '.directorist-instant-search .listing-with-sidebar select', (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    e.preventDefault();
     if (!$(this).val()) {
       return; // Skip search if the value is empty
     }

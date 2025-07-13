@@ -1924,12 +1924,4 @@ import "./components/directoristSelect";
 
 		rangeSliderObserver();
 	});
-
-	window.addEventListener(
-		'directorist-instant-search-reloaded',
-		function () {
-			initSearchCategoryCustomFields($);
-		},
-		{ once: true }
-	);
 })(jQuery);

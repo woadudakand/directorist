@@ -1,4 +1,6 @@
 import debounce from '../../global/components/debounce';
+import initSearchCategoryCustomFields from "./category-custom-fields";
+
 (function ($) {
 	/** 
     Global Variables 
@@ -142,6 +144,9 @@ import debounce from '../../global/components/debounce';
 
 					// SearchForm Item in Single Category Location Page Init
 					singleCategoryLocationInit();
+
+
+					initSearchCategoryCustomFields($);
 				}
 
 				// Initialize scrolling status
@@ -804,6 +809,7 @@ import debounce from '../../global/components/debounce';
 		'change',
 		'.directorist-instant-search .listing-with-sidebar select',
 		debounce(function (e) {
+			e.preventDefault();
 			if (!$(this).val()) {
 				return; // Skip search if the value is empty
 			}
