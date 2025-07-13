@@ -1612,20 +1612,54 @@ import "./components/directoristSelect";
 				// Flags
 				let rangeInitLoad = true;
 				let sliderActivated = false;
+				let sliderRadiusActive = false;
 
 				// Parse the URL parameters
 				const urlParams = new URLSearchParams(window.location.search);
-				const minRangeParams = urlParams.get('directorist-custom-range-slider__value__min');
-				const maxRangeParams = urlParams.get('directorist-custom-range-slider__value__max');
+				const customNumberParams = urlParams.get('custom-number');
+				const locationDistanceParams = urlParams.get('miles');
+				const milesParams = new URLSearchParams(
+					window.location.search
+				).has('miles');
 
-				sliderActivated = minRangeParams !== null && maxRangeParams !== null && minRangeParams !== '0' && maxRangeParams !== '0';
+				if (locationDistanceParams !== '0-0' && sliderDefaultValue >= 0) {
+					sliderRadiusActive = true;
+				}
 
-				if (sliderActivated) {
-					// Initial with [min, max] value
+				// if already have custom values, then slider is activated
+				sliderActivated = customNumberParams && customNumberParams !== '0-0';
+
+				if (sliderRadiusActive) { // Radius Search Range Slider
 					directoristCustomRangeSlider?.create(slider, {
 						start: [
 							minInput.value,
-							maxInput.value
+							!milesParams ? sliderDefaultValue : maxInput.value
+						],
+						connect: true,
+						direction: isRTL ? 'rtl' : 'ltr',
+						step: sliderStep ? sliderStep : 1,
+						range: {
+							min: Number(sliderMinValue || 0),
+							max: Number(sliderMaxValue || 100),
+						},
+					});
+				} else if (sliderActivated) { // Custom Number Range Slider
+					let minValue = minInput.value;
+					let maxValue = maxInput.value;
+
+					if (customNumberParams && customNumberParams !== '0-0') {
+						const [min, max] = customNumberParams.split('-').map(Number);
+
+						// Use the split values
+						minValue = min;
+						maxValue = max;
+					}
+
+					// Initial with [min, max] value
+					directoristCustomRangeSlider?.create(slider, {
+						start: [
+							minValue,
+							!milesParams ? sliderDefaultValue || maxValue : maxValue
 						],
 						connect: true,
 						direction: isRTL ? 'rtl' : 'ltr',
@@ -1655,12 +1689,12 @@ import "./components/directoristSelect";
 					sliderActivated = true;
 
 					slider.directoristCustomRangeSlider.updateOptions({
+						start: [sliderMinValue, sliderMinValue],
+						step: sliderStep,
 						range: {
 							min: sliderMinValue,
 							max: sliderMaxValue,
 						},
-						step: sliderStep,
-						start: [sliderMinValue, sliderMaxValue],
 					});
 				});
 
