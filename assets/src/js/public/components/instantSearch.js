@@ -268,7 +268,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 				(!Array.isArray(value) || value.length)
 			) {
 				if (Array.isArray(value) && value.length) {
-					query += (query.length ? '&' : '?') + `${key}[]=${value}`;
+					query += (query.length ? '&' : '?') + `${key}=${value}`;
 				} else {
 					query +=
 						(query.length ? '&' : '?') +

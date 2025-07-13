@@ -1616,7 +1616,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var appendQuery = function appendQuery(key, value) {
       if (value !== undefined && value !== null && value !== '' && (!Array.isArray(value) || value.length)) {
         if (Array.isArray(value) && value.length) {
-          query += (query.length ? '&' : '?') + "".concat(key, "[]=").concat(value);
+          query += (query.length ? '&' : '?') + "".concat(key, "=").concat(value);
         } else {
           query += (query.length ? '&' : '?') + "".concat(key, "=").concat(encodeURIComponent(value));
         }
