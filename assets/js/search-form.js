@@ -1282,8 +1282,18 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
       // Disable Reset Button based on value
       if (!value) {
+        // Find Reset Button in current form
         var resetButtonWrapper = searchForm.querySelector('.directorist-advanced-filter__action');
-        resetButtonWrapper && resetButtonWrapper.classList.add('reset-btn-disabled');
+        if (resetButtonWrapper) {
+          resetButtonWrapper.classList.add('reset-btn-disabled');
+        } else {
+          var _searchForm$closest;
+          // Find Reset Button in whole listing-with-sidebar
+          resetButtonWrapper = (_searchForm$closest = searchForm.closest('.listing-with-sidebar')) === null || _searchForm$closest === void 0 ? void 0 : _searchForm$closest.querySelector('.directorist-advanced-filter__action');
+          if (resetButtonWrapper) {
+            resetButtonWrapper.classList.add('reset-btn-disabled');
+          }
+        }
       }
     }
 

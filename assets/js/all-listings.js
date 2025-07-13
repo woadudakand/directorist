@@ -1514,6 +1514,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
           // SearchForm Item in Single Category Location Page Init
           singleCategoryLocationInit();
+
+          // Category Custom Field Assigned Init
           (0,_category_custom_fields__WEBPACK_IMPORTED_MODULE_4__["default"])($);
         }
 

@@ -273,11 +273,19 @@ import "./components/directoristSelect";
 
 			// Disable Reset Button based on value
 			if (!value) {
+				// Find Reset Button in current form
 				let resetButtonWrapper = searchForm.querySelector(
 					'.directorist-advanced-filter__action'
 				);
-				resetButtonWrapper &&
+				if (resetButtonWrapper) {
 					resetButtonWrapper.classList.add('reset-btn-disabled');
+				} else {
+					// Find Reset Button in whole listing-with-sidebar
+					resetButtonWrapper = searchForm.closest('.listing-with-sidebar')?.querySelector('.directorist-advanced-filter__action');
+					if (resetButtonWrapper) {
+						resetButtonWrapper.classList.add('reset-btn-disabled');
+					}
+				}
 			}
 		}
 

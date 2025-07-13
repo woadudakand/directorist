@@ -145,7 +145,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 					// SearchForm Item in Single Category Location Page Init
 					singleCategoryLocationInit();
 
-
+					// Category Custom Field Assigned Init
 					initSearchCategoryCustomFields($);
 				}
 
