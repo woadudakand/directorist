@@ -1617,6 +1617,8 @@ import "./components/directoristSelect";
 				// Parse the URL parameters
 				const urlParams = new URLSearchParams(window.location.search);
 				const customNumberParams = urlParams.get('custom-number');
+				const customRangeMinParams = urlParams.get('directorist-custom-range-slider__value__min');
+				const customRangeMaxParams = urlParams.get('directorist-custom-range-slider__value__max');
 				const locationDistanceParams = urlParams.get('miles');
 				const milesParams = new URLSearchParams(
 					window.location.search
@@ -1627,7 +1629,11 @@ import "./components/directoristSelect";
 				}
 
 				// if already have custom values, then slider is activated
-				sliderActivated = customNumberParams && customNumberParams !== '0-0';
+				if (customNumberParams && customNumberParams !== '0-0') {
+					sliderActivated = true;
+				} else if(customRangeMinParams && customRangeMinParams !== '0' && customRangeMaxParams && customRangeMaxParams !== '0') {
+					sliderActivated = true;
+				}
 
 				if (sliderRadiusActive) { // Radius Search Range Slider
 					directoristCustomRangeSlider?.create(slider, {
@@ -1647,12 +1653,16 @@ import "./components/directoristSelect";
 					let minValue = minInput.value;
 					let maxValue = maxInput.value;
 
+					// Assign min-max values from custom-range-slider params
 					if (customNumberParams && customNumberParams !== '0-0') {
 						const [min, max] = customNumberParams.split('-').map(Number);
 
-						// Use the split values
+						// Use the split values as min-max
 						minValue = min;
 						maxValue = max;
+					} else if ( customRangeMinParams && customRangeMaxParams ) { // Modal Search Form
+						minValue = customRangeMinParams;
+						maxValue = customRangeMaxParams;
 					}
 
 					// Initial with [min, max] value

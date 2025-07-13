@@ -2212,6 +2212,8 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         // Parse the URL parameters
         var urlParams = new URLSearchParams(window.location.search);
         var customNumberParams = urlParams.get('custom-number');
+        var customRangeMinParams = urlParams.get('directorist-custom-range-slider__value__min');
+        var customRangeMaxParams = urlParams.get('directorist-custom-range-slider__value__max');
         var locationDistanceParams = urlParams.get('miles');
         var milesParams = new URLSearchParams(window.location.search).has('miles');
         if (locationDistanceParams !== '0-0' && sliderDefaultValue >= 0) {
@@ -2219,7 +2221,11 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         }
 
         // if already have custom values, then slider is activated
-        sliderActivated = customNumberParams && customNumberParams !== '0-0';
+        if (customNumberParams && customNumberParams !== '0-0') {
+          sliderActivated = true;
+        } else if (customRangeMinParams && customRangeMinParams !== '0' && customRangeMaxParams && customRangeMaxParams !== '0') {
+          sliderActivated = true;
+        }
         if (sliderRadiusActive) {
           var _directoristCustomRan;
           // Radius Search Range Slider
@@ -2238,15 +2244,21 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           // Custom Number Range Slider
           var minValue = minInput.value;
           var maxValue = maxInput.value;
+
+          // Assign min-max values from custom-range-slider params
           if (customNumberParams && customNumberParams !== '0-0') {
             var _customNumberParams$s = customNumberParams.split('-').map(Number),
               _customNumberParams$s2 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_customNumberParams$s, 2),
               min = _customNumberParams$s2[0],
               max = _customNumberParams$s2[1];
 
-            // Use the split values
+            // Use the split values as min-max
             minValue = min;
             maxValue = max;
+          } else if (customRangeMinParams && customRangeMaxParams) {
+            // Modal Search Form
+            minValue = customRangeMinParams;
+            maxValue = customRangeMaxParams;
           }
 
           // Initial with [min, max] value
