@@ -57,4 +57,6 @@ if ( $is_logged_in ||
 
 </div>
 
-<div class="directorist-account-block-logout-mode"><?php echo $content; ?></div>
+<div class="directorist-account-block-logout-mode">
+    <?php echo wp_kses_post( $content ); ?>
+</div>
