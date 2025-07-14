@@ -17,8 +17,7 @@ $is_dashboard_page    = atbdp_is_page( 'dashboard' );
 $is_guest_listing = atbdp_is_page( 'add_listing' ) && get_directorist_option( 'guest_listings' );
 
 // If any of the above conditions are true, exit early
-if (
-    $is_logged_in ||
+if ( $is_logged_in ||
     $is_login_page ||
     $is_registration_page ||
     $is_dashboard_page ||
@@ -30,31 +29,31 @@ if (
 
 <div class="directorist-account-block-authentication-modal">
 
-	<div class="modal fade" id="directorist-account-block-login-modal" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="directorist-account-block-login-modal" role="dialog" aria-hidden="true">
 
-		<div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
 
-			<div class="modal-content">
+            <div class="modal-content">
 
-				<div class="modal-header">
+                <div class="modal-header">
 
-					<div class="modal-title" id="login_modal_label"><?php esc_html_e( 'Account', 'directorist' );?></div>
+                    <div class="modal-title" id="login_modal_label"><?php esc_html_e( 'Account', 'directorist' );?></div>
 
-					<button type="button" class="directorist-account-block-close" data-bs-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+                    <button type="button" class="directorist-account-block-close" data-bs-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 
-				</div>
+                </div>
 
-				<div class="modal-body">
+                <div class="modal-body">
 
-					<?php echo do_shortcode( '[directorist_user_login]' ); ?>
+                    <?php echo do_shortcode( '[directorist_user_login]' ); ?>
 
-				</div>
+                </div>
 
-			</div>
+            </div>
 
-		</div>
+        </div>
 
-	</div>
+    </div>
 
 </div>
 
