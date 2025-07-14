@@ -433,6 +433,12 @@
 					~.directorist-search-field__btn--clear {
 						bottom: 0;
 					}
+					@media screen and (max-width: 575px) {
+						top: 0;
+						~.directorist-search-field__btn--clear {
+							bottom: unset;
+						}
+					}
 				}
 				&.atbdp-form-fade:after {
 					margin-top: 3px;
@@ -490,6 +496,9 @@
 				display: flex;
 				.wp-picker-input-wrap {
 					margin: 0;
+					@media screen and (max-width: 480px) {
+						flex-direction: column;
+					}
 					label {
 						width: 70px;
 						input {
