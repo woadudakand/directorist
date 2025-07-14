@@ -864,24 +864,27 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 				irisPicker.click();
 			}
 
-			let inputValue = $(this)
-				.closest('.directorist-search-field')
-				.find(
-					'input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select'
+			let $searchField = $(this).closest('.directorist-search-field');
+			let $form = $(
+				document.querySelector(
+					'.directorist-instant-search .listing-with-sidebar form'
 				)
-				.val('');
+			);
 
-			if (inputValue) {
-				let searchElm = $(
-					document.querySelector(
-						'.directorist-instant-search .listing-with-sidebar form'
-					)
-				);
+			// Clear text, email, number, select fields etc
+			$searchField
+			.find('input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select')
+			.val('');
 
-				// Instant search with required value
-				if (searchElm) {
-					performInstantSearchWithRequiredValue(searchElm);
-				}
+			// Clear checkboxes
+			$searchField.find('input[type="checkbox"]').prop('checked', false);
+
+			// Clear radio buttons
+			$searchField.find('input[type="radio"]').prop('checked', false);
+
+			// Proceed if form exists
+			if ($form.length) {
+				performInstantSearchWithRequiredValue($form);
 			}
 		}
 	);

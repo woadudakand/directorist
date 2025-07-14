@@ -2052,14 +2052,21 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     if (irisPicker !== null) {
       irisPicker.click();
     }
-    var inputValue = $(this).closest('.directorist-search-field').find('input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select').val('');
-    if (inputValue) {
-      var searchElm = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));
+    var $searchField = $(this).closest('.directorist-search-field');
+    var $form = $(document.querySelector('.directorist-instant-search .listing-with-sidebar form'));
 
-      // Instant search with required value
-      if (searchElm) {
-        performInstantSearchWithRequiredValue(searchElm);
-      }
+    // Clear text, email, number, select fields etc
+    $searchField.find('input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select').val('');
+
+    // Clear checkboxes
+    $searchField.find('input[type="checkbox"]').prop('checked', false);
+
+    // Clear radio buttons
+    $searchField.find('input[type="radio"]').prop('checked', false);
+
+    // Proceed if form exists
+    if ($form.length) {
+      performInstantSearchWithRequiredValue($form);
     }
   });
 
