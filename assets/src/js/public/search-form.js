@@ -51,7 +51,7 @@ import "./components/directoristSelect";
 			}
 		});
 
-		// Search Form
+		/*** Search Form ***/
 
 		// Count Checkbox Selected Items
 		function selectedItemCount(item) {
@@ -425,11 +425,6 @@ import "./components/directoristSelect";
 			} else {
 				setTimeout(() => {
 					initForm(form);
-
-					// let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
-					// if (irisPicker !== null) {
-					// 	irisPicker.click();
-					// }
 				}, 100);
 			}
 		});

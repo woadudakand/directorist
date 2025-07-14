@@ -1233,7 +1233,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       }
     });
 
-    // Search Form
+    /*** Search Form ***/
 
     // Count Checkbox Selected Items
     function selectedItemCount(item) {
@@ -1485,11 +1485,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       } else {
         setTimeout(function () {
           initForm(form);
-
-          // let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
-          // if (irisPicker !== null) {
-          // 	irisPicker.click();
-          // }
         }, 100);
       }
     });

@@ -590,6 +590,9 @@ window.addEventListener('load', function () {
       var _toggleBtn = _sidebar.closest('.listing-with-sidebar').querySelector('.directorist-archive-sidebar-toggle');
       closeSidebar(_toggleBtn, _sidebar);
     } else if (body.classList.contains('modal-overlay-enabled') && !targetElement.closest('.listing-with-sidebar__sidebar')) {
+      // Check directorist color picker is available or not
+      var directoristColorPicker = body.querySelector('.listing-with-sidebar__sidebar--open .wp-color-result');
+      if (directoristColorPicker) return;
       document.querySelectorAll('.listing-with-sidebar__sidebar--open').forEach(function (sidebar) {
         var toggleBtn = sidebar.closest('.listing-with-sidebar').querySelector('.directorist-archive-sidebar-toggle');
         closeSidebar(toggleBtn, sidebar);
