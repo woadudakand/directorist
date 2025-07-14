@@ -1718,6 +1718,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var email = searchElm.find('input[name="email"]').val();
     var website = searchElm.find('input[name="website"]').val();
     var phone = searchElm.find('input[name="phone"]').val();
+    var phone2 = searchElm.find('input[name="phone2"]').val();
     var view = form_data.view;
     var paged = form_data.paged;
 
@@ -1736,6 +1737,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       email: email,
       website: website,
       phone: phone,
+      phone2: phone2,
       custom_field: custom_field,
       view: view,
       paged: paged

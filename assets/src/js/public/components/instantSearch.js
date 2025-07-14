@@ -452,6 +452,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		const email = searchElm.find('input[name="email"]').val();
 		const website = searchElm.find('input[name="website"]').val();
 		const phone = searchElm.find('input[name="phone"]').val();
+		const phone2 = searchElm.find('input[name="phone2"]').val();
 		const view = form_data.view;
 		const paged = form_data.paged;
 
@@ -470,6 +471,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 			email,
 			website,
 			phone,
+			phone2,
 			custom_field,
 			view,
 			paged,
