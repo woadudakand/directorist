@@ -1392,7 +1392,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var searchElm = searchElement.closest('.directorist-instant-search');
 
     // Instant Search Data
-    var instant_search_data = prepareInstantSearchData(searchElement);
+    var instant_search_data = prepareInstantSearchData(searchElm);
     $.ajax({
       url: directorist.ajaxurl,
       type: 'POST',
@@ -1440,7 +1440,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var searchElm = searchElement.closest('.directorist-instant-search');
 
     // Instant Search Data
-    var instant_search_data = prepareInstantSearchData(searchElement);
+    var instant_search_data = prepareInstantSearchData(searchElm);
     $.ajax({
       url: directorist.ajaxurl,
       type: 'POST',
@@ -1474,8 +1474,11 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var loadingDiv;
     var container = $('.directorist-infinite-scroll .directorist-container-fluid .directorist-row');
 
+    // get parent element
+    var searchElm = searchElement.closest('.directorist-instant-search');
+
     // Instant Search Data
-    var preparedData = prepareInstantSearchData(searchElement);
+    var preparedData = prepareInstantSearchData(searchElm);
 
     // make ajax data
     var instant_search_data = _objectSpread(_objectSpread({}, preparedData), {}, {

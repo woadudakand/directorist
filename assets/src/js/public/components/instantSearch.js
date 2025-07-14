@@ -24,7 +24,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Instant Search Data
-		const instant_search_data = prepareInstantSearchData(searchElement);
+		const instant_search_data = prepareInstantSearchData(searchElm);
 
 		$.ajax({
 			url: directorist.ajaxurl,
@@ -117,7 +117,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		const searchElm = searchElement.closest('.directorist-instant-search');
 
 		// Instant Search Data
-		const instant_search_data = prepareInstantSearchData(searchElement);
+		const instant_search_data = prepareInstantSearchData(searchElm);
 
 		$.ajax({
 			url: directorist.ajaxurl,
@@ -163,8 +163,11 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 			'.directorist-infinite-scroll .directorist-container-fluid .directorist-row'
 		);
 
+		// get parent element
+		const searchElm = searchElement.closest('.directorist-instant-search');
+
 		// Instant Search Data
-		const preparedData = prepareInstantSearchData(searchElement);
+		const preparedData = prepareInstantSearchData(searchElm);
 
 		// make ajax data
 		const instant_search_data = {
