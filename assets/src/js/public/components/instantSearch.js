@@ -894,7 +894,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		}
 	);
 
-	/* Directorist instant search reset */
+	// Directorist instant search reset 
 	$('body').on(
 		'click',
 		'.directorist-instant-search .listing-with-sidebar  .directorist-btn-reset-js',
@@ -917,7 +917,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		}
 	);
 
-	/* Directorist instant search submit */
+	// Directorist instant search submit 
 	$('body').on('submit', '.directorist-instant-search form', function (e) {
 		e.preventDefault();
 		let _this = $(this);
@@ -1094,9 +1094,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 	});
 
 	// Prevent default action for dropdown links
-	$(
-		'.directorist-instant-search .directorist-dropdown__links__single-js'
-	).off('click');
+	$('.directorist-instant-search .directorist-dropdown__links__single-js').off('click');
 
 	// Initialize Infinite Scroll
 	window.addEventListener('scroll', function () {

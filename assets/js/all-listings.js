@@ -2075,7 +2075,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     }
   });
 
-  /* Directorist instant search reset */
+  // Directorist instant search reset 
   $('body').on('click', '.directorist-instant-search .listing-with-sidebar  .directorist-btn-reset-js', function (e) {
     e.preventDefault();
     var searchElm = $(this).closest('.directorist-instant-search');
@@ -2096,7 +2096,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     }, 250);
   });
 
-  /* Directorist instant search submit */
+  // Directorist instant search submit 
   $('body').on('submit', '.directorist-instant-search form', function (e) {
     e.preventDefault();
     var _this = $(this);
