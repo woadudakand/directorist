@@ -389,6 +389,22 @@ import "./components/directoristSelect";
 				$parentElement.removeClass('input-has-value input-is-focused');
 			}
 
+			const color = '';
+			const input = $parentElement.find('.wp-color-picker')[0]; // get raw DOM element
+			const form = $parentElement.closest('form')[0];
+
+			if (!input || !form) return;
+
+			// Dispatch custom event
+			const colorChangeEvent = new CustomEvent('directorist-color-changed', {
+				detail: {
+					color, 
+					input,
+					form,
+				},
+			});
+
+			window.dispatchEvent(colorChangeEvent);
 		});
 
 		// Color Change Event
@@ -410,10 +426,10 @@ import "./components/directoristSelect";
 				setTimeout(() => {
 					initForm(form);
 
-					let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
-					if (irisPicker !== null) {
-						irisPicker.click();
-					}
+					// let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
+					// if (irisPicker !== null) {
+					// 	irisPicker.click();
+					// }
 				}, 100);
 			}
 		});

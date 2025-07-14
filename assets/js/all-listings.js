@@ -818,6 +818,7 @@ window.addEventListener('load', function () {
       });
     }
     colorPickerInit();
+
     /* Initialize on Directory type change */
     window.addEventListener('directorist-instant-search-reloaded', colorPickerInit);
   });
@@ -1509,8 +1510,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }
 
   /**
-     Helper Functions  
-   **/
+     	Helper Functions  
+   	**/
 
   // Prepare Instant Search Data
   function prepareInstantSearchData(searchElm) {
@@ -1526,6 +1527,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     });
     return instant_search_data;
   }
+
   // Update or retain existing keys in form_data
   function updateFormData(newData) {
     Object.entries(newData).forEach(function (_ref) {
@@ -2026,15 +2028,12 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
   // sidebar on change searching - color
   window.addEventListener('directorist-color-changed', (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
-    var _e$detail = e.detail,
-      color = _e$detail.color,
-      input = _e$detail.input;
+    var input = e.detail.input;
     var searchElm = $(input).closest('.listing-with-sidebar');
     if (!searchElm.length) return;
-    if (color && color !== '') {
-      // Instant search with required value
-      performInstantSearchWithRequiredValue(searchElm);
-    }
+
+    // Instant search with required value
+    performInstantSearchWithRequiredValue(searchElm);
   }, 250));
 
   // sidebar on click searching - location icon

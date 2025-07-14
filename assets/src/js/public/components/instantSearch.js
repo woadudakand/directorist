@@ -204,8 +204,8 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 	}
 
 	/**
-    Helper Functions  
-  **/
+    	Helper Functions  
+  	**/
 
 	// Prepare Instant Search Data
 	function prepareInstantSearchData(searchElm) {
@@ -223,6 +223,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 
 		return instant_search_data;
 	}
+	
 	// Update or retain existing keys in form_data
 	function updateFormData(newData) {
 		Object.entries(newData).forEach(([key, value]) => {
@@ -826,15 +827,13 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 	// sidebar on change searching - color
 	window.addEventListener('directorist-color-changed',
 		debounce(function (e) {
-			const { color, input } = e.detail;
+			const { input } = e.detail;
 			const searchElm = $(input).closest('.listing-with-sidebar');
 
 			if (!searchElm.length) return;
 
-			if (color && color !== '') {
-				// Instant search with required value
-				performInstantSearchWithRequiredValue(searchElm);
-			} 
+			// Instant search with required value
+			performInstantSearchWithRequiredValue(searchElm);
 		}, 250)
 	);
 
@@ -1106,5 +1105,6 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		debounce(initObserver(), 250);
 
 		singleCategoryLocationInit();
+
 	});
 })(jQuery);

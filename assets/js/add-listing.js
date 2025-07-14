@@ -660,6 +660,7 @@ function convertToSelect2(selector) {
       });
     }
     colorPickerInit();
+
     /* Initialize on Directory type change */
     window.addEventListener('directorist-instant-search-reloaded', colorPickerInit);
   });

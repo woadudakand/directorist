@@ -672,6 +672,7 @@ function initSearchCategoryCustomFields($) {
       });
     }
     colorPickerInit();
+
     /* Initialize on Directory type change */
     window.addEventListener('directorist-instant-search-reloaded', colorPickerInit);
   });
@@ -1453,6 +1454,20 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       if ($parentElement.hasClass('input-has-value') || $parentElement.hasClass('input-is-focused')) {
         $parentElement.removeClass('input-has-value input-is-focused');
       }
+      var color = '';
+      var input = $parentElement.find('.wp-color-picker')[0]; // get raw DOM element
+      var form = $parentElement.closest('form')[0];
+      if (!input || !form) return;
+
+      // Dispatch custom event
+      var colorChangeEvent = new CustomEvent('directorist-color-changed', {
+        detail: {
+          color: color,
+          input: input,
+          form: form
+        }
+      });
+      window.dispatchEvent(colorChangeEvent);
     });
 
     // Color Change Event
@@ -1470,10 +1485,11 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       } else {
         setTimeout(function () {
           initForm(form);
-          var irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
-          if (irisPicker !== null) {
-            irisPicker.click();
-          }
+
+          // let irisPicker = input.closest('.directorist-color-picker-wrap').find('input.wp-picker-clear');
+          // if (irisPicker !== null) {
+          // 	irisPicker.click();
+          // }
         }, 100);
       }
     });
