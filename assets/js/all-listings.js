@@ -1383,8 +1383,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   var infinitePaginationCompleted = false;
 
   /** 
-     Main Functions 
-   */
+  	Main Functions 
+  */
 
   // Perform Instant Search
   function performInstantSearch(searchElement) {

@@ -15,8 +15,8 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 	let infinitePaginationCompleted = false;
 
 	/** 
-    Main Functions 
-  */
+		Main Functions 
+	*/
 
 	// Perform Instant Search
 	function performInstantSearch(searchElement) {
