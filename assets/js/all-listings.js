@@ -1371,8 +1371,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
 (function ($) {
   /** 
-     Global Variables 
-   */
+  	Global Variables 
+  */
 
   // Globally accessible form_data
   var form_data = {};
@@ -1977,8 +1977,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
   }
 
   /** 
-     Event Listeners 
-   */
+  	Event Listeners 
+  */
 
   // sidebar on keyup searching
   $('body').on('keyup', '.directorist-instant-search .listing-with-sidebar form', (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {

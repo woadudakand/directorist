@@ -3,8 +3,8 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 
 (function ($) {
 	/** 
-    Global Variables 
-  */
+		Global Variables 
+	*/
 
 	// Globally accessible form_data
 	let form_data = {};
@@ -753,8 +753,8 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 	}
 
 	/** 
-    Event Listeners 
-  */
+		Event Listeners 
+	*/
 
 	// sidebar on keyup searching
 	$('body').on(
