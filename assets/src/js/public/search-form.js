@@ -1804,13 +1804,17 @@ import "./components/directoristSelect";
 			if (radiusSearch) {
 				minInput.value = '0';
 				maxInput.value = defaultValue;
-				slider.directoristCustomRangeSlider.set([0, defaultValue]); // Set your initial values
+				slider?.directoristCustomRangeSlider?.set([0, defaultValue]); // Set your initial values
 			} else {
 				// Reset values to their initial state
-				slider.directoristCustomRangeSlider.set([0, 0]); // Set your initial values
+				slider?.directoristCustomRangeSlider?.set([0, 0]); // Set your initial values
 				minInput.value = '0'; // Set your initial min value
 				maxInput.value = '0'; // Set your initial max value
 			}
+
+			// Destroy Range Slider
+			slider?.directoristCustomRangeSlider?.destroy();
+			rangeSliderObserver();
 		}
 
 		// DOM Mutation Observer on Location Field
@@ -1936,22 +1940,21 @@ import "./components/directoristSelect";
 		}
 
 		// Custom Range Slider Value Check on Change
-		function sliderValueCheck(targetNode, value) {
-			let searchForm = targetNode.closest('form');
+		function sliderValueCheck(searchForm, targetNode, value) {
 			if (value > 0) {
-				let customSliderMin = targetNode
-					.closest('.directorist-custom-range-slider')
-					.querySelector(
-						'.directorist-custom-range-slider__value__min'
-					);
-				let customSliderRange = targetNode
-					.closest('.directorist-custom-range-slider')
-					.querySelector('.directorist-custom-range-slider__range');
+				enableResetButton(searchForm);
+
+				const rangeSlider = targetNode.closest('.directorist-custom-range-slider');
+
+				if (!rangeSlider) return; 
+
+				let customSliderMin = rangeSlider.querySelector('.directorist-custom-range-slider__value__min');
+				let customSliderRange = rangeSlider.querySelector('.directorist-custom-range-slider__range');
+
 				customSliderMin.value = customSliderMin.value
 					? customSliderMin.value
 					: 0;
 				customSliderRange.value = customSliderMin.value + '-' + value;
-				enableResetButton(searchForm);
 			} else {
 				initForm(searchForm);
 			}
@@ -1964,6 +1967,7 @@ import "./components/directoristSelect";
 			);
 			targetNodes.forEach((targetNode) => {
 				if (targetNode) {
+					const searchForm = targetNode.closest('form');
 					let observerCallback = (mutationList, observer) => {
 						for (let mutation of mutationList) {
 							if (
@@ -1972,6 +1976,7 @@ import "./components/directoristSelect";
 								)
 							) {
 								sliderValueCheck(
+									searchForm,
 									targetNode,
 									parseInt(targetNode.ariaValueNow)
 								);
