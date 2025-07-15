@@ -2271,6 +2271,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         // Update slider config
         (_slider$directoristCu2 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu2 === void 0 || _slider$directoristCu2.on('update', function (values, handle) {
           var value = Math.round(values[handle]);
+          // Assign minmax value based on handler
           if (handle === 0) {
             minInput.value = value;
           } else {
@@ -2329,27 +2330,31 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
     // Reset Custom Range Slider
     function resetCustomRangeSlider(sliderItem) {
-      var _slider$directoristCu5;
       var slider = sliderItem.querySelector('.directorist-custom-range-slider__slide');
       var minInput = sliderItem.querySelector('.directorist-custom-range-slider__value__min');
       var maxInput = sliderItem.querySelector('.directorist-custom-range-slider__value__max');
+      var rangeValue = sliderItem.querySelector('.directorist-custom-range-slider__range');
       var radiusSearch = sliderItem.closest('.directorist-search-field-radius_search');
       var defaultValue = slider.getAttribute('default-value') || '0';
       if (radiusSearch) {
         var _slider$directoristCu3;
         minInput.value = '0';
         maxInput.value = defaultValue;
-        slider === null || slider === void 0 || (_slider$directoristCu3 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu3 === void 0 || _slider$directoristCu3.set([0, defaultValue]); // Set your initial values
+        slider === null || slider === void 0 || (_slider$directoristCu3 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu3 === void 0 || _slider$directoristCu3.set([0, defaultValue]); // Set initial values
       } else {
         var _slider$directoristCu4;
         // Reset values to their initial state
-        slider === null || slider === void 0 || (_slider$directoristCu4 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu4 === void 0 || _slider$directoristCu4.set([0, 0]); // Set your initial values
-        minInput.value = '0'; // Set your initial min value
-        maxInput.value = '0'; // Set your initial max value
+        slider === null || slider === void 0 || (_slider$directoristCu4 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu4 === void 0 || _slider$directoristCu4.set([0, 0]); // Set initial values
+        minInput.value = '0'; // Set initial min value
+        maxInput.value = '0'; // Set initial max value
+        rangeValue.value = '0-0';
       }
-
-      // Destroy Range Slider
-      slider === null || slider === void 0 || (_slider$directoristCu5 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu5 === void 0 || _slider$directoristCu5.destroy();
+      var sidebarRangeSlider = slider.closest('.listing-with-sidebar');
+      if (sidebarRangeSlider && slider !== null && slider !== void 0 && slider.directoristCustomRangeSlider) {
+        // Destroy the custom range slider instance
+        slider.directoristCustomRangeSlider.destroy();
+        delete slider.directoristCustomRangeSlider;
+      }
     }
 
     // DOM Mutation Observer on Location Field

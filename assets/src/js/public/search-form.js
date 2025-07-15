@@ -1735,7 +1735,7 @@ import "./components/directoristSelect";
 				// Update slider config
 				slider.directoristCustomRangeSlider?.on('update', function (values, handle) {
 					const value = Math.round(values[handle]);
-
+					// Assign minmax value based on handler
 					if (handle === 0) {
 						minInput.value = value;
 					} else {
@@ -1809,6 +1809,9 @@ import "./components/directoristSelect";
 			let maxInput = sliderItem.querySelector(
 				'.directorist-custom-range-slider__value__max'
 			);
+			let rangeValue = sliderItem.querySelector(
+				'.directorist-custom-range-slider__range'
+			);
 			let radiusSearch = sliderItem.closest(
 				'.directorist-search-field-radius_search'
 			);
@@ -1817,16 +1820,23 @@ import "./components/directoristSelect";
 			if (radiusSearch) {
 				minInput.value = '0';
 				maxInput.value = defaultValue;
-				slider?.directoristCustomRangeSlider?.set([0, defaultValue]); // Set your initial values
+				slider?.directoristCustomRangeSlider?.set([0, defaultValue]); // Set initial values
 			} else {
 				// Reset values to their initial state
-				slider?.directoristCustomRangeSlider?.set([0, 0]); // Set your initial values
-				minInput.value = '0'; // Set your initial min value
-				maxInput.value = '0'; // Set your initial max value
+				slider?.directoristCustomRangeSlider?.set([0, 0]); // Set initial values
+				minInput.value = '0'; // Set initial min value
+				maxInput.value = '0'; // Set initial max value
+				rangeValue.value = '0-0';
 			}
 
-			// Destroy Range Slider
-			slider?.directoristCustomRangeSlider?.destroy();
+			const sidebarRangeSlider = slider.closest('.listing-with-sidebar');
+
+			if (sidebarRangeSlider && slider?.directoristCustomRangeSlider) {
+				// Destroy the custom range slider instance
+				slider.directoristCustomRangeSlider.destroy();
+				delete slider.directoristCustomRangeSlider;
+			}
+
 		}
 
 		// DOM Mutation Observer on Location Field
