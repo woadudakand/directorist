@@ -9,7 +9,7 @@
 $is_logged_in = is_user_logged_in();
 
 // Check if current page is login, registration, or dashboard
-$is_login_page        = atbdp_is_page( 'login' );
+$is_login_page        = atbdp_is_page( 'signin_signup' );
 $is_registration_page = atbdp_is_page( 'registration' );
 $is_dashboard_page    = atbdp_is_page( 'dashboard' );
 
