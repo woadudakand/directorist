@@ -1516,7 +1516,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         }
       });
       searchForm.querySelectorAll("input[type='hidden']:not(.listing_type)").forEach(function (el) {
-        if (el.getAttribute('name') === 'directory_type') return;
+        if (el.getAttribute('name') === 'directory_type' || el.getAttribute('name') === 'radius-search-based-on') return;
         el.value = '';
       });
       searchForm.querySelectorAll("input[type='radio']").forEach(function (el) {
@@ -2318,17 +2318,17 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       var slider = sliderItem.querySelector('.directorist-custom-range-slider__slide');
       var minInput = sliderItem.querySelector('.directorist-custom-range-slider__value__min');
       var maxInput = sliderItem.querySelector('.directorist-custom-range-slider__value__max');
-      var sliderParent = sliderItem.closest('.directorist-search-field-radius_search');
-      var maxValue = slider.getAttribute('value') || 'none';
-      if (sliderParent) {
+      var radiusSearch = sliderItem.closest('.directorist-search-field-radius_search');
+      var defaultValue = slider.getAttribute('default-value') || '0';
+      if (radiusSearch) {
         minInput.value = '0';
-        maxInput.value = maxValue;
-        slider.directoristCustomRangeSlider.set([0, maxValue]); // Set your initial values
+        maxInput.value = defaultValue;
+        slider.directoristCustomRangeSlider.set([0, defaultValue]); // Set your initial values
       } else {
         // Reset values to their initial state
         slider.directoristCustomRangeSlider.set([0, 0]); // Set your initial values
-        minInput.value = ''; // Set your initial min value
-        maxInput.value = ''; // Set your initial max value
+        minInput.value = '0'; // Set your initial min value
+        maxInput.value = '0'; // Set your initial max value
       }
     }
 

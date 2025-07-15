@@ -495,7 +495,7 @@ import "./components/directoristSelect";
 			searchForm
 				.querySelectorAll("input[type='hidden']:not(.listing_type)")
 				.forEach(function (el) {
-					if (el.getAttribute('name') === 'directory_type') return;
+					if (el.getAttribute('name') === 'directory_type' || el.getAttribute('name') === 'radius-search-based-on') return;
 					el.value = '';
 				});
 			searchForm
@@ -1796,20 +1796,20 @@ import "./components/directoristSelect";
 			let maxInput = sliderItem.querySelector(
 				'.directorist-custom-range-slider__value__max'
 			);
-			let sliderParent = sliderItem.closest(
+			let radiusSearch = sliderItem.closest(
 				'.directorist-search-field-radius_search'
 			);
-			let maxValue = slider.getAttribute('value') || 'none';
+			let defaultValue = slider.getAttribute('default-value') || '0';
 
-			if (sliderParent) {
+			if (radiusSearch) {
 				minInput.value = '0';
-				maxInput.value = maxValue;
-				slider.directoristCustomRangeSlider.set([0, maxValue]); // Set your initial values
+				maxInput.value = defaultValue;
+				slider.directoristCustomRangeSlider.set([0, defaultValue]); // Set your initial values
 			} else {
 				// Reset values to their initial state
 				slider.directoristCustomRangeSlider.set([0, 0]); // Set your initial values
-				minInput.value = ''; // Set your initial min value
-				maxInput.value = ''; // Set your initial max value
+				minInput.value = '0'; // Set your initial min value
+				maxInput.value = '0'; // Set your initial max value
 			}
 		}
 
