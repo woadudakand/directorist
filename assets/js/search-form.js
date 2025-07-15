@@ -1339,7 +1339,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       var value = false;
 
       // Check all input fields which are not checkbox, radio & hidden
-      searchForm.querySelectorAll("input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear)").forEach(function (el) {
+      searchForm.querySelectorAll("input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear):not(.directorist-custom-range-slider__value__min):not(.directorist-custom-range-slider__value__max)").forEach(function (el) {
         if (el.value !== '') {
           value = true;
         }
@@ -1387,13 +1387,22 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
             resetButtonWrapper.classList.add('reset-btn-disabled');
           }
         }
+      } else {
+        setTimeout(function () {
+          enableResetButton(searchForm);
+        }, 100);
       }
     }
 
     // Enable Reset Button
     function enableResetButton(searchForm) {
-      var resetButtonWrapper = searchForm.querySelector('.directorist-advanced-filter__action');
-      resetButtonWrapper && resetButtonWrapper.classList.remove('reset-btn-disabled');
+      var $resetButtonWrapper = $(searchForm).find('.directorist-advanced-filter__action');
+      if (!$resetButtonWrapper.length) {
+        $resetButtonWrapper = $(searchForm).closest('.directorist-instant-search').find('.directorist-advanced-filter__action');
+      }
+      if ($resetButtonWrapper.length) {
+        $resetButtonWrapper.removeClass('reset-btn-disabled');
+      }
     }
 
     // Initialize Form Reset Button
@@ -2244,6 +2253,8 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         (_slider$directoristCu = slider.directoristCustomRangeSlider) === null || _slider$directoristCu === void 0 || _slider$directoristCu.on('start', function () {
           if (sliderActivated) return;
           sliderActivated = true;
+
+          // Range slider options update
           slider.directoristCustomRangeSlider.updateOptions({
             start: [sliderMinValue, sliderMinValue],
             step: sliderStep,
@@ -2252,6 +2263,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
               max: sliderMaxValue
             }
           });
+
+          // Trigger range slider observer
+          rangeSliderObserver();
         });
 
         // Update slider config
@@ -2336,7 +2350,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
       // Destroy Range Slider
       slider === null || slider === void 0 || (_slider$directoristCu5 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu5 === void 0 || _slider$directoristCu5.destroy();
-      rangeSliderObserver();
     }
 
     // DOM Mutation Observer on Location Field

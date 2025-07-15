@@ -229,7 +229,7 @@ import "./components/directoristSelect";
 			// Check all input fields which are not checkbox, radio & hidden
 			searchForm
 				.querySelectorAll(
-					"input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear)"
+					"input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear):not(.directorist-custom-range-slider__value__min):not(.directorist-custom-range-slider__value__max)"
 				)
 				.forEach(function (el) {
 					if (el.value !== '') {
@@ -285,17 +285,26 @@ import "./components/directoristSelect";
 					if (resetButtonWrapper) {
 						resetButtonWrapper.classList.add('reset-btn-disabled');
 					}
-				}
+				}			
+			} else {
+				setTimeout(function () {
+					enableResetButton(searchForm)
+				}, 100);
 			}
 		}
 
 		// Enable Reset Button
 		function enableResetButton(searchForm) {
-			let resetButtonWrapper = searchForm.querySelector(
-				'.directorist-advanced-filter__action'
-			);
-			resetButtonWrapper &&
-				resetButtonWrapper.classList.remove('reset-btn-disabled');
+			let $resetButtonWrapper = $(searchForm).find('.directorist-advanced-filter__action');
+
+			if (!$resetButtonWrapper.length) {
+				$resetButtonWrapper = $(searchForm).closest('.directorist-instant-search').find('.directorist-advanced-filter__action');
+			}
+
+			if ($resetButtonWrapper.length) {
+				$resetButtonWrapper.removeClass('reset-btn-disabled');
+			}
+
 		}
 
 		// Initialize Form Reset Button
@@ -1709,6 +1718,7 @@ import "./components/directoristSelect";
 					if (sliderActivated) return;
 					sliderActivated = true;
 
+					// Range slider options update
 					slider.directoristCustomRangeSlider.updateOptions({
 						start: [sliderMinValue, sliderMinValue],
 						step: sliderStep,
@@ -1717,6 +1727,9 @@ import "./components/directoristSelect";
 							max: sliderMaxValue,
 						},
 					});
+					
+					// Trigger range slider observer
+					rangeSliderObserver();
 				});
 
 				// Update slider config
@@ -1814,7 +1827,6 @@ import "./components/directoristSelect";
 
 			// Destroy Range Slider
 			slider?.directoristCustomRangeSlider?.destroy();
-			rangeSliderObserver();
 		}
 
 		// DOM Mutation Observer on Location Field
