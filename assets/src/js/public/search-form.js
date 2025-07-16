@@ -589,6 +589,16 @@ import "./components/directoristSelect";
 		if ($('.directorist-btn-reset-js') !== null) {
 			$('body').on('click', '.directorist-btn-reset-js', function (e) {
 				e.preventDefault();
+				// Clear URL params on modal form reset
+				if (this.closest('.directorist-search-modal')) {
+					// Clear only the query parameters 
+					const baseUrl = window.location.origin + window.location.pathname;
+
+					// Update the URL in the address bar 
+					window.history.replaceState(null, '', baseUrl);
+				}
+
+				// Reset search form values
 				if (this.closest('.directorist-contents-wrap')) {
 					let searchForm = this.closest(
 						'.directorist-contents-wrap'
@@ -596,12 +606,14 @@ import "./components/directoristSelect";
 					if (searchForm) {
 						adsFormReset(searchForm);
 					}
+					
 					let advanceSearchForm = this.closest(
 						'.directorist-contents-wrap'
 					).querySelector('.directorist-advanced-filter__form');
 					if (advanceSearchForm) {
 						adsFormReset(advanceSearchForm);
 					}
+
 					let advanceSearchFilter = this.closest(
 						'.directorist-contents-wrap'
 					).querySelector('.directorist-advanced-filter__advanced');
@@ -1715,7 +1727,7 @@ import "./components/directoristSelect";
 
 				// Handle first interaction
 				slider.directoristCustomRangeSlider?.on('start', function () {
-					if (sliderActivated) return;
+					if (sliderActivated || sliderRadiusActive) return;
 					sliderActivated = true;
 
 					// Range slider options update
@@ -1735,7 +1747,7 @@ import "./components/directoristSelect";
 				// Update slider config
 				slider.directoristCustomRangeSlider?.on('update', function (values, handle) {
 					const value = Math.round(values[handle]);
-					// Assign minmax value based on handler
+					// Assign min-max value based on handler
 					if (handle === 0) {
 						minInput.value = value;
 					} else {

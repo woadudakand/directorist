@@ -1568,6 +1568,16 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     if ($('.directorist-btn-reset-js') !== null) {
       $('body').on('click', '.directorist-btn-reset-js', function (e) {
         e.preventDefault();
+        // Clear URL params on modal form reset
+        if (this.closest('.directorist-search-modal')) {
+          // Clear only the query parameters 
+          var baseUrl = window.location.origin + window.location.pathname;
+
+          // Update the URL in the address bar 
+          window.history.replaceState(null, '', baseUrl);
+        }
+
+        // Reset search form values
         if (this.closest('.directorist-contents-wrap')) {
           var _searchForm = this.closest('.directorist-contents-wrap').querySelector('.directorist-search-form');
           if (_searchForm) {
@@ -2251,7 +2261,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
         // Handle first interaction
         (_slider$directoristCu = slider.directoristCustomRangeSlider) === null || _slider$directoristCu === void 0 || _slider$directoristCu.on('start', function () {
-          if (sliderActivated) return;
+          if (sliderActivated || sliderRadiusActive) return;
           sliderActivated = true;
 
           // Range slider options update
@@ -2271,7 +2281,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         // Update slider config
         (_slider$directoristCu2 = slider.directoristCustomRangeSlider) === null || _slider$directoristCu2 === void 0 || _slider$directoristCu2.on('update', function (values, handle) {
           var value = Math.round(values[handle]);
-          // Assign minmax value based on handler
+          // Assign min-max value based on handler
           if (handle === 0) {
             minInput.value = value;
           } else {
