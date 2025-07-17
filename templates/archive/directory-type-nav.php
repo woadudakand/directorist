@@ -17,7 +17,7 @@ $current_directory_type = ( ! empty( $_GET['directory_type'] ) ? sanitize_text_f
 do_action( 'directorist_before_listing_types', $listings );
 ?>
 <div class="directorist-type-nav">
-    <ul class="directorist-type-nav__list">
+    <ul style="justify-content: <?php echo $listings->atts['align'] ?>;" class="directorist-type-nav__list">
 
         <?php if ( ! empty( $all_types ) ) : ?>
 
