@@ -93,6 +93,7 @@ registerBlockType(metadata.name, {
 			default_directory_type,
 			query_type,
 			sidebar,
+			align,
 		} = attributes;
 
 		let oldLocations = location ? location.split(',') : [],
@@ -159,6 +160,30 @@ registerBlockType(metadata.name, {
 						) : (
 							''
 						)}
+
+						<SelectControl
+							label={__('Alignment', 'directorist')}
+							labelPosition="side"
+							value={align}
+							options={[
+								{
+									label: __('Left', 'directorist'),
+									value: 'start',
+								},
+								{
+									label: __('Center', 'directorist'),
+									value: 'center',
+								},
+								{
+									label: __('Right', 'directorist'),
+									value: 'end',
+								},
+							]}
+							onChange={(newState) =>
+								setAttributes({ align: newState })
+							}
+							className="directorist-gb-fixed-control"
+						/>
 
 						<SelectControl
 							label={__('Default View', 'directorist')}
