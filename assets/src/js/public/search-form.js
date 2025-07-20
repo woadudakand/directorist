@@ -229,7 +229,7 @@ import './components/directoristSelect';
 			// Check all input fields which are not checkbox, radio & hidden
 			searchForm
 				.querySelectorAll(
-					"input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear)"
+					"input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not(.wp-picker-clear):not(.directorist-custom-range-slider__value__min):not(.directorist-custom-range-slider__value__max)"
 				)
 				.forEach(function (el) {
 					if (el.value !== '') {
@@ -292,16 +292,28 @@ import './components/directoristSelect';
 						resetButtonWrapper.classList.add('reset-btn-disabled');
 					}
 				}
+			} else {
+				setTimeout(function () {
+					enableResetButton(searchForm);
+				}, 100);
 			}
 		}
 
 		// Enable Reset Button
 		function enableResetButton(searchForm) {
-			let resetButtonWrapper = searchForm.querySelector(
+			let $resetButtonWrapper = $(searchForm).find(
 				'.directorist-advanced-filter__action'
 			);
-			resetButtonWrapper &&
-				resetButtonWrapper.classList.remove('reset-btn-disabled');
+
+			if (!$resetButtonWrapper.length) {
+				$resetButtonWrapper = $(searchForm)
+					.closest('.directorist-instant-search')
+					.find('.directorist-advanced-filter__action');
+			}
+
+			if ($resetButtonWrapper.length) {
+				$resetButtonWrapper.removeClass('reset-btn-disabled');
+			}
 		}
 
 		// Initialize Form Reset Button
@@ -518,7 +530,11 @@ import './components/directoristSelect';
 			searchForm
 				.querySelectorAll("input[type='hidden']:not(.listing_type)")
 				.forEach(function (el) {
-					if (el.getAttribute('name') === 'directory_type') return;
+					if (
+						el.getAttribute('name') === 'directory_type' ||
+						el.getAttribute('name') === 'radius-search-based-on'
+					)
+						return;
 					el.value = '';
 				});
 			searchForm
@@ -603,6 +619,17 @@ import './components/directoristSelect';
 		if ($('.directorist-btn-reset-js') !== null) {
 			$('body').on('click', '.directorist-btn-reset-js', function (e) {
 				e.preventDefault();
+				// Clear URL params on modal form reset
+				if (this.closest('.directorist-search-modal')) {
+					// Clear only the query parameters
+					const baseUrl =
+						window.location.origin + window.location.pathname;
+
+					// Update the URL in the address bar
+					window.history.replaceState(null, '', baseUrl);
+				}
+
+				// Reset search form values
 				if (this.closest('.directorist-contents-wrap')) {
 					let searchForm = this.closest(
 						'.directorist-contents-wrap'
@@ -610,12 +637,14 @@ import './components/directoristSelect';
 					if (searchForm) {
 						adsFormReset(searchForm);
 					}
+
 					let advanceSearchForm = this.closest(
 						'.directorist-contents-wrap'
 					).querySelector('.directorist-advanced-filter__form');
 					if (advanceSearchForm) {
 						adsFormReset(advanceSearchForm);
 					}
+
 					let advanceSearchFilter = this.closest(
 						'.directorist-contents-wrap'
 					).querySelector('.directorist-advanced-filter__advanced');
@@ -1764,9 +1793,10 @@ import './components/directoristSelect';
 
 				// Handle first interaction
 				slider.directoristCustomRangeSlider?.on('start', function () {
-					if (sliderActivated) return;
+					if (sliderActivated || sliderRadiusActive) return;
 					sliderActivated = true;
 
+					// Range slider options update
 					slider.directoristCustomRangeSlider.updateOptions({
 						start: [sliderMinValue, sliderMinValue],
 						step: sliderStep,
@@ -1775,6 +1805,9 @@ import './components/directoristSelect';
 							max: sliderMaxValue,
 						},
 					});
+
+					// Trigger range slider observer
+					rangeSliderObserver();
 				});
 
 				// Update slider config
@@ -1782,7 +1815,7 @@ import './components/directoristSelect';
 					'update',
 					function (values, handle) {
 						const value = Math.round(values[handle]);
-
+						// Assign min-max value based on handler
 						if (handle === 0) {
 							minInput.value = value;
 						} else {
@@ -1867,20 +1900,32 @@ import './components/directoristSelect';
 			let maxInput = sliderItem.querySelector(
 				'.directorist-custom-range-slider__value__max'
 			);
-			let sliderParent = sliderItem.closest(
+			let rangeValue = sliderItem.querySelector(
+				'.directorist-custom-range-slider__range'
+			);
+			let radiusSearch = sliderItem.closest(
 				'.directorist-search-field-radius_search'
 			);
-			let maxValue = slider.getAttribute('value') || 'none';
+			let defaultValue = slider.getAttribute('default-value') || '0';
 
-			if (sliderParent) {
+			if (radiusSearch) {
 				minInput.value = '0';
-				maxInput.value = maxValue;
-				slider.directoristCustomRangeSlider.set([0, maxValue]); // Set your initial values
+				maxInput.value = defaultValue;
+				slider?.directoristCustomRangeSlider?.set([0, defaultValue]); // Set initial values
 			} else {
 				// Reset values to their initial state
-				slider.directoristCustomRangeSlider.set([0, 0]); // Set your initial values
-				minInput.value = ''; // Set your initial min value
-				maxInput.value = ''; // Set your initial max value
+				slider?.directoristCustomRangeSlider?.set([0, 0]); // Set initial values
+				minInput.value = '0'; // Set initial min value
+				maxInput.value = '0'; // Set initial max value
+				rangeValue.value = '0-0';
+			}
+
+			const sidebarRangeSlider = slider.closest('.listing-with-sidebar');
+
+			if (sidebarRangeSlider && slider?.directoristCustomRangeSlider) {
+				// Destroy the custom range slider instance
+				slider.directoristCustomRangeSlider.destroy();
+				delete slider.directoristCustomRangeSlider;
 			}
 		}
 
@@ -2007,22 +2052,27 @@ import './components/directoristSelect';
 		}
 
 		// Custom Range Slider Value Check on Change
-		function sliderValueCheck(targetNode, value) {
-			let searchForm = targetNode.closest('form');
+		function sliderValueCheck(searchForm, targetNode, value) {
 			if (value > 0) {
-				let customSliderMin = targetNode
-					.closest('.directorist-custom-range-slider')
-					.querySelector(
-						'.directorist-custom-range-slider__value__min'
-					);
-				let customSliderRange = targetNode
-					.closest('.directorist-custom-range-slider')
-					.querySelector('.directorist-custom-range-slider__range');
+				enableResetButton(searchForm);
+
+				const rangeSlider = targetNode.closest(
+					'.directorist-custom-range-slider'
+				);
+
+				if (!rangeSlider) return;
+
+				let customSliderMin = rangeSlider.querySelector(
+					'.directorist-custom-range-slider__value__min'
+				);
+				let customSliderRange = rangeSlider.querySelector(
+					'.directorist-custom-range-slider__range'
+				);
+
 				customSliderMin.value = customSliderMin.value
 					? customSliderMin.value
 					: 0;
 				customSliderRange.value = customSliderMin.value + '-' + value;
-				enableResetButton(searchForm);
 			} else {
 				initForm(searchForm);
 			}
@@ -2035,6 +2085,7 @@ import './components/directoristSelect';
 			);
 			targetNodes.forEach((targetNode) => {
 				if (targetNode) {
+					const searchForm = targetNode.closest('form');
 					let observerCallback = (mutationList, observer) => {
 						for (let mutation of mutationList) {
 							if (
@@ -2043,6 +2094,7 @@ import './components/directoristSelect';
 								)
 							) {
 								sliderValueCheck(
+									searchForm,
 									targetNode,
 									parseInt(targetNode.ariaValueNow)
 								);
