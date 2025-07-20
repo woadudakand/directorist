@@ -17,7 +17,7 @@ $current_directory_type = ( ! empty( $_GET['directory_type'] ) ? sanitize_text_f
 do_action( 'directorist_before_listing_types', $listings );
 ?>
 <div class="directorist-type-nav">
-    <ul style="justify-content: <?php echo $listings->atts['align'] ?>;" class="directorist-type-nav__list">
+    <ul class="directorist-type-nav_list--<?php echo $listings->atts['align'] ?> directorist-type-nav__list">
 
         <?php if ( ! empty( $all_types ) ) : ?>
 
@@ -31,7 +31,7 @@ do_action( 'directorist_before_listing_types', $listings );
         <?php foreach ( $listings->listing_types as $id => $value ) : ?>
 
             <li class="<?php echo ( ( $listings->current_listing_type === $value['term']->term_id && 'all' !== $current_directory_type ) ? 'directorist-type-nav__list__current' : '' ); ?>">
-                <a class="directorist-type-nav__link" href="<?php echo esc_url( directorist_get_directory_type_nav_url( $value['term']->slug ) ); ?>" data-listing_type="<?php echo esc_attr( $value['term']->slug ); ?>" data-listing_type_id="<?php echo esc_attr( $value['term']->term_id ); ?>"><?php directorist_icon( $value['data']['icon'] );?> <?php echo esc_html( $value['name'] );?></a>
+                <a class="directorist-type-nav__link--<?php echo $listings->atts['type_nav_display'] ?> directorist-type-nav__link" href="<?php echo esc_url( directorist_get_directory_type_nav_url( $value['term']->slug ) ); ?>" data-listing_type="<?php echo esc_attr( $value['term']->slug ); ?>" data-listing_type_id="<?php echo esc_attr( $value['term']->term_id ); ?>"><?php directorist_icon( $value['data']['icon'] );?> <?php echo esc_html( $value['name'] );?></a>
             </li>
 
         <?php endforeach; ?>

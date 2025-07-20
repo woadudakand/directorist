@@ -110,6 +110,10 @@
     "align": {
       "type": "string",
       "default": "center"
+    },
+    "type_nav_display": {
+      "type": "string",
+      "default": "column"
     }
   },
   "supports": {

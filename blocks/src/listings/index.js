@@ -15,7 +15,18 @@ import {
 	TypesControl,
 } from './../controls';
 
-import { list, grid, mapMarker } from '@wordpress/icons';
+import {
+	list,
+	grid,
+	mapMarker,
+	alignLeft,
+	alignCenter,
+	alignRight,
+	chevronUp,
+	chevronDown,
+	chevronLeft,
+	chevronRight,
+} from '@wordpress/icons';
 
 import {
 	PanelBody,
@@ -24,6 +35,9 @@ import {
 	TextControl,
 	ToolbarGroup,
 	ToolbarButton,
+	Button,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
 import {
@@ -94,6 +108,7 @@ registerBlockType(metadata.name, {
 			query_type,
 			sidebar,
 			align,
+			type_nav_display,
 		} = attributes;
 
 		let oldLocations = location ? location.split(',') : [],
@@ -161,29 +176,60 @@ registerBlockType(metadata.name, {
 							''
 						)}
 
-						<SelectControl
+						<ToggleGroupControl
 							label={__('Alignment', 'directorist')}
-							labelPosition="side"
 							value={align}
-							options={[
-								{
-									label: __('Left', 'directorist'),
-									value: 'start',
-								},
-								{
-									label: __('Center', 'directorist'),
-									value: 'center',
-								},
-								{
-									label: __('Right', 'directorist'),
-									value: 'end',
-								},
-							]}
-							onChange={(newState) =>
-								setAttributes({ align: newState })
+							onChange={(value) =>
+								setAttributes({ align: value })
 							}
-							className="directorist-gb-fixed-control"
-						/>
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="start"
+								label={__('Left', 'directorist')}
+								aria-label={__('Left', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="center"
+								label={__('Center', 'directorist')}
+								aria-label={__('Center', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="end"
+								label={__('Right', 'directorist')}
+								aria-label={__('Right', 'directorist')}
+							/>
+						</ToggleGroupControl>
+
+						<ToggleGroupControl
+							label={__('Display', 'directorist')}
+							value={type_nav_display}
+							onChange={(value) =>
+								setAttributes({ type_nav_display: value })
+							}
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="column"
+								label="↑"
+								aria-label={__('Default', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="column-reverse"
+								label="↓"
+								aria-label={__('Column Reverse', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="row"
+								label="←"
+								aria-label={__('Row', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="row-reverse"
+								label="→"
+								aria-label={__('Row Reverse', 'directorist')}
+							/>
+						</ToggleGroupControl>
 
 						<SelectControl
 							label={__('Default View', 'directorist')}
