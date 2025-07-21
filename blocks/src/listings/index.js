@@ -163,7 +163,6 @@ registerBlockType(metadata.name, {
 						) : (
 							''
 						)}
-
 						<ToggleGroupControl
 							label={__('Type Alignment', 'directorist')}
 							value={align}
@@ -188,7 +187,6 @@ registerBlockType(metadata.name, {
 								aria-label={__('Right', 'directorist')}
 							/>
 						</ToggleGroupControl>
-
 						<ToggleGroupControl
 							label={__('Icon Position', 'directorist')}
 							value={type_nav_display}
@@ -218,7 +216,6 @@ registerBlockType(metadata.name, {
 								aria-label={__('Row Reverse', 'directorist')}
 							/>
 						</ToggleGroupControl>
-
 						<SelectControl
 							label={__('Default View', 'directorist')}
 							labelPosition="side"
@@ -279,7 +276,6 @@ registerBlockType(metadata.name, {
 						) : (
 							''
 						)}
-
 						<SelectControl
 							label={__('Sidebar Filter', 'directorist')}
 							labelPosition="side"
@@ -309,7 +305,6 @@ registerBlockType(metadata.name, {
 							}
 							className="directorist-gb-fixed-control"
 						/>
-
 						<TextControl
 							label={__('Listings Per Page', 'directorist')}
 							type="number"
@@ -366,13 +361,19 @@ registerBlockType(metadata.name, {
 								setAttributes({ popular_only: newState })
 							}
 						/>
-						<ToggleControl
-							label={__('Display Filter Button', 'directorist')}
-							checked={advanced_filter}
-							onChange={(newState) =>
-								setAttributes({ advanced_filter: newState })
-							}
-						/>
+
+						{sidebar == 'no_sidebar' ? (
+							<ToggleControl
+								label={__(
+									'Display Filter Button',
+									'directorist'
+								)}
+								checked={advanced_filter}
+								onChange={(newState) =>
+									setAttributes({ advanced_filter: newState })
+								}
+							/>
+						) : null}
 						<ToggleControl
 							label={__('Display Preview Image', 'directorist')}
 							checked={display_preview_image}

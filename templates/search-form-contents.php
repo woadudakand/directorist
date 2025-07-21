@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <?php
         do_action( 'directorist_search_listing_before_title' );
-        $text_align = "text-" . ( $searchform->atts['title_align'] ? $searchform->atts['title_align'] : 'center' );
+        $text_align = "text-" . ( ! empty( $searchform->atts['title_align'] ) ? $searchform->atts['title_align'] : 'center' );
         ?>
 
         <?php if ( $searchform->show_title_subtitle && ( $searchform->search_bar_title || $searchform->search_bar_sub_title ) ) : ?>
