@@ -10,6 +10,8 @@ import {
 	SelectControl,
 	ToggleControl,
 	TextControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
 import {
@@ -20,9 +22,9 @@ import {
 import metadata from './block.json';
 import getLogo from '../logo';
 
-const Placeholder = () => getPlaceholder( 'search' );
+const Placeholder = () => getPlaceholder('search');
 
-registerBlockType( metadata.name, {
+registerBlockType(metadata.name, {
 	icon: getLogo(),
 
 	transforms: {
@@ -30,13 +32,13 @@ registerBlockType( metadata.name, {
 			{
 				type: 'shortcode',
 				tag: 'directorist_search_listing',
-				attributes: getAttsForTransform( metadata.attributes ),
+				attributes: getAttsForTransform(metadata.attributes),
 			},
 		],
 	},
 
-	edit( { attributes, setAttributes } ) {
-		const [ shouldRender, setShouldRender ] = useState( true );
+	edit({ attributes, setAttributes }) {
+		const [shouldRender, setShouldRender] = useState(true);
 
 		let {
 			show_title_subtitle,
@@ -52,251 +54,262 @@ registerBlockType( metadata.name, {
 			logged_in_user_only,
 			directory_type,
 			default_directory_type,
-			show_popular_category
+			show_popular_category,
+			align,
 		} = attributes;
 
-		let oldTypes = directory_type ? directory_type.split( ',' ) : [];
+		let oldTypes = directory_type ? directory_type.split(',') : [];
 
 		return (
 			<Fragment>
 				<InspectorControls>
 					<PanelBody
-						title={ __( 'General', 'directorist' ) }
-						initialOpen={ true }
+						title={__('General', 'directorist')}
+						initialOpen={true}
 					>
-						{ isMultiDirectoryEnabled() ? (
+						{isMultiDirectoryEnabled() ? (
 							<TypesControl
-								shouldRender={ shouldRender }
-								selected={ oldTypes }
-								showDefault={ true }
-								defaultType={ default_directory_type }
-								onDefaultChange={ ( value ) =>
-									setAttributes( {
+								shouldRender={shouldRender}
+								selected={oldTypes}
+								showDefault={true}
+								defaultType={default_directory_type}
+								onDefaultChange={(value) =>
+									setAttributes({
 										default_directory_type: value,
-									} )
+									})
 								}
-								onChange={ ( types ) => {
-									setAttributes( {
-										directory_type: types.join( ',' ),
-									} );
+								onChange={(types) => {
+									setAttributes({
+										directory_type: types.join(','),
+									});
 
-									if ( types.length === 1 ) {
-										setAttributes( {
+									if (types.length === 1) {
+										setAttributes({
 											default_directory_type: types[0],
-										} );
+										});
 									}
 
-									setShouldRender( false );
-								} }
+									setShouldRender(false);
+								}}
 							/>
-						) : null }
+						) : null}
+
+						<ToggleGroupControl
+							label={__('Alignment', 'directorist')}
+							value={align}
+							onChange={(value) =>
+								setAttributes({ align: value })
+							}
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="start"
+								label={__('Left', 'directorist')}
+								aria-label={__('Left', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="center"
+								label={__('Center', 'directorist')}
+								aria-label={__('Center', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="end"
+								label={__('Right', 'directorist')}
+								aria-label={__('Right', 'directorist')}
+							/>
+						</ToggleGroupControl>
 
 						<ToggleControl
-							label={ __(
+							label={__(
 								'Display Title & Subtitle',
 								'directorist'
-							) }
-							checked={ show_title_subtitle }
-							onChange={ ( newState ) =>
-								setAttributes( {
+							)}
+							checked={show_title_subtitle}
+							onChange={(newState) =>
+								setAttributes({
 									show_title_subtitle: newState,
-								} )
+								})
 							}
 						/>
-						{ show_title_subtitle ? (
+						{show_title_subtitle ? (
 							<TextControl
-								label={ __(
-									'Search Form Title',
-									'directorist'
-								) }
+								label={__('Search Form Title', 'directorist')}
 								type="text"
-								value={ search_bar_title }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								value={search_bar_title}
+								onChange={(newState) =>
+									setAttributes({
 										search_bar_title: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ show_title_subtitle ? (
+						) : null}
+						{show_title_subtitle ? (
 							<TextControl
-								label={ __(
+								label={__(
 									'Search Form Subtitle',
 									'directorist'
-								) }
+								)}
 								type="text"
-								value={ search_bar_sub_title }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								value={search_bar_sub_title}
+								onChange={(newState) =>
+									setAttributes({
 										search_bar_sub_title: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
+						) : null}
 						<ToggleControl
-							label={ __(
+							label={__(
 								'Display More Filters Button',
 								'directorist'
-							) }
-							checked={ more_filters_button }
-							onChange={ ( newState ) =>
-								setAttributes( {
+							)}
+							checked={more_filters_button}
+							onChange={(newState) =>
+								setAttributes({
 									more_filters_button: newState,
-								} )
+								})
 							}
 						/>
-						{ more_filters_button ? (
+						{more_filters_button ? (
 							<TextControl
-								label={ __(
+								label={__(
 									'More Filters Button Label',
 									'directorist'
-								) }
+								)}
 								type="text"
-								value={ more_filters_text }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								value={more_filters_text}
+								onChange={(newState) =>
+									setAttributes({
 										more_filters_text: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ more_filters_button ? (
+						) : null}
+						{more_filters_button ? (
 							<ToggleControl
-								label={ __(
+								label={__(
 									'Display Apply Filters Button',
 									'directorist'
-								) }
-								checked={ apply_filters_button }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								)}
+								checked={apply_filters_button}
+								onChange={(newState) =>
+									setAttributes({
 										apply_filters_button: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ more_filters_button && apply_filters_button ? (
+						) : null}
+						{more_filters_button && apply_filters_button ? (
 							<TextControl
-								label={ __(
-									'Apply Filters Text',
-									'directorist'
-								) }
+								label={__('Apply Filters Text', 'directorist')}
 								type="text"
-								value={ apply_filters_text }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								value={apply_filters_text}
+								onChange={(newState) =>
+									setAttributes({
 										apply_filters_text: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ more_filters_button ? (
+						) : null}
+						{more_filters_button ? (
 							<ToggleControl
-								label={ __(
+								label={__(
 									'Display Reset Filters Button',
 									'directorist'
-								) }
-								checked={ reset_filters_button }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								)}
+								checked={reset_filters_button}
+								onChange={(newState) =>
+									setAttributes({
 										reset_filters_button: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ more_filters_button && reset_filters_button ? (
+						) : null}
+						{more_filters_button && reset_filters_button ? (
 							<TextControl
-								label={ __(
-									'Reset Filters Text',
-									'directorist'
-								) }
+								label={__('Reset Filters Text', 'directorist')}
 								type="text"
-								value={ reset_filters_text }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								value={reset_filters_text}
+								onChange={(newState) =>
+									setAttributes({
 										reset_filters_text: newState,
-									} )
+									})
 								}
 							/>
-						) : null }
-						{ more_filters_button ? (
+						) : null}
+						{more_filters_button ? (
 							<SelectControl
-								label={ __( 'More Filter By', 'directorist' ) }
+								label={__('More Filter By', 'directorist')}
 								labelPosition="side"
-								value={ more_filters_display }
-								options={ [
+								value={more_filters_display}
+								options={[
 									{
-										label: __(
-											'Overlapping',
-											'directorist'
-										),
+										label: __('Overlapping', 'directorist'),
 										value: 'overlapping',
 									},
 									{
-										label: __( 'Sliding', 'directorist' ),
+										label: __('Sliding', 'directorist'),
 										value: 'sliding',
 									},
 									{
-										label: __(
-											'Always Open',
-											'directorist'
-										),
+										label: __('Always Open', 'directorist'),
 										value: 'always_open',
 									},
-								] }
-								onChange={ ( newState ) =>
-									setAttributes( {
+								]}
+								onChange={(newState) =>
+									setAttributes({
 										more_filters_display: newState,
-									} )
+									})
 								}
 								className="directorist-gb-fixed-control"
 							/>
-						) : null }
+						) : null}
 
 						<ToggleControl
-							label={ __(
+							label={__(
 								'Display Popular Categories',
 								'directorist'
-							) }
-							checked={ show_popular_category }
-							onChange={ ( newState ) =>
-								setAttributes( {
+							)}
+							checked={show_popular_category}
+							onChange={(newState) =>
+								setAttributes({
 									show_popular_category: newState,
-								} )
+								})
 							}
-							help={ __(
+							help={__(
 								'You can control the number of popular categories to show from settings panel.',
 								'directorist'
-							) }
+							)}
 						/>
 
 						<ToggleControl
-							label={ __(
+							label={__(
 								'Logged In User Can View Only',
 								'directorist'
-							) }
-							checked={ logged_in_user_only }
-							onChange={ ( newState ) =>
-								setAttributes( {
+							)}
+							checked={logged_in_user_only}
+							onChange={(newState) =>
+								setAttributes({
 									logged_in_user_only: newState,
-								} )
+								})
 							}
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<div
-					{ ...useBlockProps( {
+					{...useBlockProps({
 						className:
 							'directorist-content-active directorist-w-100',
-					} ) }
+					})}
 				>
 					<ServerSideRender
-						block={ metadata.name }
-						attributes={ attributes }
-						LoadingResponsePlaceholder={ Placeholder }
+						block={metadata.name}
+						attributes={attributes}
+						LoadingResponsePlaceholder={Placeholder}
 					/>
 				</div>
 			</Fragment>
 		);
 	},
-} );
+});

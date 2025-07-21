@@ -15,18 +15,7 @@ import {
 	TypesControl,
 } from './../controls';
 
-import {
-	list,
-	grid,
-	mapMarker,
-	alignLeft,
-	alignCenter,
-	alignRight,
-	chevronUp,
-	chevronDown,
-	chevronLeft,
-	chevronRight,
-} from '@wordpress/icons';
+import { list, grid, mapMarker } from '@wordpress/icons';
 
 import {
 	PanelBody,
@@ -35,7 +24,6 @@ import {
 	TextControl,
 	ToolbarGroup,
 	ToolbarButton,
-	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
@@ -370,9 +358,7 @@ registerBlockType(metadata.name, {
 									setAttributes({ header_title: newState })
 								}
 							/>
-						) : (
-							setAttributes({ header_title: '' })
-						)}
+						) : null}
 						<ToggleControl
 							label={__('Display Popular Only', 'directorist')}
 							checked={popular_only}

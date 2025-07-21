@@ -67,6 +67,10 @@
     "default_directory_type": {
       "type": "string",
       "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": "center"
     }
   },
   "supports": {
