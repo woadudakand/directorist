@@ -56,6 +56,9 @@ registerBlockType(metadata.name, {
 			default_directory_type,
 			show_popular_category,
 			align,
+			title_align,
+			type_nav_display,
+			search_button_text,
 		} = attributes;
 
 		let oldTypes = directory_type ? directory_type.split(',') : [];
@@ -95,7 +98,35 @@ registerBlockType(metadata.name, {
 						) : null}
 
 						<ToggleGroupControl
-							label={__('Alignment', 'directorist')}
+							label={__(
+								'Title & subtitle Alignment',
+								'directorist'
+							)}
+							value={title_align}
+							onChange={(value) =>
+								setAttributes({ title_align: value })
+							}
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="left"
+								label={__('Left', 'directorist')}
+								aria-label={__('Left', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="center"
+								label={__('Center', 'directorist')}
+								aria-label={__('Center', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="right"
+								label={__('Right', 'directorist')}
+								aria-label={__('Right', 'directorist')}
+							/>
+						</ToggleGroupControl>
+
+						<ToggleGroupControl
+							label={__('Type Alignment', 'directorist')}
 							value={align}
 							onChange={(value) =>
 								setAttributes({ align: value })
@@ -116,6 +147,36 @@ registerBlockType(metadata.name, {
 								value="end"
 								label={__('Right', 'directorist')}
 								aria-label={__('Right', 'directorist')}
+							/>
+						</ToggleGroupControl>
+
+						<ToggleGroupControl
+							label={__('Display', 'directorist')}
+							value={type_nav_display}
+							onChange={(value) =>
+								setAttributes({ type_nav_display: value })
+							}
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="column"
+								label="↑"
+								aria-label={__('Default', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="column-reverse"
+								label="↓"
+								aria-label={__('Column Reverse', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="row"
+								label="←"
+								aria-label={__('Row', 'directorist')}
+							/>
+							<ToggleGroupControlOption
+								value="row-reverse"
+								label="→"
+								aria-label={__('Row Reverse', 'directorist')}
 							/>
 						</ToggleGroupControl>
 
@@ -158,6 +219,16 @@ registerBlockType(metadata.name, {
 								}
 							/>
 						) : null}
+						<TextControl
+							label={__('Search Button Label', 'directorist')}
+							type="text"
+							value={search_button_text}
+							onChange={(newState) =>
+								setAttributes({
+									search_button_text: newState,
+								})
+							}
+						/>
 						<ToggleControl
 							label={__(
 								'Display More Filters Button',
