@@ -165,7 +165,7 @@ registerBlockType(metadata.name, {
 						)}
 
 						<ToggleGroupControl
-							label={__('Alignment', 'directorist')}
+							label={__('Type Alignment', 'directorist')}
 							value={align}
 							onChange={(value) =>
 								setAttributes({ align: value })
@@ -190,7 +190,7 @@ registerBlockType(metadata.name, {
 						</ToggleGroupControl>
 
 						<ToggleGroupControl
-							label={__('Display', 'directorist')}
+							label={__('Icon Position', 'directorist')}
 							value={type_nav_display}
 							onChange={(value) =>
 								setAttributes({ type_nav_display: value })
