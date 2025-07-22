@@ -53,10 +53,6 @@
       "type": "boolean",
       "default": false
     },
-    "display_preview_image": {
-      "type": "boolean",
-      "default": true
-    },
     "popular_only": {
       "type": "boolean",
       "default": false
@@ -76,6 +72,10 @@
     "sidebar": {
       "type": "string",
       "default": ""
+    },
+    "display_preview_image": {
+      "type": "boolean",
+      "default": true
     },
     "align": {
       "type": "string",
