@@ -564,7 +564,7 @@ function getLogo() {
   \**************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"category":"directorist-blocks-collection","version":"1.0.0","title":"Search Result","name":"directorist/search-result","description":"Create directory search result grid view, list view or map view.","keywords":["all listings","search","result","form"],"attributes":{"view":{"type":"string","default":"grid"},"orderby":{"type":"string","default":"date"},"order":{"type":"string","default":"desc"},"listings_per_page":{"type":"number","default":6},"show_pagination":{"type":"boolean","default":false},"header":{"type":"boolean","default":true},"header_title":{"type":"string","default":"Search Result"},"columns":{"type":"number","default":3},"featured_only":{"type":"boolean","default":false},"popular_only":{"type":"boolean","default":false},"logged_in_user_only":{"type":"boolean","default":false},"map_height":{"type":"number","default":500},"map_zoom_level":{"type":"number","default":0},"sidebar":{"type":"string","default":""}},"supports":{"html":false},"editorScript":["file:./index.js","jquery-masonry","directorist-swiper","directorist-select2-script","directorist-all-listings","directorist-listing-slider","directorist-search-form","directorist-openstreet-map","directorist-google-map"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"category":"directorist-blocks-collection","version":"1.0.0","title":"Search Result","name":"directorist/search-result","description":"Create directory search result grid view, list view or map view.","keywords":["all listings","search","result","form"],"attributes":{"view":{"type":"string","default":"grid"},"orderby":{"type":"string","default":"date"},"order":{"type":"string","default":"desc"},"advanced_filter":{"type":"boolean","default":false},"listings_per_page":{"type":"number","default":6},"show_pagination":{"type":"boolean","default":false},"header":{"type":"boolean","default":true},"header_title":{"type":"string","default":"Search Result"},"columns":{"type":"number","default":3},"featured_only":{"type":"boolean","default":false},"display_preview_image":{"type":"boolean","default":true},"popular_only":{"type":"boolean","default":false},"logged_in_user_only":{"type":"boolean","default":false},"map_height":{"type":"number","default":500},"map_zoom_level":{"type":"number","default":0},"sidebar":{"type":"string","default":""},"align":{"type":"string","default":"center"},"type_nav_display":{"type":"string","default":"column"}},"supports":{"html":false},"editorScript":["file:./index.js","jquery-masonry","directorist-swiper","directorist-select2-script","directorist-all-listings","directorist-listing-slider","directorist-search-form","directorist-openstreet-map","directorist-google-map"]}');
 
 /***/ }),
 
@@ -796,7 +796,11 @@ var Placeholder = function Placeholder() {
       map_zoom_level = attributes.map_zoom_level,
       featured_only = attributes.featured_only,
       popular_only = attributes.popular_only,
-      sidebar = attributes.sidebar;
+      sidebar = attributes.sidebar,
+      align = attributes.align,
+      type_nav_display = attributes.type_nav_display,
+      advanced_filter = attributes.advanced_filter,
+      display_preview_image = attributes.display_preview_image;
     return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__.BlockControls, {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.ToolbarGroup, {
@@ -833,7 +837,55 @@ var Placeholder = function Placeholder() {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.PanelBody, {
           title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Listing Settings', 'directorist'),
           initialOpen: true,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.SelectControl, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Type Alignment', 'directorist'),
+            value: align,
+            onChange: function onChange(value) {
+              return setAttributes({
+                align: value
+              });
+            },
+            isBlock: true,
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "start",
+              label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Left', 'directorist'),
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Left', 'directorist')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "center",
+              label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Center', 'directorist'),
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Center', 'directorist')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "end",
+              label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Right', 'directorist'),
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Right', 'directorist')
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Icon Position', 'directorist'),
+            value: type_nav_display,
+            onChange: function onChange(value) {
+              return setAttributes({
+                type_nav_display: value
+              });
+            },
+            isBlock: true,
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "column",
+              label: "\u2191",
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Default', 'directorist')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "column-reverse",
+              label: "\u2193",
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Column Reverse', 'directorist')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "row",
+              label: "\u2190",
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Row', 'directorist')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.__experimentalToggleGroupControlOption, {
+              value: "row-reverse",
+              label: "\u2192",
+              "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Row Reverse', 'directorist')
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.SelectControl, {
             label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Default View', 'directorist'),
             labelPosition: "side",
             value: view,
@@ -934,7 +986,7 @@ var Placeholder = function Placeholder() {
             },
             className: "directorist-gb-fixed-control"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.SelectControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Order', 'directorist'),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Listing Order', 'directorist'),
             labelPosition: "side",
             value: order,
             options: [{
@@ -975,8 +1027,22 @@ var Placeholder = function Placeholder() {
                 header_title: newState
               });
             }
-          }) : setAttributes({
-            header_title: ''
+          }) : null, sidebar == 'no_sidebar' && header ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.ToggleControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Display Filter Button', 'directorist'),
+            checked: advanced_filter,
+            onChange: function onChange(newState) {
+              return setAttributes({
+                advanced_filter: newState
+              });
+            }
+          }) : null, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.ToggleControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Display Preview Image', 'directorist'),
+            checked: display_preview_image,
+            onChange: function onChange(newState) {
+              return setAttributes({
+                display_preview_image: newState
+              });
+            }
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.ToggleControl, {
             label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Display Featured Listings Only', 'directorist'),
             checked: featured_only,
