@@ -66,9 +66,6 @@ registerBlockType(metadata.name, {
 			header_title,
 			map_height,
 			columns,
-			location,
-			category,
-			tag,
 			listings_per_page,
 			show_pagination,
 			orderby,
@@ -77,6 +74,9 @@ registerBlockType(metadata.name, {
 			map_zoom_level,
 			sidebar,
 			align,
+			location,
+			category,
+			tag,
 			type_nav_display,
 			advanced_filter,
 			display_preview_image,
@@ -339,7 +339,7 @@ registerBlockType(metadata.name, {
 							className="directorist-gb-fixed-control"
 						/>
 						<SelectControl
-							label={__('Order', 'directorist')}
+							label={__('Listings Order', 'directorist')}
 							labelPosition="side"
 							value={order}
 							options={[

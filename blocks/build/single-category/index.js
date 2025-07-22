@@ -1962,7 +1962,7 @@ function getLogo() {
 /***/ (function(module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"category":"directorist-blocks-collection","version":"1.0.0","title":"Single Category","name":"directorist/category","description":"Create directory listing categories grid view, list view or map view.","keywords":["all categories","category","taxonomy","term","single"],"attributes":{"view":{"type":"string","default":"grid"},"orderby":{"type":"string","default":"date"},"category":{"type":"string","default":""},"location":{"type":"string","default":""},"tag":{"type":"string","default":""},"directory_type":{"type":"string","default":""},"default_directory_type":{"type":"string","default":""},"order":{"type":"string","default":"desc"},"listings_per_page":{"type":"number","default":6},"show_pagination":{"type":"boolean","default":false},"header":{"type":"boolean","default":true},"header_title":{"type":"string","default":"Items Found"},"columns":{"type":"number","default":3},"logged_in_user_only":{"type":"boolean","default":false},"map_height":{"type":"number","default":500},"map_zoom_level":{"type":"number","default":0},"sidebar":{"type":"string","default":""},"ids":{"type":"string","default":""},"featured_only":{"type":"boolean","default":false},"popular_only":{"type":"boolean","default":false},"display_preview_image":{"type":"boolean","default":true},"align":{"type":"string","default":"center"},"type_nav_display":{"type":"string","default":"column"},"advanced_filter":{"type":"boolean","default":false}},"supports":{"html":false},"editorScript":["file:./index.js","jquery-masonry","directorist-swiper","directorist-select2-script","directorist-all-listings","directorist-listing-slider","directorist-search-form","directorist-openstreet-map","directorist-google-map"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"category":"directorist-blocks-collection","version":"1.0.0","title":"Single Category","name":"directorist/category","description":"Create directory listing categories grid view, list view or map view.","keywords":["all categories","category","taxonomy","term","single"],"attributes":{"view":{"type":"string","default":"grid"},"orderby":{"type":"string","default":"date"},"order":{"type":"string","default":"desc"},"listings_per_page":{"type":"number","default":6},"show_pagination":{"type":"boolean","default":false},"header":{"type":"boolean","default":true},"header_title":{"type":"string","default":"Items Found"},"columns":{"type":"number","default":3},"logged_in_user_only":{"type":"boolean","default":false},"map_height":{"type":"number","default":500},"map_zoom_level":{"type":"number","default":0},"sidebar":{"type":"string","default":""},"ids":{"type":"string","default":""},"featured_only":{"type":"boolean","default":false},"popular_only":{"type":"boolean","default":false},"display_preview_image":{"type":"boolean","default":true},"align":{"type":"string","default":"center"},"type_nav_display":{"type":"string","default":"column"},"advanced_filter":{"type":"boolean","default":false},"category":{"type":"string","default":""},"location":{"type":"string","default":""},"tag":{"type":"string","default":""},"directory_type":{"type":"string","default":""},"default_directory_type":{"type":"string","default":""}},"supports":{"html":false},"editorScript":["file:./index.js","jquery-masonry","directorist-swiper","directorist-select2-script","directorist-all-listings","directorist-listing-slider","directorist-search-form","directorist-openstreet-map","directorist-google-map"]}');
 
 /***/ }),
 
@@ -3375,9 +3375,6 @@ var Placeholder = function Placeholder() {
       header_title = attributes.header_title,
       map_height = attributes.map_height,
       columns = attributes.columns,
-      location = attributes.location,
-      category = attributes.category,
-      tag = attributes.tag,
       listings_per_page = attributes.listings_per_page,
       show_pagination = attributes.show_pagination,
       orderby = attributes.orderby,
@@ -3386,6 +3383,9 @@ var Placeholder = function Placeholder() {
       map_zoom_level = attributes.map_zoom_level,
       sidebar = attributes.sidebar,
       align = attributes.align,
+      location = attributes.location,
+      category = attributes.category,
+      tag = attributes.tag,
       type_nav_display = attributes.type_nav_display,
       advanced_filter = attributes.advanced_filter,
       display_preview_image = attributes.display_preview_image,
@@ -3610,7 +3610,7 @@ var Placeholder = function Placeholder() {
             },
             className: "directorist-gb-fixed-control"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Order', 'directorist'),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Listings Order', 'directorist'),
             labelPosition: "side",
             value: order,
             options: [{

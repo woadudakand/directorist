@@ -16,26 +16,6 @@
       "type": "string",
       "default": "date"
     },
-    "category": {
-      "type": "string",
-      "default": ""
-    },
-    "location": {
-      "type": "string",
-      "default": ""
-    },
-    "tag": {
-      "type": "string",
-      "default": ""
-    },
-    "directory_type": {
-      "type": "string",
-      "default": ""
-    },
-    "default_directory_type": {
-      "type": "string",
-      "default": ""
-    },
     "order": {
       "type": "string",
       "default": "desc"
@@ -103,6 +83,26 @@
     "advanced_filter": {
       "type": "boolean",
       "default": false
+    },
+    "category": {
+      "type": "string",
+      "default": ""
+    },
+    "location": {
+      "type": "string",
+      "default": ""
+    },
+    "tag": {
+      "type": "string",
+      "default": ""
+    },
+    "directory_type": {
+      "type": "string",
+      "default": ""
+    },
+    "default_directory_type": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {
