@@ -2095,8 +2095,8 @@
 				$('.button.wp-color-result').attr('style', ' ');
 
 				/* ----------------
-        Search Form
-        ------------------ */
+          Search Form
+          ------------------ */
 
 				// Default Tags Slice
 				function defaultTags() {

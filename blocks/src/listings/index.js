@@ -362,7 +362,7 @@ registerBlockType(metadata.name, {
 							}
 						/>
 
-						{sidebar == 'no_sidebar' ? (
+						{sidebar == 'no_sidebar' && header ? (
 							<ToggleControl
 								label={__(
 									'Display Filter Button',

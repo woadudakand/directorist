@@ -15184,7 +15184,6 @@ input.directorist-toggle-input:checked
 }
 
 .directorist-search-top {
-	text-align: center;
 	margin-bottom: 34px;
 }
 .directorist-search-top__title {
@@ -15193,11 +15192,28 @@ input.directorist-toggle-input:checked
 	font-weight: 500;
 	margin-bottom: 18px;
 }
+.directorist-search-top__title.text-center {
+	text-align: center;
+}
+.directorist-search-top__title.text-left {
+	text-align: left;
+}
+.directorist-search-top__title.text-right {
+	text-align: right;
+}
 .directorist-search-top__subtitle {
 	color: var(--directorist-color-body);
 	font-size: 18px;
 	opacity: 0.8;
+}
+.directorist-search-top__subtitle.text-center {
 	text-align: center;
+}
+.directorist-search-top__subtitle.text-left {
+	text-align: left;
+}
+.directorist-search-top__subtitle.text-right {
+	text-align: right;
 }
 
 .directorist-search-contents {
@@ -17073,12 +17089,77 @@ input.directorist-toggle-input:checked
 }
 .directorist-listing-type-selection__item a .directorist-icon-mask {
 	display: inline-block;
-	margin: 0 0 7px;
 }
 .directorist-listing-type-selection__item a .directorist-icon-mask:after {
 	width: 20px;
 	height: 20px;
 	background-color: var(--directorist-color-body);
+}
+.directorist-listing-type-selection__item a.directorist-type-nav__link--column {
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--column
+	.directorist-icon-mask {
+	margin-bottom: 5px;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--column-reverse {
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+	-webkit-flex-direction: column-reverse;
+	-ms-flex-direction: column-reverse;
+	flex-direction: column-reverse;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--column-reverse
+	.directorist-icon-mask {
+	margin-top: 5px;
+}
+.directorist-listing-type-selection__item a.directorist-type-nav__link--row {
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--row
+	.directorist-icon-mask {
+	margin-right: 5px;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--row-reverse {
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: reverse;
+	-webkit-flex-direction: row-reverse;
+	-ms-flex-direction: row-reverse;
+	flex-direction: row-reverse;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+.directorist-listing-type-selection__item
+	a.directorist-type-nav__link--row-reverse
+	.directorist-icon-mask {
+	margin-left: 5px;
 }
 .directorist-listing-type-selection__item
 	.directorist-listing-type-selection__link--current {
@@ -17094,6 +17175,24 @@ input.directorist-toggle-input:checked
 	.directorist-listing-type-selection__link--current:after {
 	opacity: 1;
 	visibility: visible;
+}
+.directorist-listing-type-selection.directorist-type-nav_list--start {
+	-webkit-box-pack: start;
+	-webkit-justify-content: flex-start;
+	-ms-flex-pack: start;
+	justify-content: flex-start;
+}
+.directorist-listing-type-selection.directorist-type-nav_list--center {
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+}
+.directorist-listing-type-selection.directorist-type-nav_list--end {
+	-webkit-box-pack: end;
+	-webkit-justify-content: flex-end;
+	-ms-flex-pack: end;
+	justify-content: flex-end;
 }
 
 .directorist-search-form-wrap .directorist-listing-type-selection {
@@ -17599,7 +17698,6 @@ input.directorist-toggle-input:checked
 .directorist-categories__single__content {
 	position: relative;
 	z-index: 1;
-	text-align: center;
 	-webkit-box-flex: 1;
 	-webkit-flex: 1;
 	-ms-flex: 1;
