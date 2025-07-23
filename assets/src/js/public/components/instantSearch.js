@@ -215,7 +215,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		// Get data-atts
 		const instant_search_atts = searchElm.data('atts');
 
-		// make ajax data
+		// Make ajax data
 		const instant_search_data = {
 			...form_data,
 			action: 'directorist_instant_search',
@@ -456,6 +456,9 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 		const view = form_data.view;
 		const paged = form_data.paged;
 
+		// Get directory type
+		const directory_type = searchElm.find('input[name="directory_type"]').val();		
+
 		// Update form_data
 		updateFormData({
 			q,
@@ -475,6 +478,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 			custom_field,
 			view,
 			paged,
+			directory_type,
 		});
 
 		// open_now checkbox
@@ -963,13 +967,17 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
 			// reset form data
 			resetFormData();
 
-			// get directory_type
+			// Get directory_type
 			const directory_type = getDirectoryType($(this));
+			
 			// ✅ only update `directory_type`, preserve others
 			updateFormData({ directory_type });
 
 			// Update URL with form data
 			update_instant_search_url(form_data);
+
+			// Set the directory_type value in the input
+			$(this).closest('.directorist-instant-search').find('input[name="directory_type"]').val(directory_type);
 
 			// Get active form
 			const activeForm = getActiveForm(searchElm);

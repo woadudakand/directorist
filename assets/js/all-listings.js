@@ -1524,7 +1524,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     // Get data-atts
     var instant_search_atts = searchElm.data('atts');
 
-    // make ajax data
+    // Make ajax data
     var instant_search_data = _objectSpread(_objectSpread({}, form_data), {}, {
       action: 'directorist_instant_search',
       _nonce: directorist.ajax_nonce,
@@ -1725,6 +1725,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var view = form_data.view;
     var paged = form_data.paged;
 
+    // Get directory type
+    var directory_type = searchElm.find('input[name="directory_type"]').val();
+
     // Update form_data
     updateFormData({
       q: q,
@@ -1743,7 +1746,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       phone2: phone2,
       custom_field: custom_field,
       view: view,
-      paged: paged
+      paged: paged,
+      directory_type: directory_type
     });
 
     // open_now checkbox
@@ -2134,8 +2138,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     // reset form data
     resetFormData();
 
-    // get directory_type
+    // Get directory_type
     var directory_type = getDirectoryType($(this));
+
     // ✅ only update `directory_type`, preserve others
     updateFormData({
       directory_type: directory_type
@@ -2143,6 +2148,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
     // Update URL with form data
     update_instant_search_url(form_data);
+
+    // Set the directory_type value in the input
+    $(this).closest('.directorist-instant-search').find('input[name="directory_type"]').val(directory_type);
 
     // Get active form
     var activeForm = getActiveForm(searchElm);
