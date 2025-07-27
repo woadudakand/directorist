@@ -76,6 +76,10 @@
       "type": "string",
       "default": "center"
     },
+    "category_align": {
+      "type": "string",
+      "default": "center"
+    },
     "title_align": {
       "type": "string",
       "default": "center"

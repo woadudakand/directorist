@@ -6,13 +6,15 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+$category_align = ! empty( $searchform->atts['category_align'] ) ? $searchform->atts['category_align'] : 'center';
+
 ?>
 
 <div class="directorist-listing-category-top">
 
     <h3><?php echo esc_html( $title ); ?></h3>
 
-    <ul>
+    <ul class="justify-content_<?php echo esc_attr( $category_align ); ?>">
         <?php foreach ( $top_categories as $cat ) : ?>
 
             <li>
