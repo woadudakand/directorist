@@ -433,10 +433,7 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
     const paged = form_data.paged;
 
     // Get directory type
-    const directory_type = searchElm
-      .closest(".directorist-instant-search")
-      .find('input[name="directory_type"]')
-      .val();
+    const directory_type = searchElm.find('input[name="directory_type"]').val();
 
     // Update form_data
     updateFormData({
@@ -842,11 +839,13 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
       }
 
       let $searchField = $(this).closest(".directorist-search-field");
-      let $form = $(
-        document.querySelector(
-          ".directorist-instant-search .listing-with-sidebar form",
-        ),
-      );
+      //   let $form = $(
+      //     document.querySelector(
+      //       ".directorist-instant-search .listing-with-sidebar form",
+      //     ),
+      //   );
+
+      var searchElm = $(this).closest(".listing-with-sidebar");
 
       // Clear text, email, number, select fields etc
       $searchField
@@ -862,8 +861,8 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
       $searchField.find('input[type="radio"]').prop("checked", false);
 
       // Proceed if form exists
-      if ($form.length) {
-        performInstantSearchWithRequiredValue($form);
+      if (searchElm.length) {
+        performInstantSearchWithRequiredValue(searchElm);
       }
     },
   );

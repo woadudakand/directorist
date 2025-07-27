@@ -1726,7 +1726,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var paged = form_data.paged;
 
     // Get directory type
-    var directory_type = searchElm.closest(".directorist-instant-search").find('input[name="directory_type"]').val();
+    var directory_type = searchElm.find('input[name="directory_type"]').val();
 
     // Update form_data
     updateFormData({
@@ -2065,7 +2065,13 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       irisPicker.click();
     }
     var $searchField = $(this).closest(".directorist-search-field");
-    var $form = $(document.querySelector(".directorist-instant-search .listing-with-sidebar form"));
+    //   let $form = $(
+    //     document.querySelector(
+    //       ".directorist-instant-search .listing-with-sidebar form",
+    //     ),
+    //   );
+
+    var searchElm = $(this).closest(".listing-with-sidebar");
 
     // Clear text, email, number, select fields etc
     $searchField.find('input:not([type="checkbox"]):not([type="radio"]):not(.wp-picker-clear), select').val("");
@@ -2077,8 +2083,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     $searchField.find('input[type="radio"]').prop("checked", false);
 
     // Proceed if form exists
-    if ($form.length) {
-      performInstantSearchWithRequiredValue($form);
+    if (searchElm.length) {
+      performInstantSearchWithRequiredValue(searchElm);
     }
   });
 
