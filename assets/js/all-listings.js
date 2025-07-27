@@ -2100,13 +2100,15 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       paged: 1
     });
 
-    // Build form data
-    buildFormData(activeForm);
-
-    // Filter Listing
-    (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function (e) {
+    // ✅ Define Filter Listing debounced function
+    var debouncedResetSearch = (0,_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__["default"])(function () {
+      // Build form data
+      buildFormData(activeForm);
       performInstantSearch(activeForm);
     }, 250);
+
+    // Reset Search after resetting form value
+    debouncedResetSearch();
   });
 
   // Directorist instant search submit

@@ -880,13 +880,16 @@ import initSearchCategoryCustomFields from "./category-custom-fields";
       // ✅ only update `page`, preserve others
       updateFormData({ paged: 1 });
 
-      // Build form data
-      buildFormData(activeForm);
+      // ✅ Define Filter Listing debounced function
+      const debouncedResetSearch = debounce(function () {
+        // Build form data
+        buildFormData(activeForm);
 
-      // Filter Listing
-      debounce(function (e) {
         performInstantSearch(activeForm);
       }, 250);
+
+      // Reset Search after resetting form value
+      debouncedResetSearch();
     },
   );
 
