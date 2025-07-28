@@ -3318,6 +3318,18 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 var Placeholder = function Placeholder() {
   return (0,_functions__WEBPACK_IMPORTED_MODULE_11__.getPlaceholder)('categories-grid');
 };
+var Divider = function Divider() {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelRow, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("hr", {
+      style: {
+        width: '100%',
+        border: 0,
+        borderTop: '1px solid #ddd',
+        margin: '8px 0 16px 0'
+      }
+    })
+  });
+};
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_12__.name, {
   icon: (0,_logo__WEBPACK_IMPORTED_MODULE_13__["default"])(),
   transforms: {
@@ -3403,8 +3415,8 @@ var Placeholder = function Placeholder() {
               }
               setShouldRender(false);
             }
-          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Default View', 'directorist'),
+          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('View as', 'directorist'),
             labelPosition: "side",
             value: view,
             options: [{
@@ -3421,7 +3433,7 @@ var Placeholder = function Placeholder() {
             },
             className: "directorist-gb-fixed-control"
           }), view === 'grid' ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Columns', 'directorist'),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Categories Per Row', 'directorist'),
             labelPosition: "side",
             value: columns,
             options: [{
@@ -3446,18 +3458,7 @@ var Placeholder = function Placeholder() {
               });
             },
             className: "directorist-gb-fixed-control"
-          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.TextControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Number Of Categories', 'directorist'),
-            type: "number",
-            value: cat_per_page,
-            onChange: function onChange(perPage) {
-              return setAttributes({
-                cat_per_page: Number(perPage)
-              });
-            },
-            className: "directorist-gb-fixed-control",
-            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Set the number of categories to show.', 'directorist')
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
+          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
             label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Order By', 'directorist'),
             labelPosition: "side",
             value: orderby,
@@ -3487,8 +3488,8 @@ var Placeholder = function Placeholder() {
               });
             },
             value: oldCategories
-          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Order', 'directorist'),
+          }) : '', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.SelectControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Categories Order', 'directorist'),
             labelPosition: "side",
             value: order,
             options: [{
@@ -3504,7 +3505,18 @@ var Placeholder = function Placeholder() {
               });
             },
             className: "directorist-gb-fixed-control"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToggleControl, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.TextControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Number of Categories', 'directorist'),
+            type: "number",
+            value: cat_per_page,
+            onChange: function onChange(perPage) {
+              return setAttributes({
+                cat_per_page: Number(perPage)
+              });
+            },
+            className: "directorist-gb-fixed-control",
+            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Set the number of categories to show.', 'directorist')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToggleControl, {
             label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('LoggedIn User Can View Only', 'directorist'),
             checked: logged_in_user_only,
             onChange: function onChange(logged_in_user_only) {
