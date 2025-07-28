@@ -20,6 +20,18 @@
       "type": "string",
       "default": "desc"
     },
+    "category": {
+      "type": "string",
+      "default": ""
+    },
+    "location": {
+      "type": "string",
+      "default": ""
+    },
+    "tag": {
+      "type": "string",
+      "default": ""
+    },
     "advanced_filter": {
       "type": "boolean",
       "default": false
@@ -79,7 +91,15 @@
     "type_nav_display": {
       "type": "string",
       "default": "column"
-    }
+    },
+    "directory_type": {
+			"type": "string",
+			"default": ""
+		},
+		"default_directory_type": {
+			"type": "string",
+			"default": ""
+		}
   },
   "supports": {
     "html": false

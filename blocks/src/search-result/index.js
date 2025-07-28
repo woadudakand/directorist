@@ -1,8 +1,13 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 import ServerSideRender from '@wordpress/server-side-render';
 import { __ } from '@wordpress/i18n';
-
+import {
+	CategoryControl,
+	TypesControl,
+	TagsControl,
+	LocationControl,
+} from './../controls';
 import {
 	useBlockProps,
 	InspectorControls,
@@ -13,6 +18,7 @@ import { list, grid, mapMarker } from '@wordpress/icons';
 
 import {
 	PanelBody,
+	PanelRow,
 	SelectControl,
 	ToggleControl,
 	TextControl,
@@ -22,12 +28,35 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
-import { getAttsForTransform, getPlaceholder } from './../functions';
+import {
+	getAttsForTransform,
+	getPlaceholder,
+	isMultiDirectoryEnabled,
+} from './../functions';
 import metadata from './block.json';
 import getLogo from './../logo';
 
 const Placeholder = () => getPlaceholder('listing-grid');
+const Divider = () => (
+	<PanelRow>
+		<hr
+			style={{
+				width: '100%',
+				border: 0,
+				borderTop: '1px solid #ddd',
+				margin: '8px 0 16px 0',
+			}}
+		/>
+	</PanelRow>
+);
 
+const SectionTitle = ({ children }) => (
+	<div style={{ marginTop: '0px', marginBottom: '8px' }}>
+		<h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>
+			{children}
+		</h3>
+	</div>
+);
 registerBlockType(metadata.name, {
 	icon: getLogo(),
 
@@ -42,6 +71,7 @@ registerBlockType(metadata.name, {
 	},
 
 	edit({ attributes, setAttributes }) {
+		const [shouldRender, setShouldRender] = useState(true);
 		let {
 			view,
 			header,
@@ -61,7 +91,17 @@ registerBlockType(metadata.name, {
 			type_nav_display,
 			advanced_filter,
 			display_preview_image,
+			directory_type,
+			default_directory_type,
+			category,
+			location,
+			tag,
 		} = attributes;
+
+		let oldLocations = location ? location.split(',') : [],
+			oldCategories = category ? category.split(',') : [],
+			oldTags = tag ? tag.split(',') : [],
+			oldTypes = directory_type ? directory_type.split(',') : [];
 
 		return (
 			<Fragment>
@@ -90,9 +130,42 @@ registerBlockType(metadata.name, {
 
 				<InspectorControls>
 					<PanelBody
-						title={__('Listing Settings', 'directorist')}
+						title={__('General Settings', 'directorist')}
 						initialOpen={true}
 					>
+						<SectionTitle>
+							{__('Directory Type Settings', 'directorist')}
+						</SectionTitle>
+
+						{isMultiDirectoryEnabled() ? (
+							<TypesControl
+								shouldRender={shouldRender}
+								selected={oldTypes}
+								showDefault={true}
+								defaultType={default_directory_type}
+								onDefaultChange={(value) =>
+									setAttributes({
+										default_directory_type: value,
+									})
+								}
+								onChange={(types) => {
+									setAttributes({
+										directory_type: types.join(','),
+									});
+
+									if (types.length === 1) {
+										setAttributes({
+											default_directory_type: types[0],
+										});
+									}
+
+									setShouldRender(false);
+								}}
+							/>
+						) : (
+							''
+						)}
+
 						<ToggleGroupControl
 							label={__('Type Alignment', 'directorist')}
 							value={align}
@@ -147,8 +220,84 @@ registerBlockType(metadata.name, {
 								aria-label={__('Row Reverse', 'directorist')}
 							/>
 						</ToggleGroupControl>
+						<Divider />
+
+						<SectionTitle>
+							{__('Listing Configuration', 'directorist')}
+						</SectionTitle>
+
+						<ToggleControl
+							label={__('Display Header Section', 'directorist')}
+							checked={header}
+							onChange={(newState) =>
+								setAttributes({ header: newState })
+							}
+						/>
+						{header ? (
+							<TextControl
+								label={__('Listings Found Text', 'directorist')}
+								type="text"
+								value={header_title}
+								onChange={(newState) =>
+									setAttributes({ header_title: newState })
+								}
+							/>
+						) : null}
+
 						<SelectControl
-							label={__('Default View', 'directorist')}
+							label={__('Sidebar Options', 'directorist')}
+							labelPosition="side"
+							value={sidebar}
+							options={[
+								{
+									label: __('Default', 'directorist'),
+									value: '',
+								},
+								{
+									label: __('Left Sidebar', 'directorist'),
+									value: 'left_sidebar',
+								},
+								{
+									label: __('Right Sidebar', 'directorist'),
+									value: 'right_sidebar',
+								},
+								{
+									label: __('No Sidebar', 'directorist'),
+									value: 'no_sidebar',
+								},
+							]}
+							onChange={(newState) =>
+								setAttributes({
+									sidebar: newState,
+								})
+							}
+							className="directorist-gb-fixed-control"
+						/>
+
+						<ToggleControl
+							label={__('Display Preview Image', 'directorist')}
+							checked={display_preview_image}
+							onChange={(newState) =>
+								setAttributes({
+									display_preview_image: newState,
+								})
+							}
+						/>
+						{sidebar == 'no_sidebar' && header ? (
+							<ToggleControl
+								label={__(
+									'Display Filter Button',
+									'directorist'
+								)}
+								checked={advanced_filter}
+								onChange={(newState) =>
+									setAttributes({ advanced_filter: newState })
+								}
+							/>
+						) : null}
+
+						<SelectControl
+							label={__('View as', 'directorist')}
 							labelPosition="side"
 							value={view}
 							options={[
@@ -172,7 +321,7 @@ registerBlockType(metadata.name, {
 						/>
 						{view === 'grid' ? (
 							<SelectControl
-								label={__('Columns', 'directorist')}
+								label={__('Grid Columns', 'directorist')}
 								labelPosition="side"
 								value={columns}
 								options={[
@@ -208,51 +357,90 @@ registerBlockType(metadata.name, {
 							''
 						)}
 
-						<SelectControl
-							label={__('Sidebar Filter', 'directorist')}
-							labelPosition="side"
-							value={sidebar}
-							options={[
-								{
-									label: __('Default', 'directorist'),
-									value: '',
-								},
-								{
-									label: __('Left Sidebar', 'directorist'),
-									value: 'left_sidebar',
-								},
-								{
-									label: __('Right Sidebar', 'directorist'),
-									value: 'right_sidebar',
-								},
-								{
-									label: __('No Sidebar', 'directorist'),
-									value: 'no_sidebar',
-								},
-							]}
-							onChange={(newState) =>
-								setAttributes({
-									sidebar: newState,
-								})
-							}
-							className="directorist-gb-fixed-control"
-						/>
+						{view === 'map' ? (
+							<TextControl
+								label={__('Map Height', 'directorist')}
+								type="number"
+								value={map_height}
+								help={__(
+									'Applicable for map view only',
+									'directorist'
+								)}
+								onChange={(newState) =>
+									setAttributes({
+										map_height: Number(newState),
+									})
+								}
+								className={`directorist-gb-fixed-control ${
+									view !== 'map' ? 'hidden' : ''
+								}`}
+							/>
+						) : (
+							''
+						)}
+						{view === 'map' ? (
+							<TextControl
+								label={__('Map Zoom Level', 'directorist')}
+								help={__(
+									'Applicable for map view only',
+									'directorist'
+								)}
+								type="number"
+								value={map_zoom_level}
+								onChange={(newState) =>
+									setAttributes({
+										map_zoom_level: Number(newState),
+									})
+								}
+								className="directorist-gb-fixed-control"
+							/>
+						) : (
+							''
+						)}
 
-						<TextControl
-							label={__('Listings Per Page', 'directorist')}
-							type="number"
-							value={listings_per_page}
-							onChange={(newState) =>
-								setAttributes({
-									listings_per_page: Number(newState),
-								})
-							}
-							className="directorist-gb-fixed-control"
-							help={__(
-								'Set the number of listings to show per page.',
+						<ToggleControl
+							label={__(
+								'Display Featured Listings Only',
 								'directorist'
 							)}
+							checked={featured_only}
+							onChange={(newState) =>
+								setAttributes({ featured_only: newState })
+							}
 						/>
+						<ToggleControl
+							label={__('Display Popular Only', 'directorist')}
+							checked={popular_only}
+							onChange={(newState) =>
+								setAttributes({ popular_only: newState })
+							}
+						/>
+
+						<CategoryControl
+							onChange={(categories) => {
+								setAttributes({
+									category: categories.join(','),
+								});
+							}}
+							value={oldCategories}
+						/>
+
+						<TagsControl
+							onChange={(tags) => {
+								setAttributes({ tag: tags.join(',') });
+							}}
+							value={oldTags}
+						/>
+
+						<LocationControl
+							onChange={(locations) => {
+								setAttributes({
+									location: locations.join(','),
+								});
+							}}
+							value={oldLocations}
+						/>
+
 						<SelectControl
 							label={__('Order By', 'directorist')}
 							labelPosition="side"
@@ -295,68 +483,19 @@ registerBlockType(metadata.name, {
 							}
 							className="directorist-gb-fixed-control"
 						/>
-						<ToggleControl
-							label={__('Display Pagination', 'directorist')}
-							checked={show_pagination}
-							onChange={(newState) =>
-								setAttributes({ show_pagination: newState })
-							}
-						/>
-						<ToggleControl
-							label={__('Display Header', 'directorist')}
-							checked={header}
-							onChange={(newState) =>
-								setAttributes({ header: newState })
-							}
-						/>
-						{header ? (
-							<TextControl
-								label={__('Listings Found Text', 'directorist')}
-								type="text"
-								value={header_title}
-								onChange={(newState) =>
-									setAttributes({ header_title: newState })
-								}
-							/>
-						) : null}
-						{sidebar == 'no_sidebar' && header ? (
-							<ToggleControl
-								label={__(
-									'Display Filter Button',
-									'directorist'
-								)}
-								checked={advanced_filter}
-								onChange={(newState) =>
-									setAttributes({ advanced_filter: newState })
-								}
-							/>
-						) : null}
-						<ToggleControl
-							label={__('Display Preview Image', 'directorist')}
-							checked={display_preview_image}
+
+						<TextControl
+							label={__('Listings Per Page', 'directorist')}
+							type="number"
+							value={listings_per_page}
 							onChange={(newState) =>
 								setAttributes({
-									display_preview_image: newState,
+									listings_per_page: Number(newState),
 								})
 							}
+							className="directorist-gb-fixed-control"
 						/>
-						<ToggleControl
-							label={__(
-								'Display Featured Listings Only',
-								'directorist'
-							)}
-							checked={featured_only}
-							onChange={(newState) =>
-								setAttributes({ featured_only: newState })
-							}
-						/>
-						<ToggleControl
-							label={__('Display Popular Only', 'directorist')}
-							checked={popular_only}
-							onChange={(newState) =>
-								setAttributes({ popular_only: newState })
-							}
-						/>
+
 						<ToggleControl
 							label={__(
 								'Logged In User Can View Only',
@@ -369,46 +508,18 @@ registerBlockType(metadata.name, {
 								})
 							}
 						/>
-						{view === 'map' ? (
-							<TextControl
-								label={__('Map Height', 'directorist')}
-								type="number"
-								value={map_height}
-								help={__(
-									'Applicable for map view only',
-									'directorist'
-								)}
-								onChange={(newState) =>
-									setAttributes({
-										map_height: Number(newState),
-									})
-								}
-								className={`directorist-gb-fixed-control ${
-									view !== 'map' ? 'hidden' : ''
-								}`}
-							/>
-						) : (
-							''
-						)}
-						{view === 'map' ? (
-							<TextControl
-								label={__('Map Zoom Level', 'directorist')}
-								help={__(
-									'Applicable for map view only',
-									'directorist'
-								)}
-								type="number"
-								value={map_zoom_level}
-								onChange={(newState) =>
-									setAttributes({
-										map_zoom_level: Number(newState),
-									})
-								}
-								className="directorist-gb-fixed-control"
-							/>
-						) : (
-							''
-						)}
+
+						<Divider />
+						<SectionTitle>
+							{__('Pagination Area', 'directorist')}
+						</SectionTitle>
+						<ToggleControl
+							label={__('Enable Pagination', 'directorist')}
+							checked={show_pagination}
+							onChange={(newState) =>
+								setAttributes({ show_pagination: newState })
+							}
+						/>
 					</PanelBody>
 				</InspectorControls>
 
