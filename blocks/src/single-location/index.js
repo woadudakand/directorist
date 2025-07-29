@@ -507,10 +507,6 @@ registerBlockType(metadata.name, {
 								})
 							}
 							className="directorist-gb-fixed-control"
-							help={__(
-								'Set the number of listings to show per page.',
-								'directorist'
-							)}
 						/>
 
 						<ToggleControl

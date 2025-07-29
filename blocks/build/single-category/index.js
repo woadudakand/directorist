@@ -3749,8 +3749,7 @@ var Divider = function Divider() {
                 listings_per_page: Number(newState)
               });
             },
-            className: "directorist-gb-fixed-control",
-            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Set the number of listings to show per page.', 'directorist')
+            className: "directorist-gb-fixed-control"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToggleControl, {
             label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Logged In User Can View Only', 'directorist'),
             checked: logged_in_user_only,
