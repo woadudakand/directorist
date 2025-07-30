@@ -6,7 +6,6 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
-$category_align = ! empty( $searchform->atts['category_align'] ) ? $searchform->atts['category_align'] : 'center';
 
 ?>
 
@@ -14,7 +13,7 @@ $category_align = ! empty( $searchform->atts['category_align'] ) ? $searchform->
 
     <h3><?php echo esc_html( $title ); ?></h3>
 
-    <ul class="justify-content_<?php echo esc_attr( $category_align ); ?>">
+    <ul class="justify-content_<?php echo esc_attr( $searchform->category_align ); ?>">
         <?php foreach ( $top_categories as $cat ) : ?>
 
             <li>

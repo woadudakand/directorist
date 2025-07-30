@@ -3910,6 +3910,8 @@
 						) {
 							sliderActivated = true;
 						}
+						if (typeof directoristCustomRangeSlider === 'undefined')
+							return;
 						if (sliderRadiusActive) {
 							var _directoristCustomRan;
 							// Radius Search Range Slider

@@ -214,6 +214,10 @@ class Directorist_Listings {
 
     public $display_phone_map;
 
+    public $type_align;
+
+    public $type_display;
+
     protected $deferred_data = [];
 
     protected $deferred_props = [
@@ -229,6 +233,12 @@ class Directorist_Listings {
 
         $current_page = ! empty( $this->atts['_current_page'] ) ? $this->atts['_current_page'] : '';
 
+        $align = ! empty( $this->atts['align'] ) ? $this->atts['align'] : 'center';
+        $display = ! empty( $this->atts['type_nav_display'] ) ? $this->atts['type_nav_display'] : 'column';
+
+        $this->type_align = $align;
+        $this->type_display = $display;
+        
         if ( 'search_result' === $this->type || ( 'instant_search' == $this->type && 'search_result' === $current_page ) ) {
             $this->update_search_options();
         }

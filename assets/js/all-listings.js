@@ -2584,7 +2584,7 @@
 						// Get data-atts
 						var instant_search_atts = searchElm.data('atts');
 
-						// make ajax data
+						// Make ajax data
 						var instant_search_data = _objectSpread(
 							_objectSpread({}, form_data),
 							{},
@@ -2907,6 +2907,11 @@
 						var view = form_data.view;
 						var paged = form_data.paged;
 
+						// Get directory type
+						var directory_type = searchElm
+							.find('input[name="directory_type"]')
+							.val();
+
 						// Update form_data
 						updateFormData({
 							q: q,
@@ -2926,6 +2931,7 @@
 							custom_field: custom_field,
 							view: view,
 							paged: paged,
+							directory_type: directory_type,
 						});
 
 						// open_now checkbox
@@ -3426,10 +3432,14 @@
 							var $searchField = $(this).closest(
 								'.directorist-search-field'
 							);
-							var $form = $(
-								document.querySelector(
-									'.directorist-instant-search .listing-with-sidebar form'
-								)
+							//   let $form = $(
+							//     document.querySelector(
+							//       ".directorist-instant-search .listing-with-sidebar form",
+							//     ),
+							//   );
+
+							var searchElm = $(this).closest(
+								'.listing-with-sidebar'
 							);
 
 							// Clear text, email, number, select fields etc
@@ -3450,8 +3460,10 @@
 								.prop('checked', false);
 
 							// Proceed if form exists
-							if ($form.length) {
-								performInstantSearchWithRequiredValue($form);
+							if (searchElm.length) {
+								performInstantSearchWithRequiredValue(
+									searchElm
+								);
 							}
 						}
 					);
@@ -3473,16 +3485,18 @@
 								paged: 1,
 							});
 
-							// Build form data
-							buildFormData(activeForm);
-
-							// Filter Listing
-							(0,
+							// ✅ Define Filter Listing debounced function
+							var debouncedResetSearch = (0,
 							_global_components_debounce__WEBPACK_IMPORTED_MODULE_3__[
 								'default'
-							])(function (e) {
+							])(function () {
+								// Build form data
+								buildFormData(activeForm);
 								performInstantSearch(activeForm);
 							}, 250);
+
+							// Reset Search after resetting form value
+							debouncedResetSearch();
 						}
 					);
 
@@ -3540,8 +3554,9 @@
 							// reset form data
 							resetFormData();
 
-							// get directory_type
+							// Get directory_type
 							var directory_type = getDirectoryType($(this));
+
 							// ✅ only update `directory_type`, preserve others
 							updateFormData({
 								directory_type: directory_type,
@@ -3549,6 +3564,12 @@
 
 							// Update URL with form data
 							update_instant_search_url(form_data);
+
+							// Set the directory_type value in the input
+							$(this)
+								.closest('.directorist-instant-search')
+								.find('input[name="directory_type"]')
+								.val(directory_type);
 
 							// Get active form
 							var activeForm = getActiveForm(searchElm);
