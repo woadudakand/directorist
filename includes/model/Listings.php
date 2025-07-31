@@ -44,6 +44,8 @@ class Directorist_Listings {
 
     public $show_pagination;
 
+    public $pagination_type;
+
     public $header;
 
     public $header_title;
@@ -429,6 +431,7 @@ class Directorist_Listings {
         $this->order                    = $this->params['order'];
         $this->listings_per_page        = (int) $this->params['listings_per_page'];
         $this->show_pagination          = $this->params['show_pagination'] == 'yes' ? true : false;
+        $this->pagination_type          = $this->params['pagination_type'];
         $this->header                   = $this->params['header'] == 'yes' ? true : false;
         $this->header_title             = $this->params['header_title'];
         $this->categories               = ! empty( $this->params['category'] ) ? explode( ',', $this->params['category'] ) : '';
@@ -1983,8 +1986,8 @@ class Directorist_Listings {
 
     public function pagination_infinite_scroll_class() {
         return ! empty( $this->show_pagination )
-        && isset( $this->options['pagination_type'] )
-        && $this->options['pagination_type'] === 'infinite_scroll'
+        && isset( $this->pagination_type )
+        && $this->pagination_type === 'infinite_scroll'
         ? 'directorist-infinite-scroll'
         : '';
     }
@@ -2034,7 +2037,7 @@ class Directorist_Listings {
             'directorist-archive-contents directorist-contents-wrap directorist-w-100',
         ];
 
-        if ( 'yes' === $this->instant_search ) {
+        if ( 'yes' === $this->instant_search || 'infinite_scroll' === $this->pagination_type ) {
             $classes[] = 'directorist-instant-search';
         }
 

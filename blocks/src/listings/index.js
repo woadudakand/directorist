@@ -118,6 +118,7 @@ registerBlockType(metadata.name, {
 			sidebar,
 			align,
 			type_nav_display,
+			pagination_type,
 		} = attributes;
 
 		let oldLocations = location ? location.split(',') : [],
@@ -479,6 +480,31 @@ registerBlockType(metadata.name, {
 								setAttributes({ show_pagination: newState })
 							}
 						/>
+
+						{show_pagination && (
+							<SelectControl
+								label={__('Pagination Type', 'directorist')}
+								value={pagination_type}
+								labelPosition="side"
+								options={[
+									{
+										label: __('Numbered', 'directorist'),
+										value: 'numbered',
+									},
+									{
+										label: __(
+											'Infinite Scroll',
+											'directorist'
+										),
+										value: 'infinite_scroll',
+									},
+								]}
+								onChange={(newState) =>
+									setAttributes({ pagination_type: newState })
+								}
+								className="directorist-gb-fixed-control"
+							/>
+						)}
 					</PanelBody>
 
 					<PanelBody

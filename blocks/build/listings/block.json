@@ -114,6 +114,10 @@
     "type_nav_display": {
       "type": "string",
       "default": "column"
+    },
+    "pagination_type": {
+      "type": "string",
+      "default": "numbered"
     }
   },
   "supports": {
